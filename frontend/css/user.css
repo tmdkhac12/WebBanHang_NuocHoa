@@ -1,0 +1,12 @@
+/* Hieu ung cho sidebar khi hover va active */
+.list-group-item button {
+    padding: 0 !important;
+}
+
+.list-group-item button.active {
+    color: black !important;
+}
+
+.col-9 p {
+    margin: 10px;
+}
