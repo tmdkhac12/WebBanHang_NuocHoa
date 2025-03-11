@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nước hoa</title>
+    <link rel="stylesheet" href="../asset/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <script src="../asset/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+    <script src="index.js"></script>
+</head>
+<body>
+    <header class="py-3 shadow-sm bg-light mb-3">
+        <div class="container">
+            <!-- Mobile Navbar -->
+            <div class="row align-items-center d-md-none">
+                <div class="col-2">
+                    <button class="btn btn-outline-dark" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <div class="col-8 text-center">
+                    <img src="./images/Logo.svg" alt="Logo Shop" class="img-fluid" id="logoMB">
+                </div>
+                <div class="col-2"></div>
+            </div>
+
+            <!-- Dropdown Menu (Mobile) -->
+            <div class="collapse" id="mobileMenu">
+                <div class="card card-body text-center">
+                    <a href="#home" class="menu-link text-decoration-none text-dark py-1" data-section="home">Trang chủ</a>
+                    <a href="#about" class="menu-link text-decoration-none text-dark py-1" data-section="about">Giới thiệu</a>
+                    <a href="#brands" class="menu-link text-decoration-none text-dark py-1" data-section="brands">Thương hiệu</a>
+                    <hr>
+                    <a href="#products" class="menu-link text-decoration-none text-dark py-1" data-section="products">Sản phẩm</a>
+                    <a href="#blog" class="menu-link text-decoration-none text-dark py-1" data-section="blog">Blog</a>
+                </div>
+            </div>
+
+            <!-- Desktop Navbar -->
+            <div class="row align-items-center d-none d-md-flex">
+                <div class="col-md-5 d-flex justify-content-around header-menu">
+                    <a href="#home" class="menu-link" data-section="home">Trang chủ</a>
+                    <a href="#about" class="menu-link" data-section="about">Giới thiệu</a>
+                    <a href="#brands" class="menu-link" data-section="brands">Thương hiệu</a>
+                </div>
+                <div class="col-md-2 text-center header-logo">
+                    <img src="./images/Logo.svg" alt="Logo Shop" class="img-fluid">
+                </div>
+                <div class="col-md-3 d-flex justify-content-around header-menu">
+                    <a href="#products" class="menu-link" data-section="products">Sản phẩm</a>
+                    <a href="#blog" class="menu-link" data-section="blog">Blog</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div class="content">
+        <!-- ------------------------Trang chủ-------------------------------------- -->
+        <section id="home" class="content-section">
+            <!-- Carousel -->
+            <div id="demo" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
+                    <button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
+                </div>
+            
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="./images/ncHoaNam.jpg" alt="Los Angeles" class="d-block" style="width:100%">
+                        <div class="carousel-caption mb-4">
+                            <h2>Nước hoa nam</h2>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="./images/ncHoaNu.jpg" alt="Chicago" class="d-block" style="width:100%">
+                        <div class="carousel-caption mb-4">
+                            <h2>Nước hoa nữ</h2>
+                        </div> 
+                    </div>
+                    <div class="carousel-item">
+                        <img src="./images/ncHoaUnisex.jpg" alt="New York" class="d-block" style="width:100%">
+                        <div class="carousel-caption mb-4">
+                            <h2>Nước hoa Unisex</h2>
+                        </div>  
+                    </div>
+                </div>
+            
+                <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+            <section class="brands-section">
+                <div class="container">
+                    <div class="row py-3">
+                        <div class="col-12 text-center">
+                            <h1>THƯƠNG HIỆU NỔI TIẾNG</h1>
+                        </div>
+                    </div>
+                    <div class="brands-container"></div>
+    
+                </div>
+            </section>
+            
+            <section class="featured-products">
+                <div class="container">
+                    <div class="row py-3">
+                        <div class="col-12 text-center">
+                            <h1>SẢN PHẨM NỔI BẬT</h1>
+                            <div class="product-tabs">
+                                <button class="tab-button active" data-category="men">Nước hoa nam</button>
+                                <button class="tab-button" data-category="women">Nước hoa nữ</button>
+                                <button class="tab-button" data-category="unisex">Unisex</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper product-slider">
+                        <div class="swiper-wrapper">
+                            <!-- Sản phẩm sẽ được thêm bằng JavaScript -->
+                        </div>
+                        <!-- Nút điều hướng -->
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                    </div>
+                </div>
+            </section>
+        </section>
+        
+        
+        <!-- -------------------------------------Trang sản phẩm------------------------ -->
+        <section id="products" class="content-section" style="display: none;">
+            <div class="container-fluid mb-4">
+                <div class="banner">
+                    <img src="https://xxivstore.com/wp-content/themes/yootheme/cache/ed/banner-danh-muc-ed43cdb7.webp" alt="" class="w-100">
+                </div>
+            </div>
+            <section>
+                <div class="container">
+                    <div class="row">
+                        <aside class="col-md-3">
+                            <h4>Thương hiệu</h4>
+                            <input type="text" class="form-control mb-2" placeholder="Tìm kiếm nhanh">
+                            <ul class="list-unstyled">
+                                <li><a href="#">Acqua di Parma</a></li>
+                                <li><a href="#">Afnan</a></li>
+                                <li><a href="#">Amouage</a></li>
+                            </ul>
+                            <h4>Giới tính</h4>
+                            <button class="btn btn-outline-dark">Nam</button>
+                            <button class="btn btn-outline-dark">Nữ</button>
+                            <button class="btn btn-outline-dark">Unisex</button>
+                            <h4>Mùa</h4>
+                            <button class="btn btn-outline-dark">Đông</button>
+                            <button class="btn btn-outline-dark">Hạ</button>
+                            <button class="btn btn-outline-dark">Thu</button>
+                            <button class="btn btn-outline-dark">Xuân</button>
+                            <h4>Giá cả</h4>
+                            <button class="btn btn-outline-dark">1.500.000 - 3.000.000</button>
+                            <button class="btn btn-outline-dark">3.000.000 - 5.000.000</button>
+                        </aside>
+                        <div class="col-md-9">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span>Hiển thị 1-20 của 545 kết quả</span>
+                                <select class="form-select w-auto">
+                                    <option>Mới nhất</option>
+                                    <option>Giá tăng dần</option>
+                                    <option>Giá giảm dần</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-center">
+                                    <img src="./images/sample1.jpg" class="img-fluid" alt="Old Fashioned">
+                                    <h6>By Kilian</h6>
+                                    <p>Old Fashioned</p>
+                                    <p>6.700.000 đ</p>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <img src="./images/sample2.jpg" class="img-fluid" alt="Coromandel">
+                                    <h6>Chanel</h6>
+                                    <p>Coromandel</p>
+                                    <p>6.700.000 đ</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </div>
+</body>
+</html>
