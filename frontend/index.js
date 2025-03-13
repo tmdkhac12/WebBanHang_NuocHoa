@@ -84,7 +84,50 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => console.error("Lỗi khi tải danh sách sản phẩm:", error));
     }
+    // 🏷️ **6. Hiển thị phân trang**
+    function renderPagination(totalPages, currentPage) {
+        paginationContainer.innerHTML = "";
 
+        if (totalPages <= 1) return; // Không hiển thị nếu chỉ có 1 trang
+
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+        }
+
+        let paginationHTML = `<div class="pagination">`;
+
+        // Nút về trang đầu & lùi trang
+        if (currentPage > 1) {
+            paginationHTML += `<a href="#" class="page-link" data-page="1"><<</a>`;
+            paginationHTML += `<a href="#" class="page-link" data-page="${currentPage - 1}"><</a>`;
+        }
+
+        // Hiển thị các trang
+        for (let i = startPage; i <= endPage; i++) {
+            let activeClass = i === currentPage ? "active" : "";
+            paginationHTML += `<a href="#" class="page-link ${activeClass}" data-page="${i}">${i}</a>`;
+        }
+
+        // Nút tiến trang & trang cuối
+        if (currentPage < totalPages) {
+            paginationHTML += `<a href="#" class="page-link" data-page="${currentPage + 1}">></a>`;
+            paginationHTML += `<a href="#" class="page-link" data-page="${totalPages}">>></a>`;
+        }
+
+        paginationHTML += `</div>`;
+        paginationContainer.innerHTML = paginationHTML;
+
+        // Gán sự kiện click cho các nút phân trang
+        document.querySelectorAll(".page-link").forEach(link => {
+            link.addEventListener("click", function (e) {
+                e.preventDefault();
+                let page = parseInt(this.getAttribute("data-page"));
+                loadProducts(page);
+            });
+        });
+    }
     loadProducts(); // 🚀 Load sản phẩm khi trang mở
 
     // 🏷️ **6. Hiển thị danh sách thương hiệu**
