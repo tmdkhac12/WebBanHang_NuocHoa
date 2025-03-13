@@ -1,20 +1,93 @@
 document.addEventListener("DOMContentLoaded", function () {
     const menuLinks = document.querySelectorAll(".menu-link");
     const sections = document.querySelectorAll(".content-section");
+    const productList = document.getElementById("product-list");
+    const detailSection = document.getElementById("detail");
+    const backToProducts = document.getElementById("backToProducts");
 
+    // 🏷️ **1. Xử lý chuyển tab navbar**
     menuLinks.forEach(link => {
         link.addEventListener("click", function (e) {
             e.preventDefault();
             const sectionId = this.getAttribute("data-section");
-            sections.forEach(section => {
-                section.style.display = "none";
-            });
+
+            sections.forEach(section => section.style.display = "none");
             document.getElementById(sectionId).style.display = "block";
         });
     });
-});
 
-document.addEventListener("DOMContentLoaded", function () {
+    // 🏷️ **2. Hàm hiển thị chi tiết sản phẩm**
+    function showDetail(productId) {
+        fetch(`http://127.0.0.1/DoAnWeb2/WebBanHang_NuocHoa/frontend/product.php?id=${productId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error("Lỗi:", data.error);
+                    return;
+                }
+
+                // 🖼️ Hiển thị thông tin sản phẩm
+                document.getElementById("hinh_1").src = data.hinh_1;
+                document.getElementById("ten_nuoc_hoa").textContent = data.ten_nuoc_hoa;
+                document.getElementById("thuong_hieu").textContent = data.thuong_hieu;
+                document.getElementById("gioi_tinh").textContent = data.gioi_tinh;
+                document.getElementById("dung_tich").textContent = data.dung_tich;
+                document.getElementById("gia_ban").textContent = new Intl.NumberFormat("vi-VN").format(data.gia_ban);
+                document.getElementById("mo_ta").textContent = data.mo_ta;
+
+                // Ẩn danh sách sản phẩm, hiện chi tiết sản phẩm
+                sections.forEach(section => section.style.display = "none");
+                detailSection.style.display = "block";
+            })
+            .catch(error => console.error("Lỗi khi tải dữ liệu:", error));
+    }
+
+    // 🏷️ **3. Lắng nghe sự kiện click vào sản phẩm**
+    productList.addEventListener("click", function (event) {
+        let target = event.target.closest(".product-card");
+        if (target) {
+            let productId = target.getAttribute("data-id");
+            console.log("ID sản phẩm:", productId);
+            showDetail(productId);
+        }
+    });
+
+    // 🏷️ **4. Xử lý nút quay lại danh sách sản phẩm**
+    backToProducts.addEventListener("click", function () {
+        sections.forEach(section => section.style.display = "none");
+        document.getElementById("products").style.display = "block"; // Hiển thị lại trang sản phẩm
+    });
+
+    // 🏷️ **5. Tải danh sách sản phẩm từ index.php**
+    function loadProducts(page = 1) {
+        fetch(`http://localhost/DoAnWeb2/WebBanHang_NuocHoa/backend/index.php?page=${page}`)
+            .then(response => response.text())
+            .then(data => {
+                productList.innerHTML = data;
+
+                // Gán lại sự kiện click vào sản phẩm sau khi load xong
+                document.querySelectorAll(".product-card").forEach(card => {
+                    card.addEventListener("click", function () {
+                        let productId = this.getAttribute("data-id");
+                        showDetail(productId);
+                    });
+                });
+
+                // Gán sự kiện click cho nút phân trang
+                document.querySelectorAll(".page-link").forEach(link => {
+                    link.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        let page = this.getAttribute("data-page");
+                        loadProducts(page);
+                    });
+                });
+            })
+            .catch(error => console.error("Lỗi khi tải danh sách sản phẩm:", error));
+    }
+
+    loadProducts(); // 🚀 Load sản phẩm khi trang mở
+
+    // 🏷️ **6. Hiển thị danh sách thương hiệu**
     const brands = [
         { src: "https://xxivstore.com/wp-content/uploads/2023/11/Nuoc-hoa-Clive-Christian.png", alt: "Clive Christian" },
         { src: "https://xxivstore.com/wp-content/uploads/2023/11/Nuoc-hoa-Xerjoff.png", alt: "Xerjoff" },
@@ -43,58 +116,42 @@ document.addEventListener("DOMContentLoaded", function () {
         brandItem.appendChild(img);
         brandsContainer.appendChild(brandItem);
     });
-});
 
-document.addEventListener("DOMContentLoaded", function () {
-    const products = {
-        men: [
-            { src: "https://xxivstore.com/wp-content/uploads/2022/09/Marie-Jeanne-Vetiver-Santal-300x300.png", name: "Marie Jeanne", desc: "Vetiver Santal", price: "5.250.000 đ" },
-            { src: "https://xxivstore.com/wp-content/uploads/2020/06/Nuoc-hoa-Creed-Aventus-300x300.png", name: "Creed", desc: "Aventus", price: "6.000.000 đ" },
-            { src: "https://xxivstore.com/wp-content/uploads/2022/06/Kilian-Angels-Share-300x300.png", name: "By Kilian", desc: "Angel’s Share", price: "4.900.000 đ" },
-            { src: "https://xxivstore.com/wp-content/uploads/2022/07/Enigma-300x300.png", name: "Roja Parfum", desc: "Enigma Parfum Cologne", price: "8.700.000 đ" },
-            { src: "https://xxivstore.com/wp-content/uploads/2022/06/LOrchestre-Piano-Santal-300x300.png", name: "L’Orchestre Parfum", desc: "Piano Santal", price: "1.500.000 đ" },
-            { src: "https://xxivstore.com/wp-content/uploads/2023/11/D600-300x300.png", name: "Carner Barcelona", desc: "D600", price: "2.850.000 đ" }
-        ],
-        women: [
-            { src: "https://xxivstore.com/wp-content/uploads/2021/07/XXIV-Store-Nasnomatto-Narcotic-V-300x300.png", name :"Nasomatto", desc: "Nasomatto Narcotic V", price: "3.850.000 đ"},
-            { src: "https://xxivstore.com/wp-content/uploads/2023/12/Nuoc-hoa-Ex-Nihilo-Fleur-Narcotique-300x300.png", name :"Ex Nihilo", desc: "Fleur Narcotique", price: "900.000 đ"},
-            { src: "https://xxivstore.com/wp-content/uploads/2020/06/baccarat-rouge-540-extrait-extrait-de-parfum-70ml-359-300x300.png", name :"Maison Francis Kurkdijan", desc: "Baccarat Rouge 540 Extrait", price: "6.300.000 đ"},
-            { src: "https://xxivstore.com/wp-content/uploads/2020/06/6bb559193c12a192157b071aa6c2f153-300x300.png", name :"Tom Ford", desc: "Lost Cherry", price: "7.500.000 đ"},
-            { src: "https://xxivstore.com/wp-content/uploads/2020/06/rolling-in-love-eau-de-parfum-50ml-677-300x300.png", name :"By Kilian", desc: "Rolling in love", price: "6.300.000 đ"},
-            { src: "https://xxivstore.com/wp-content/uploads/2022/06/Lorchestre-Rose-Trombone-300x300.png", name :" L’Orchestre Parfum", desc: " L’Orchestre Rose Trombone", price: "4.600.000 đ"},
-            { src: "https://xxivstore.com/wp-content/uploads/2022/11/Nuoc-hoa-Paris-Cheri-300x300.png", name :" Astrophil Stella", desc: " Paris Chéri", price: "5.300.000 đ"},
-            { src: "https://xxivstore.com/wp-content/uploads/2022/10/Nuoc-hoa-Masque-Milano-Lost-Alice-300x300.png", name :"Masque Milano ", desc: " Lost Alice", price: "4.200.000 đ"},
-            { src: "https://xxivstore.com/wp-content/uploads/2020/06/Good-girl-gond-Bad-50ml-300x300.png", name :"By Kilian ", desc: "Good Girl Gone Bad", price: "6.100.000"},
-        ],
-        unisex: [
-            { src: "https://xxivstore.com/wp-content/uploads/2022/09/Marie-Jeanne-Vetiver-Santal-300x300.png", name: "Marie Jeanne", desc: "Vetiver Santal", price: "5.250.000 đ" },
-            { src: "https://xxivstore.com/wp-content/uploads/2020/06/Nuoc-hoa-Creed-Aventus-300x300.png", name: "Creed", desc: "Aventus", price: "6.000.000 đ" },
-            { src: "https://xxivstore.com/wp-content/uploads/2022/06/Kilian-Angels-Share-300x300.png", name: "By Kilian", desc: "Angel’s Share", price: "4.900.000 đ" },
-            { src: "https://xxivstore.com/wp-content/uploads/2022/07/Enigma-300x300.png", name: "Roja Parfum", desc: "Enigma Parfum Cologne", price: "8.700.000 đ" },
-            { src: "https://xxivstore.com/wp-content/uploads/2022/06/LOrchestre-Piano-Santal-300x300.png", name: "L’Orchestre Parfum", desc: "Piano Santal", price: "1.500.000 đ" },
-            { src: "https://xxivstore.com/wp-content/uploads/2023/11/D600-300x300.png", name: "Carner Barcelona", desc: "D600", price: "2.850.000 đ" }
-        ]
-    };
-
+    // 🏷️ **7. Slider sản phẩm**
     const sliderWrapper = document.querySelector(".swiper-wrapper");
     const tabButtons = document.querySelectorAll(".tab-button");
 
-    function loadProducts(category) {
-        sliderWrapper.innerHTML = "";
-        products[category].forEach(product => {
-            const slide = document.createElement("div");
-            slide.classList.add("swiper-slide");
-            slide.innerHTML = `
-                <div class="product-card">
-                    <img src="${product.src}" alt="${product.name}">
-                    <h4>${product.name}</h4>
-                    <p>${product.desc}</p>
-                    <strong>${product.price}</strong>
-                </div>
-            `;
-            sliderWrapper.appendChild(slide);
-        });
-        swiper.update();
+    function loadFeaturedProducts(category) {
+        fetch(`http://localhost/DoAnWeb2/WebBanHang_NuocHoa/frontend/product.php?gender=${category}`)
+            .then(response => response.json())
+            .then(products => {
+                sliderWrapper.innerHTML = ""; // Xóa sản phẩm cũ
+
+                if (!Array.isArray(products)) {
+                    console.error("Dữ liệu API không hợp lệ:", products);
+                    sliderWrapper.innerHTML = "<p>Không thể tải sản phẩm.</p>";
+                    return;
+                }
+
+                products.forEach(product => {
+                    const slide = document.createElement("div");
+                    slide.classList.add("swiper-slide");
+                    slide.innerHTML = `
+                        <div class="product-card" data-id="${product.ma_nuoc_hoa}">
+                            <img src="${product.hinh_1}" alt="${product.ten_nuoc_hoa}">
+                            <h4>${product.ten_nuoc_hoa}</h4>
+                            <strong>${new Intl.NumberFormat('vi-VN').format(product.gia_ban)} đ</strong>
+                        </div>
+                    `;
+                    sliderWrapper.appendChild(slide);
+                });
+
+                swiper.update();
+            })
+            .catch(error => {
+                console.error("Lỗi tải dữ liệu:", error);
+                sliderWrapper.innerHTML = "<p>Không thể tải sản phẩm.</p>";
+            });
     }
 
     let swiper = new Swiper(".product-slider", {
@@ -106,10 +163,10 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         breakpoints: {
             1200: { slidesPerView: 4 },
-            1024: { slidesPerView: 4 },
-            768: { slidesPerView: 3 },
-            576: { slidesPerView: 2 },
-            0: { slidesPerView: 1 }
+            1024: { slidesPerView: 3 },
+            768: { slidesPerView: 2 },
+            576: { slidesPerView: 1 },
+            340: { slidesPerView: 1 }
         }
     });
 
@@ -117,25 +174,9 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener("click", function () {
             tabButtons.forEach(btn => btn.classList.remove("active"));
             this.classList.add("active");
-            loadProducts(this.dataset.category);
+            loadFeaturedProducts(this.dataset.category);
         });
     });
 
-    loadProducts("men"); // Mặc định hiển thị nước hoa nam
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const menuLinks = document.querySelectorAll(".menu-link");
-    const sections = document.querySelectorAll(".content-section");
-
-    menuLinks.forEach(link => {
-        link.addEventListener("click", function (e) {
-            e.preventDefault();
-            const sectionId = this.getAttribute("data-section");
-            sections.forEach(section => {
-                section.style.display = "none";
-            });
-            document.getElementById(sectionId).style.display = "block";
-        });
-    });
+    loadFeaturedProducts("Nam");
 });

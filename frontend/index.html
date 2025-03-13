@@ -116,9 +116,9 @@
                         <div class="col-12 text-center">
                             <h1>SẢN PHẨM NỔI BẬT</h1>
                             <div class="product-tabs">
-                                <button class="tab-button active" data-category="men">Nước hoa nam</button>
-                                <button class="tab-button" data-category="women">Nước hoa nữ</button>
-                                <button class="tab-button" data-category="unisex">Unisex</button>
+                                <button class="tab-button active" data-category="Nam">Nước hoa nam</button>
+                                <button class="tab-button" data-category="Nữ">Nước hoa nữ</button>
+                                <button class="tab-button" data-category="Unisex">Unisex</button>
                             </div>
                         </div>
                     </div>
@@ -132,6 +132,7 @@
                     </div>
                 </div>
             </section>
+            
         </section>
         
         
@@ -168,32 +169,58 @@
                         </aside>
                         <div class="col-md-9">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Hiển thị 1-20 của 545 kết quả</span>
+                                <span>Hiển thị sản phẩm</span>
                                 <select class="form-select w-auto">
                                     <option>Mới nhất</option>
                                     <option>Giá tăng dần</option>
                                     <option>Giá giảm dần</option>
                                 </select>
                             </div>
-                            <div class="row">
-                                <div class="col-md-3 text-center">
-                                    <img src="./images/sample1.jpg" class="img-fluid" alt="Old Fashioned">
-                                    <h6>By Kilian</h6>
-                                    <p>Old Fashioned</p>
-                                    <p>6.700.000 đ</p>
-                                </div>
-                                <div class="col-md-3 text-center">
-                                    <img src="./images/sample2.jpg" class="img-fluid" alt="Coromandel">
-                                    <h6>Chanel</h6>
-                                    <p>Coromandel</p>
-                                    <p>6.700.000 đ</p>
-                                </div>
+                            <div class="row" id="product-list">
+                                <!-- Dữ liệu sản phẩm sẽ được tải ở đây -->
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
         </section>
+
+        <!-- -------------------------------------Trang chi tiết------------------------ -->
+        <section id="detail" class="content-section" style="display: none;">
+            <div class="container">
+                <button id="backToProducts" class="btn btn-secondary">Quay lại</button>
+                
+                <div class="row mt-4">
+                    <!-- Hình ảnh sản phẩm -->
+                    <div class="col-md-5 text-center">
+                        <img id="hinh_1" src="" alt="Hình ảnh sản phẩm" class="product-image img-fluid">
+                    </div>
+        
+                    <!-- Thông tin sản phẩm -->
+                    <div class="col-md-7 d-flex flex-column align-items-start justify-content-center">
+                        <h1 id="ten_nuoc_hoa" style="color: orange;"></h1>
+                        <p><strong>Thương hiệu:</strong> <span id="thuong_hieu"></span></p>
+                        <p><strong>Giới tính:</strong> <span id="gioi_tinh"></span></p>
+                        <p><strong>Dung tích:</strong> <span id="dung_tich"></span></p>
+                        <p><strong>Giá:</strong> <span id="gia_ban"></span> VND</p>
+                        <div>
+                            <button class="btn btn-primary">Mua ngay</button>
+                            <button class="btn btn-info">Thêm vào giỏ hàng</button>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Mô tả sản phẩm -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <h3><strong>Mô tả sản phẩm</strong></h3>
+                        <p id="mo_ta"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        
     </div>
 </body>
 </html>
