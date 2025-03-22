@@ -7,14 +7,10 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
         <link rel="stylesheet" href="./css/style.css" />
-    </head>
-
-    <body>
-        <header>
-            <h1>Load Header</h1>
-        </header>
+    </head>    
         <main>
-            <div class="cart">
+        <?php require 'components/header.php'?>
+            < class="cart">
                 <div class="container">
                     <div class="cart-inner">
                         <div class="cart-header">
@@ -185,10 +181,9 @@
                     </div>
                 </div>
             </div>
+            <?php require 'components/footer.php'?>
         </main>
-        <footer>
-            <h1>Load Footer</h1>
-        </footer>
+        
         <!-- Bootstrap JavaScript Libraries -->
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>

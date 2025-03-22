@@ -12,25 +12,7 @@
     <script defer src="./js/index.js"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-white shadow-sm py-3">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="index.html">XXIV</a>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                <ul class="navbar-nav gap-3">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Trang chủ</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Giới thiệu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Thương hiệu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="sanpham.html">Sản phẩm</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
-                </ul>
-            </div>
-            <div class="d-flex gap-3">
-                <a href="#" class="text-dark"><i class="fas fa-search"></i></a>
-                <a href="login.html" class="text-dark"><i class="fas fa-user"></i></a>
-                <a href="giohang.html" class="text-dark"><i class="fas fa-shopping-cart"></i></a>
-            </div>
-        </div>
-    </nav>
+    <?php require 'components/header.php'?>
     
     <div class="content">
         <div class="container my-5">
@@ -47,7 +29,7 @@
             </div>
         </div>
     </div>
-    
+    <?php require 'components/footer.php'?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 </body>
