@@ -5,7 +5,7 @@ body {
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 1300px;
 }
 
 /* Filter Section */
@@ -84,7 +84,7 @@ body {
     text-transform: uppercase;
     color: #333;
     border-bottom: 2px solid #007bff;
-    padding-bottom: 10px;
+    padding: 10px;
     display: inline-block;
 }
 
@@ -148,7 +148,6 @@ body {
     border: 1px solid #ddd;
     color: #666;
     font-size: 14px;
-    padding: 8px 14px;
     transition: all 0.3s ease;
 }
 

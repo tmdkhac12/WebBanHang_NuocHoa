@@ -19,16 +19,24 @@ document.addEventListener("DOMContentLoaded", function () {
             { brand: "Tom Ford", name: "Oud Wood", price: "7.500.000 đ", image: "./images/oud-wood.png" }
         ]
     };
-    
+
     const productContainer = document.getElementById("product-list");
     const tabs = document.querySelectorAll(".tab");
-    
+    let swiperInstance = null;
+
+    function destroySwiper() {
+        if (swiperInstance) {
+            swiperInstance.destroy(true, true);
+            swiperInstance = null;
+        }
+    }
+
     function renderProducts(category) {
         productContainer.innerHTML = "";
-        perfumes[category].slice(0, 6).forEach(perfume => {  // Chỉ lấy tối đa 6 sản phẩm
+        perfumes[category].slice(0, 6).forEach(perfume => {
             const productCard = `
                 <div class="swiper-slide">
-                    <div class="product-card shadow-sm p-3 text-center bg-white rounded">
+                    <div class="product-card p-3 text-center">
                         <img src="${perfume.image}" alt="${perfume.name}" class="product-image mb-2">
                         <h5 class="text-danger fw-bold">${perfume.brand}</h5>
                         <p class="mb-1">${perfume.name}</p>
@@ -37,9 +45,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>`;
             productContainer.innerHTML += productCard;
         });
-    
-        new Swiper(".swiper-container", {
-            slidesPerView: 4, // Hiển thị 3 sản phẩm cùng lúc
+
+        destroySwiper();
+
+        swiperInstance = new Swiper(".swiper-container", {
+            slidesPerView: 4,
             spaceBetween: 20,
             navigation: {
                 nextEl: ".swiper-button-next",
@@ -52,8 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-    
-    
+
     tabs.forEach(tab => {
         tab.addEventListener("click", function () {
             document.querySelector(".tab.active").classList.remove("active");
@@ -61,6 +70,6 @@ document.addEventListener("DOMContentLoaded", function () {
             renderProducts(this.dataset.category);
         });
     });
-    
+
     renderProducts("nam");
 });

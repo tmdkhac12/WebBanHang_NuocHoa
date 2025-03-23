@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         productsToShow.forEach(product => {
             const productCard = `
-                <div class="col-md-4">
+                <div class="col-sm-6 col-lg-4">
                     <div class="product-card">
                         <img src="${product.image}" alt="${product.name}">
                         <h6>${product.name}</h6>
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Previous button
         const prevLi = document.createElement("li");
         prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
-        prevLi.innerHTML = `<a class="page-link" href="#">Trước</a>`;
+        prevLi.innerHTML = `<a class="page-link" href="#"><<</a>`;
         prevLi.addEventListener("click", (e) => {
             e.preventDefault();
             if (currentPage > 1) {
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Next button
         const nextLi = document.createElement("li");
         nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""}`;
-        nextLi.innerHTML = `<a class="page-link" href="#">Sau</a>`;
+        nextLi.innerHTML = `<a class="page-link" href="#">>></a>`;
         nextLi.addEventListener("click", (e) => {
             e.preventDefault();
             if (currentPage < totalPages) {
@@ -145,8 +145,26 @@ document.addEventListener("DOMContentLoaded", () => {
         renderProducts();
     };
 
+    // Function to apply gender filter from URL query parameter
+    const applyGenderFilterFromURL = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const gender = urlParams.get("gender");
+
+        if (gender) {
+            // Map the gender to the corresponding checkbox ID
+            const genderCheckbox = document.getElementById(`gender${gender}`);
+            if (genderCheckbox) {
+                genderCheckbox.checked = true; // Check the corresponding gender checkbox
+                filterProducts(); // Trigger filtering
+            }
+        }
+    };
+
     // Initial render
     renderProducts();
+
+    // Apply gender filter from URL
+    applyGenderFilterFromURL();
 
     // Add event listeners for filters
     genderFilters.forEach(filter => filter.addEventListener("change", filterProducts));
