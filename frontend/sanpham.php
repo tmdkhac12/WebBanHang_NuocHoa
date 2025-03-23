@@ -3,34 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XXIV Store - Sản phẩm</title>
+    <title>XXIV Store - Nâng cấp</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <link rel="stylesheet" href="./css/sanpham.css">
     <script defer src="./js/sanpham.js"></script>
 </head>
 <body>
-    <!-- Header -->
-    <nav class="navbar navbar-expand-lg bg-white shadow-sm py-3 m-0">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="index.html">XXIV</a>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                <ul class="navbar-nav gap-3">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Trang chủ</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Giới thiệu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Thương hiệu</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="sanpham.html">Sản phẩm</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
-                </ul>
-            </div>
-            <div class="d-flex gap-3">
-                <a href="#" class="text-dark"><i class="fas fa-search"></i></a>
-                <a href="login.html" class="text-dark"><i class="fas fa-user"></i></a>
-                <a href="giohang.html" class="text-dark"><i class="fas fa-shopping-cart"></i></a>
-            </div>
-        </div>
-    </nav>
+    <?php include 'components/header.php' ?>
 
     <div class="container my-5">
         <div class="row">
@@ -95,45 +77,9 @@
             </div>
         </div>
     </div>
-
-    <!-- Footer -->
-    <div class="container-fluid bg-dark text-secondary mt-5 pt-0">
-        <div class="row px-xl-5 pt-5 justify-content-around">
-            <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
-                <h5 class="text-secondary text-uppercase mb-4">XXIV Perfume Bar</h5>
-                <p class="mb-4">XXIV Store là một tiệm nước hoa nho nhỏ bắt nguồn từ đam mê về mùi hương cũng như việc mong muốn chia sẻ với tất cả các bạn về sở thích của tụi mình, đồng thời tạo ra một nơi giúp mọi người dễ dàng sở hữu bất cứ chai nước hoa nào bạn muốn.</p>
-                <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i> 273 An Dương Vương, P3, Q5</p>
-                <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d0e8e8f9e6d0f5e8f1fde0fcf5bef3fffd">[email protected]</a></p>
-                <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i> 090 721 9889</p>
-            </div>
-            <div class="col-md-4 px-5">
-                <h5 class="text-secondary text-uppercase mb-4">Chính sách bán hàng</h5>
-                <div class="d-flex flex-column justify-content-start">
-                    <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i> Chính sách và quy định chung</a>
-                    <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i> Chính sách bảo mật</a>
-                    <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i> Vận chuyển và giao nhận</a>
-                    <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i> Mua hàng và thanh toán</a>
-                </div>
-            </div>
-            <div class="col-md-4 px-5">
-                <h5 class="text-secondary text-uppercase mb-4">Thông tin chung</h5>
-                <div class="d-flex flex-column justify-content-start">
-                    <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Trang chủ</a>
-                    <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Giới thiệu</a>
-                    <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Blog</a>
-                    <a class="text-secondary mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Liên hệ</a>
-                </div>
-            </div>
-        </div>
-        <div class="row border-top mx-xl-5 py-4" style="border-color: rgba(256, 256, 256, .5) !important;">
-            <div class="col-12 px-xl-0">
-                <p class="mb-md-0 text-center text-md-left text-white">
-                    © xxiv 2024 | all right reserved
-                </p>
-            </div>
-        </div>
-    </div>
+    <?php include 'components/footer.php' ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 </body>
 </html>
