@@ -22,7 +22,7 @@
 
     <div class="login-page py-5">
         <div class="form w-50">
-            <form class="login-form" action="">
+            <form class="login-form" action="" method="post">
                 <input id="username" type="text" placeholder="Tên đăng nhập" required>
                 <input id="password" type="password" placeholder="Mật khẩu" required>
                 <button type="submit">Đăng Nhập</button>
@@ -33,7 +33,7 @@
 
     <div class="signup-page py-5" style="display: none;">
         <div class="form w-50">
-            <form class="login-form" action="">
+            <form class="login-form" action="" method="post">
                 <input id="username" type="text" placeholder="Tên đăng nhập*" required>
                 <input id="password" type="password" placeholder="Mật khẩu*" required>
                 <input id="confirmPassword" type="password" placeholder="Nhập lại mật khẩu*" required>
@@ -44,7 +44,6 @@
     </div>
 
     <!-- Footer -->
-    
     <?php require 'components/footer.php'?>
 </body>
 
