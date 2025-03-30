@@ -15,6 +15,9 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="./css/user.css">
+
+    <!-- JS -->
+    <script src="./js/user.js" defer></script>
 </head>
 
 <body>
@@ -34,7 +37,7 @@
                         <button class="btn btn-link text-muted text-decoration-none shadow-none" data-toggle="tab" data-target="#order-tab">Đơn Hàng</button>
                     </li>
                     <li class="list-group-item border-0 py-2">
-                        <button class="btn btn-link text-muted text-decoration-none shadow-none">Đăng Xuất</button>
+                        <button class="btn btn-link text-muted text-decoration-none shadow-none" id="logout-btn">Đăng Xuất</button>
                     </li>
                 </ul>
             </div>
