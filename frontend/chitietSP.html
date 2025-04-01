@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <link rel="stylesheet" href="./css/chitietSP.css">
-    <link rel="stylesheet" href="./css/index.css">
     <script defer src="./js/chitietSP.js"></script>
 </head>
 <body>
@@ -34,91 +33,96 @@
         </div>
     </nav>
 
-    <div class="container my-5">
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Tổng quan</a></li>
-                <li class="breadcrumb-item"><a href="#">Thương hiệu</a></li>
-                <li class="breadcrumb-item"><a href="#">Chanel</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Allure Homme Sport Superleggera</li>
-            </ol>
-        </nav>
-
-        <!-- Product Details -->
-        <div class="row product-details">
-            <!-- Product Image -->
-            <div class="col-md-6">
-                <div class="product-image-wrapper">
-                    <img src="https://xxivstore.com/wp-content/uploads/2024/11/spct-chanel-allure-homme-sport-superleggera-edp-1-600x600.png" alt="Allure Homme Sport Superleggera" class="img-fluid product-image">
-                </div>
-            </div>
-
-            <!-- Product Info -->
-            <div class="col-md-6">
-                <h1 class="product-title">Allure Homme Sport Superleggera</h1>
-                <h6>Chanel</h6>
-                <p class="product-gender"><i class="fas fa-venus-mars"></i> Nam</p>
-                <p class="product-price">4.500.000 đ</p>
-
-                <div class="mb-4">
-                    <label class="form-label">Dung tích:</label>
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-outline-secondary size-btn active" data-size="100ml">100ml</button>
+    <div class="content">
+        <div class="container my-5">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Tổng quan</a></li>
+                    <li class="breadcrumb-item"><a href="#">Thương hiệu</a></li>
+                    <li class="breadcrumb-item"><a href="#">Chanel</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Allure Homme Sport Superleggera</li>
+                </ol>
+            </nav>
+    
+            <!-- Product Details -->
+            <div class="row product-details">
+                <!-- Product Image -->
+                <div class="col-md-6">
+                    <div class="product-image-wrapper">
+                        <img src="https://xxivstore.com/wp-content/uploads/2024/11/spct-chanel-allure-homme-sport-superleggera-edp-1-600x600.png" alt="Allure Homme Sport Superleggera" class="img-fluid product-image">
                     </div>
                 </div>
-
-                <div class="mb-4 quantity-selector">
-                    <label class="form-label">Số lượng:</label>
-                    <div class="input-group">
-                        <button class="btn btn-outline-secondary" type="button" id="decreaseQty">-</button>
-                        <input type="text" class="form-control text-center" id="quantity" value="1" readonly>
-                        <button class="btn btn-outline-secondary" type="button" id="increaseQty">+</button>
+    
+                <!-- Product Info -->
+                <div class="col-md-6">
+                    <h1 class="product-title">Allure Homme Sport Superleggera</h1>
+                    <h6>Chanel</h6>
+                    <p class="product-gender"><i class="fas fa-venus-mars"></i> Nam</p>
+                    <p class="product-price">4.500.000 đ</p>
+    
+                    <div class="mb-4">
+                        <label class="form-label">Dung tích:</label>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-secondary size-btn active" data-size="100ml">100ml</button>
+                        </div>
+                    </div>
+    
+                    <div class="mb-4 quantity-selector">
+                        <label class="form-label">Số lượng:</label>
+                        <div class="input-group">
+                            <button class="btn btn-outline-secondary" type="button" id="decreaseQty">-</button>
+                            <input type="text" class="form-control text-center" id="quantity" value="1" readonly>
+                            <button class="btn btn-outline-secondary" type="button" id="increaseQty">+</button>
+                        </div>
+                    </div>
+    
+                    <div class="d-flex gap-3 mb-3">
+                        <button class="btn btn-outline-primary flex-fill add-to-cart">THÊM VÀO GIỎ HÀNG</button>
+                    </div>
+    
+                    <div class="additional-info mb-3">
+                        <button class="btn btn-danger w-100 buy-now-btn" id="buyNow">
+                            <span class="d-block"><strong>MUA NGAY</strong></span>
+                            <span class="d-block">Giao Tận Nơi Hỏa Tốc Tại Các Hàng</span>
+                        </button>
                     </div>
                 </div>
-
-                <div class="d-flex gap-3 mb-3">
-                    <button class="btn btn-outline-primary flex-fill add-to-cart">THÊM VÀO GIỎ HÀNG</button>
+            </div>
+    
+            <!-- Product Features and Description -->
+            <div class="product-info-wrapper mt-4">
+                <!-- Product Features -->
+                <div class="product-features">
+                    <h2 class="section-title">Đặc điểm</h2>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <span class="feature-label">tone hương</span>
+                            <span class="feature-value">cam chanh, hương gỗ, hương trái cây, thực là</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-label">hương đầu</span>
+                            <span class="feature-value">bạch đậu khấu, nhụy hương, tiều đen</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-label">hương giữa</span>
+                            <span class="feature-value">quả man, saffron, thực là</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-label">hương cuối</span>
+                            <span class="feature-value">nghệ, vanilla</span>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="additional-info mb-3">
-                    <button class="btn btn-danger w-100 buy-now-btn" id="buyNow">
-                        <span class="d-block"><strong>MUA NGAY</strong></span>
-                        <span class="d-block">Giao Tận Nơi Hỏa Tốc Tại Các Hàng</span>
-                    </button>
+    
+                <!-- Product Description -->
+                <div class="product-description mt-3">
+                    <h2 class="section-title">Mô tả</h2>
+                    <p>
+                        Allure Homme Sport Superleggera của Chanel là một mùi hương nam tính, mạnh mẽ và hiện đại, được thiết kế dành cho những người đàn ông năng động, yêu thích sự tự do và phong cách thể thao. Với hương đầu là cam bergamot và chanh tươi mát, kết hợp cùng hương giữa của gỗ tuyết tùng và hương cuối của xạ hương trắng, sản phẩm mang lại cảm giác sảng khoái và cuốn hút suốt cả ngày dài.
+                    </p>
                 </div>
             </div>
-        </div>
-
-        <!-- Product Features -->
-        <div class="product-features mt-5">
-            <h2 class="section-title">ĐẶC ĐIỂM</h2>
-            <div class="features-list">
-                <div class="feature-item">
-                    <span class="feature-label">tone hương</span>
-                    <span class="feature-value">cam chanh, hương gỗ, hương trái cây, thực là</span>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-label">hương đầu</span>
-                    <span class="feature-value">bạch đậu khấu, nhụy hương, tiều đen</span>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-label">hương giữa</span>
-                    <span class="feature-value">quả man, saffron, thực là</span>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-label">hương cuối</span>
-                    <span class="feature-value">nghệ, vanilla</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Product Description -->
-        <div class="product-description mt-5">
-            <h2 class="section-title">MÔ TẢ</h2>
-            <p>
-                Allure Homme Sport Superleggera của Chanel là một mùi hương nam tính, mạnh mẽ và hiện đại, được thiết kế dành cho những người đàn ông năng động, yêu thích sự tự do và phong cách thể thao. Với hương đầu là cam bergamot và chanh tươi mát, kết hợp cùng hương giữa của gỗ tuyết tùng và hương cuối của xạ hương trắng, sản phẩm mang lại cảm giác sảng khoái và cuốn hút suốt cả ngày dài.
-            </p>
         </div>
     </div>
 
@@ -129,7 +133,7 @@
                 <h5 class="text-secondary text-uppercase mb-4">XXIV Perfume Bar</h5>
                 <p class="mb-4">XXIV Store là một tiệm nước hoa nho nhỏ bắt nguồn từ đam mê về mùi hương cũng như việc mong muốn chia sẻ với tất cả các bạn về sở thích của tụi mình, đồng thời tạo ra một nơi giúp mọi người dễ dàng sở hữu bất cứ chai nước hoa nào bạn muốn.</p>
                 <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i> 273 An Dương Vương, P3, Q5</p>
-                <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i> xxiv@example.com</p>
+                <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b8c0c0d1cef8ddc0d9d5c8d4dd96dbd7d5">[email&#160;protected]</a></p>
                 <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i> 090 721 9889</p>
             </div>
             <div class="col-md-4 px-5">

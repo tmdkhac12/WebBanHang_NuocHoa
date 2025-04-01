@@ -40,6 +40,5 @@ document.addEventListener("DOMContentLoaded", () => {
     buyNowBtn.addEventListener("click", () => {
         const selectedSize = document.querySelector(".size-btn.active").dataset.size;
         alert(`Đã chọn mua ngay ${quantity} sản phẩm "Allure Homme Sport Superleggera" (${selectedSize})!`);
-        // You can redirect to a checkout page or perform other actions here
     });
 });

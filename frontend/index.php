@@ -27,7 +27,7 @@
             <!-- The slideshow/carousel -->
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <a href="sanpham.html?gender=Nam">
+                    <a href="sanpham.php?gender=Nam">
                         <img src="./images/nuochoanam.jpg" alt="Nước hoa nam" class="d-block carousel-image">
                         <div class="carousel-caption">
                             <h3>NƯỚC HOA NAM</h3>
@@ -35,7 +35,7 @@
                     </a>
                 </div>
                 <div class="carousel-item">
-                    <a href="sanpham.html?gender=Nu">
+                    <a href="sanpham.php?gender=Nu">
                         <img src="./images/nuochoanu.jpg" alt="Nước hoa nữ" class="d-block carousel-image">
                         <div class="carousel-caption">
                             <h3>NƯỚC HOA NỮ</h3>
@@ -43,7 +43,7 @@
                     </a>
                 </div>
                 <div class="carousel-item">
-                    <a href="sanpham.html?gender=Unisex">
+                    <a href="sanpham.php?gender=Unisex">
                         <img src="./images/nuochoaUnisex.jpg" alt="Nước hoa unisex" class="d-block carousel-image">
                         <div class="carousel-caption">
                             <h3>NƯỚC HOA UNISEX</h3>
