@@ -19,32 +19,32 @@
     <!-- Header -->
     <?php require 'components/header.php'?>
 
-
     <div class="login-page py-5">
         <div class="form w-50">
-            <form class="login-form" action="">
+            <form id="login-form" class="login-form" action="" method="post">
                 <input id="username" type="text" placeholder="Tên đăng nhập" required>
                 <input id="password" type="password" placeholder="Mật khẩu" required>
                 <button type="submit">Đăng Nhập</button>
                 <p class="message">Bạn chưa có tài khoản? <a id="signup" href="#">Đăng ký</a></p>
+                <p id="error-message" class="p-0" style="color: red;"></p>
             </form>
         </div>
     </div>
 
     <div class="signup-page py-5" style="display: none;">
         <div class="form w-50">
-            <form class="login-form" action="">
+            <form id="register-form" class="login-form" action="" method="post">
                 <input id="username" type="text" placeholder="Tên đăng nhập*" required>
                 <input id="password" type="password" placeholder="Mật khẩu*" required>
                 <input id="confirmPassword" type="password" placeholder="Nhập lại mật khẩu*" required>
                 <button type="submit">Đăng Ký</button>
                 <p class="message">Bạn đã có tài khoản? <a id="login" href="#">Đăng Nhập</a></p>
+                <p id="error-message" class="p-0" style="color: red;"></p>
             </form>
         </div>
     </div>
 
     <!-- Footer -->
-    
     <?php require 'components/footer.php'?>
 </body>
 

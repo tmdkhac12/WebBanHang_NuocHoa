@@ -9,9 +9,7 @@
         <link rel="stylesheet" href="./css/style.css" />
     </head>
     <body>
-        <header>
-            <h1>Load Header</h1>
-        </header>
+        <?php require 'components/header.php'?>
 
         <main>
             <div class="checkout-container">
@@ -189,9 +187,8 @@
             </div>
         </main>
 
-        <footer>
-            <h1>Load Footer</h1>
-        </footer>
+        <?php require 'components/footer.php'?>
+
 
         <!-- Bootstrap JavaScript Libraries -->
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
