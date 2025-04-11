@@ -1,28 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const perfumes = {
-        "nam": [
-            { brand: "Creed", name: "Aventus", price: "6.000.000 đ", image: "./images/aventus.png" },
-            { brand: "By Kilian", name: "Angel’s Share", price: "4.900.000 đ", image: "./images/angels-share.png" },
-            { brand: "Roja Parfum", name: "Enigma Parfum Cologne", price: "8.700.000 đ", image: "./images/enigma.png" },
-            { brand: "Clive Christian", name: "X Masculine", price: "11.000.000 đ", image: "./images/x-masculine.png" },
-            { brand: "Xerjoff", name: "Xerjoff Naxos", price: "6.100.000 đ", image: "./images/naxos.png" },
-            { brand: "Parfums de Marly", name: "Herod", price: "5.550.000 đ", image: "./images/herod.png" }
-        ],
-        "nu": [
-            { brand: "Chanel", name: "Coco Mademoiselle", price: "5.200.000 đ", image: "./images/coco-mademoiselle.png" },
-            { brand: "Dior", name: "Miss Dior", price: "4.800.000 đ", image: "./images/miss-dior.png" },
-            { brand: "YSL", name: "Libre Intense", price: "4.500.000 đ", image: "./images/libre-intense.png" }
-        ],
-        "unisex": [
-            { brand: "Le Labo", name: "Santal 33", price: "7.000.000 đ", image: "./images/santal-33.png" },
-            { brand: "Maison Francis Kurkdjian", name: "Baccarat Rouge 540", price: "8.200.000 đ", image: "./images/baccarat-rouge.png" },
-            { brand: "Tom Ford", name: "Oud Wood", price: "7.500.000 đ", image: "./images/oud-wood.png" }
-        ]
-    };
-
     const productContainer = document.getElementById("product-list");
     const tabs = document.querySelectorAll(".tab");
     let swiperInstance = null;
+    let perfumes = { nam: [], nu: [], unisex: [] }; // Dữ liệu sẽ được lấy từ API
 
     function destroySwiper() {
         if (swiperInstance) {
@@ -36,14 +16,22 @@ document.addEventListener("DOMContentLoaded", function () {
         perfumes[category].slice(0, 6).forEach(perfume => {
             const productCard = `
                 <div class="swiper-slide">
-                    <div class="product-card p-3 text-center">
-                        <img src="${perfume.image}" alt="${perfume.name}" class="product-image mb-2">
-                        <h5 class="text-danger fw-bold">${perfume.brand}</h5>
-                        <p class="mb-1">${perfume.name}</p>
-                        <p class="text-success fw-bold">${perfume.price}</p>
+                    <div class="product-card p-3 text-center" data-id="${perfume.ma_nuoc_hoa}" style="cursor: pointer;">
+                        <img src="./images/${perfume.hinh_anh}" alt="${perfume.ten_nuoc_hoa}" class="product-image mb-2">
+                        <h5 class="text-danger fw-bold">${perfume.ten_thuong_hieu}</h5>
+                        <p class="mb-1">${perfume.ten_nuoc_hoa}</p>
+                        <p class="text-success fw-bold">${formatPrice(perfume.gia_ban)}</p>
                     </div>
                 </div>`;
             productContainer.innerHTML += productCard;
+        });
+
+        // Thêm sự kiện nhấp chuột để chuyển hướng đến trang chi tiết sản phẩm
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const productId = card.getAttribute('data-id');
+                window.location.href = `chitietSP.php?id=${productId}`;
+            });
         });
 
         destroySwiper();
@@ -63,6 +51,26 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Hàm định dạng giá
+    const formatPrice = (price) => {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " đ";
+    };
+
+    // Lấy dữ liệu từ API
+    fetch('/DoAnWeb2/WebBanHang_NuocHoa/backend/api/ProductAPI.php?action=getFeaturedProducts', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        perfumes = data; // Gán dữ liệu từ API vào perfumes
+        renderProducts("nam"); // Hiển thị tab "Nam" mặc định
+    })
+    .catch(error => {
+        console.error('Error fetching featured products:', error);
+        productContainer.innerHTML = '<div class="text-center text-danger">Có lỗi xảy ra khi tải dữ liệu.</div>';
+    });
+
     tabs.forEach(tab => {
         tab.addEventListener("click", function () {
             document.querySelector(".tab.active").classList.remove("active");
@@ -70,6 +78,4 @@ document.addEventListener("DOMContentLoaded", function () {
             renderProducts(this.dataset.category);
         });
     });
-
-    renderProducts("nam");
 });

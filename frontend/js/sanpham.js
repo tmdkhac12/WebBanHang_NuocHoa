@@ -1,87 +1,85 @@
-// sanpham.js
-const products = [
-    { name: "Esencia Eau de Parfum", brand: "Loewe", price: 4500000, image: "path_to_image/esencia.jpg", gender: "Unisex" },
-    { name: "AlUla", brand: "Penhaligon's", price: 3800000, image: "path_to_image/alula.jpg", gender: "Unisex" },
-    { name: "Solaris", brand: "Penhaligon's", price: 2850000, image: "path_to_image/solaris.jpg", gender: "Unisex" },
-    { name: "001 Man EDP", brand: "Loewe", price: 3550000, image: "path_to_image/001man.jpg", gender: "Nam" },
-    { name: "001 Woman EDT", brand: "Loewe", price: 3200000, image: "path_to_image/001woman.jpg", gender: "Nữ" },
-    { name: "Old Fashioned", brand: "By Kilian", price: 6700000, image: "path_to_image/oldfashioned.jpg", gender: "Unisex" },
-    { name: "Coromandel", brand: "Chanel", price: 6700000, image: "path_to_image/coromandel.jpg", gender: "Unisex" },
-    { name: "Esencia Eau de Parfum", brand: "Loewe", price: 4500000, image: "path_to_image/esencia.jpg", gender: "Unisex" },
-    { name: "AlUla", brand: "Penhaligon's", price: 3800000, image: "path_to_image/alula.jpg", gender: "Unisex" },
-    { name: "Solaris", brand: "Penhaligon's", price: 2850000, image: "path_to_image/solaris.jpg", gender: "Unisex" },
-    { name: "001 Man EDP", brand: "Loewe", price: 3550000, image: "path_to_image/001man.jpg", gender: "Nam" },
-    { name: "001 Woman EDT", brand: "Loewe", price: 3200000, image: "path_to_image/001woman.jpg", gender: "Nữ" },
-    { name: "Old Fashioned", brand: "By Kilian", price: 6700000, image: "path_to_image/oldfashioned.jpg", gender: "Unisex" },
-    { name: "Coromandel", brand: "Chanel", price: 6700000, image: "path_to_image/coromandel.jpg", gender: "Unisex" },
-    { name: "Rice Milk", brand: "Kira Parfum", price: 1100000, image: "path_to_image/ricemilk.jpg", gender: "Unisex" }
-];
-
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOMContentLoaded event fired");
+
     const productGrid = document.getElementById("productGrid");
     const genderFilters = document.querySelectorAll('input[type="checkbox"][id^="gender"]');
     const priceFilters = document.querySelectorAll('input[name="priceRange"]');
-    const clearFiltersBtn = document.getElementById("clearFilters");
     const resultCount = document.getElementById("resultCount");
     const pagination = document.getElementById("pagination");
+    const brandSearch = document.getElementById("brandSearch");
+    const clearFiltersBtn = document.getElementById("clearFilters");
 
-    const productsPerPage = 9; // 9 products per page
+    if (!clearFiltersBtn) {
+        console.error("Không tìm thấy nút clearFilters! Kiểm tra ID trong HTML.");
+    } else {
+        console.log("Nút clearFilters đã được tìm thấy.");
+    }
+
+    const productsPerPage = 9;
     let currentPage = 1;
-    let filteredProducts = [...products];
+    let totalProducts = 0;
+    let lastTotalProducts = 0;
+    let abortController = null;
 
-    // Function to format price with dots (e.g., 4500000 -> 4.500.000đ)
     const formatPrice = (price) => {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
     };
 
-    // Function to render products for the current page
-    const renderProducts = () => {
+    const renderProducts = (products, total) => {
+        console.log("renderProducts called with products:", products, "total:", total);
         productGrid.innerHTML = "";
-        const start = (currentPage - 1) * productsPerPage;
-        const end = start + productsPerPage;
-        const productsToShow = filteredProducts.slice(start, end);
-
-        productsToShow.forEach(product => {
-            const productCard = `
-                <div class="col-sm-6 col-lg-4">
-                    <div class="product-card">
-                        <img src="${product.image}" alt="${product.name}">
-                        <h6>${product.name}</h6>
-                        <p>${formatPrice(product.price)}</p>
+        if (products.length === 0) {
+            productGrid.innerHTML = '<div class="text-center text-muted">Không tìm thấy sản phẩm phù hợp. Hãy thử thay đổi bộ lọc!</div>';
+        } else {
+            products.forEach(product => {
+                console.log("Rendering product:", product);
+                const productCard = `
+                    <div class="col-sm-6 col-lg-4">
+                        <div class="product-card" data-id="${product.ma_nuoc_hoa}" style="cursor: pointer;">
+                            <img src="./images/${product.hinh_anh}" alt="${product.ten_nuoc_hoa}" loading="lazy">
+                            <h6>${product.ten_nuoc_hoa}</h6>
+                            <p>${product.ten_thuong_hieu}</p>
+                            <p>${formatPrice(product.gia_ban)}</p>
+                        </div>
                     </div>
-                </div>
-            `;
-            productGrid.innerHTML += productCard;
-        });
+                `;
+                productGrid.innerHTML += productCard;
+            });
 
-        // Update result count
-        const totalProducts = filteredProducts.length;
-        const displayedProducts = Math.min(end, totalProducts);
-        resultCount.textContent = `Hiện thị ${start + 1}-${displayedProducts} của ${totalProducts} kết quả`;
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const productId = card.getAttribute('data-id');
+                    window.location.href = `chitietSP.php?id=${productId}`;
+                });
+            });
+        }
 
-        // Render pagination
+        totalProducts = total;
+        const start = (currentPage - 1) * productsPerPage + 1;
+        const end = Math.min(currentPage * productsPerPage, totalProducts);
+        resultCount.textContent = `Hiển thị ${start}-${end} của ${totalProducts} kết quả`;
+        // Luôn gọi renderPagination để đảm bảo giao diện phân trang đồng bộ với currentPage
         renderPagination();
+        lastTotalProducts = totalProducts;
     };
 
-    // Function to render pagination
     const renderPagination = () => {
+        console.log("renderPagination called, totalPages:", Math.ceil(totalProducts / productsPerPage));
         pagination.innerHTML = "";
-        const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+        const totalPages = Math.ceil(totalProducts / productsPerPage);
 
-        // Previous button
         const prevLi = document.createElement("li");
         prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
-        prevLi.innerHTML = `<a class="page-link" href="#"><<</a>`;
+        prevLi.innerHTML = `<a class="page-link" href="#"><i class="fas fa-angle-double-left"></i></a>`;
         prevLi.addEventListener("click", (e) => {
             e.preventDefault();
             if (currentPage > 1) {
                 currentPage--;
-                renderProducts();
+                fetchProducts();
             }
         });
         pagination.appendChild(prevLi);
 
-        // Page numbers
         for (let i = 1; i <= totalPages; i++) {
             const pageLi = document.createElement("li");
             pageLi.className = `page-item ${i === currentPage ? "active" : ""}`;
@@ -89,85 +87,164 @@ document.addEventListener("DOMContentLoaded", () => {
             pageLi.addEventListener("click", (e) => {
                 e.preventDefault();
                 currentPage = i;
-                renderProducts();
+                fetchProducts();
             });
             pagination.appendChild(pageLi);
         }
 
-        // Next button
         const nextLi = document.createElement("li");
         nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""}`;
-        nextLi.innerHTML = `<a class="page-link" href="#">>></a>`;
+        nextLi.innerHTML = `<a class="page-link" href="#"><i class="fas fa-angle-double-right"></i></a>`;
         nextLi.addEventListener("click", (e) => {
             e.preventDefault();
             if (currentPage < totalPages) {
                 currentPage++;
-                renderProducts();
+                fetchProducts();
             }
         });
         pagination.appendChild(nextLi);
     };
 
-    // Function to filter products
-    const filterProducts = () => {
-        filteredProducts = [...products];
+    const fetchProducts = () => {
+        console.log("fetchProducts called, currentPage:", currentPage);
+        productGrid.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
 
-        // Filter by gender
+        if (abortController) {
+            abortController.abort();
+        }
+        abortController = new AbortController();
+
         const selectedGenders = Array.from(genderFilters)
             .filter(checkbox => checkbox.checked)
-            .map(checkbox => checkbox.value);
-        if (selectedGenders.length > 0) {
-            filteredProducts = filteredProducts.filter(product => selectedGenders.includes(product.gender));
-        }
+            .map(checkbox => checkbox.value === "Nữ" ? "Nu" : checkbox.value);
 
-        // Filter by price
         const selectedPriceRange = Array.from(priceFilters)
             .find(radio => radio.checked)?.value;
-        if (selectedPriceRange) {
-            const [minPrice, maxPrice] = selectedPriceRange.split("-").map(Number);
-            filteredProducts = filteredProducts.filter(product => 
-                product.price >= minPrice && product.price <= maxPrice
-            );
+        let minPrice = null;
+        let maxPrice = null;
+        if (selectedPriceRange && selectedPriceRange !== "all") {
+            const [min, max] = selectedPriceRange.split('-');
+            minPrice = parseInt(min);
+            maxPrice = parseInt(max);
         }
 
-        // Reset to first page after filtering
-        currentPage = 1;
-        renderProducts();
+        const brandSearchValue = brandSearch.value.trim();
+
+        const requestBody = {
+            gender: selectedGenders.length > 0 ? selectedGenders : initialGender ? [initialGender] : [],
+            brandSearch: brandSearchValue,
+            page: currentPage
+        };
+
+        if (minPrice !== null && maxPrice !== null) {
+            requestBody.minPrice = minPrice;
+            requestBody.maxPrice = maxPrice;
+        }
+
+        console.log("Sending request with data:", requestBody);
+
+        fetch('/DoAnWeb2/WebBanHang_NuocHoa/backend/api/ProductAPI.php?action=filterProducts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody),
+            signal: abortController.signal
+        })
+        .then(response => {
+            console.log("Response status:", response.status);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Data received from API:", data);
+            if (data.error) {
+                productGrid.innerHTML = `<div class="text-center text-danger">${data.error}</div>`;
+            } else {
+                renderProducts(data.products || [], data.total || 0);
+            }
+        })
+        .catch(error => {
+            if (error.name === 'AbortError') {
+                console.log("Fetch aborted");
+            } else {
+                console.error('Error fetching products:', error);
+                productGrid.innerHTML = '<div class="text-center text-danger">Có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại sau.</div>';
+            }
+        });
     };
 
-    // Function to clear all filters
-    const clearFilters = () => {
-        genderFilters.forEach(checkbox => (checkbox.checked = false));
-        priceFilters.forEach(radio => (radio.checked = false));
-        document.getElementById("brandSearch").value = "";
-        filteredProducts = [...products];
-        currentPage = 1;
-        renderProducts();
+    const debounce = (func, delay) => {
+        let timeoutId;
+        return (...args) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func(...args), delay);
+        };
     };
 
-    // Function to apply gender filter from URL query parameter
+    const resetPageAndFetch = () => {
+        console.log("resetPageAndFetch called");
+        currentPage = 1; // Reset về trang 1 khi bộ lọc thay đổi
+        fetchProducts();
+    };
+
+    const debouncedFetchProducts = debounce(resetPageAndFetch, 300);
+
+    let initialGender = null;
     const applyGenderFilterFromURL = () => {
+        console.log("applyGenderFilterFromURL called");
         const urlParams = new URLSearchParams(window.location.search);
-        const gender = urlParams.get("gender");
-
+        let gender = urlParams.get("gender");
         if (gender) {
-            // Map the gender to the corresponding checkbox ID
-            const genderCheckbox = document.getElementById(`gender${gender}`);
-            if (genderCheckbox) {
-                genderCheckbox.checked = true; // Check the corresponding gender checkbox
-                filterProducts(); // Trigger filtering
+            if (gender === "Nữ") gender = "Nu";
+            const validGenders = ["Nam", "Nu", "Unisex"];
+            if (validGenders.includes(gender)) {
+                initialGender = gender;
+                const genderCheckbox = document.getElementById(`gender${gender}`);
+                if (genderCheckbox) {
+                    genderCheckbox.checked = true;
+                }
+            } else {
+                console.warn("Invalid gender value in URL:", gender);
             }
         }
     };
 
-    // Initial render
-    renderProducts();
+    const resetFilters = () => {
+        console.log("resetFilters called");
+        console.log("Resetting gender filters...");
+        genderFilters.forEach(checkbox => {
+            checkbox.checked = false;
+            console.log(`Checkbox ${checkbox.id} unchecked`);
+        });
+        console.log("Resetting price filters...");
+        priceFilters.forEach(radio => {
+            radio.checked = radio.value === "all";
+            console.log(`Radio ${radio.id} set to ${radio.checked}`);
+        });
+        console.log("Clearing brand search...");
+        brandSearch.value = "";
+        console.log("Resetting currentPage and initialGender...");
+        currentPage = 1;
+        initialGender = null;
+        console.log("Calling fetchProducts...");
+        fetchProducts();
+    };
 
-    // Apply gender filter from URL
     applyGenderFilterFromURL();
+    fetchProducts();
 
-    // Add event listeners for filters
-    genderFilters.forEach(filter => filter.addEventListener("change", filterProducts));
-    priceFilters.forEach(filter => filter.addEventListener("change", filterProducts));
-    clearFiltersBtn.addEventListener("click", clearFilters);
+    genderFilters.forEach(filter => filter.addEventListener("change", debouncedFetchProducts));
+    priceFilters.forEach(filter => filter.addEventListener("change", debouncedFetchProducts));
+    brandSearch.addEventListener("input", debouncedFetchProducts);
+
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            console.log("Clear filters button clicked");
+            resetFilters();
+        });
+    } else {
+        console.error("Không thể gắn sự kiện cho clearFiltersBtn vì không tìm thấy nút!");
+    }
 });

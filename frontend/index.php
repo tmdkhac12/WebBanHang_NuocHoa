@@ -27,6 +27,7 @@
             </div>
 
             <!-- The slideshow/carousel -->
+            <!-- Trong file index.php -->
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <a href="sanpham.php?gender=Nam">
@@ -37,7 +38,7 @@
                     </a>
                 </div>
                 <div class="carousel-item">
-                    <a href="sanpham.php?gender=Nu">
+                    <a href="sanpham.php?gender=Nu"> <!-- Sửa từ gender=Nu thay vì Nữ -->
                         <img src="./images/nuochoanu.jpg" alt="Nước hoa nữ" class="d-block carousel-image">
                         <div class="carousel-caption">
                             <h3>NƯỚC HOA NỮ</h3>
