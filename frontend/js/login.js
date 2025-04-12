@@ -1,4 +1,3 @@
-
 window.onload = function () {
     // Them hieu ung khi chuyen tab dang nhap/dang ky
     addAnimation();
@@ -6,7 +5,7 @@ window.onload = function () {
     // Xu ly su kien dang nhap/ dang ky.
     addLoginEventHandler();
     addRegisterEventHandler();
-}
+};
 
 function addAnimation() {
     let login_page = document.querySelector(".login-page");
@@ -16,13 +15,13 @@ function addAnimation() {
     create_acc_button.addEventListener("click", function () {
         login_page.style.display = "none";
         signup_page.style.display = "block";
-    })
+    });
 
     let login_button = document.querySelector("#login");
     login_button.addEventListener("click", function () {
         signup_page.style.display = "none";
         login_page.style.display = "block";
-    })
+    });
 }
 
 function addLoginEventHandler() {
@@ -117,7 +116,6 @@ function addRegisterEventHandler() {
                 return respond.json()
             })
             .then((data) => {
-
                 // If register not success 
                 if (!data.success) {
                     flashErrorMessage(error_box, data.message);
