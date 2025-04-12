@@ -24,12 +24,14 @@ switch ($action) {
         $password = $data["password"];
 
         // Call Controller
-        $isExist = $userController->isExistUsernameAndPassword($username, $password);
-        if ($isExist) {
+        $isExistAccount = $userController->isExistUsernameAndPassword($username, $password);
+
+        // If account exist then create Session 
+        if ($isExistAccount) {
             $_SESSION["username"] = $username;
-            echo json_encode(["isExist" => "true"]);
+            echo json_encode(["success" => true, "message" => "Đăng nhập thành công"]);
         } else {
-            echo json_encode(["isExist" => "false"]);
+            echo json_encode(["success" => false, "message" => "Username hoặc password không chính xác"]);
         }
         break;
     }
@@ -39,6 +41,8 @@ switch ($action) {
             session_destroy();
             
             echo json_encode(["success" => true, "message" => "Đăng xuất thành công"]);
+        } else {
+            echo json_encode(["success" => true, "message" => "Bạn chưa đăng nhập!"]);
         }
         break;
     }
@@ -51,11 +55,12 @@ switch ($action) {
         $password = $data["password"];
         $status = $data["status"];
 
+        // If username existed 
         if ($userController->isExistUsername($username)) {
             echo json_encode(["success" => false, "message" => "Username đã tồn tại!"]);
         } else {
             $success = $userController->addUser($hoten, $email, $username, $password, $status);
-            echo json_encode(["success" => $success, "message" => $success ? "Đăng ký thành công!" : "Đăng ký thất bại!"]);
+            echo json_encode(["success" => $success, "message" => $success ? "Đăng ký tài khoản thành công!" : "Có lỗi xảy ra, đăng ký tài khoản thất bại vui lòng thử lại sau!"]);
         }
         break;
     }

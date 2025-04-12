@@ -1,10 +1,8 @@
-<?php include __DIR__. '/../../backend/config/config.php'; ?>
-
 <nav class="navbar navbar-expand-lg bg-white shadow-sm py-2 m-0">
     <div class="container">
         <a class="navbar-brand fw-bold" href="index.php">
             <img src=<?php 
-                echo BASE_URL . 'images/XXIV-Logo-2.svg';
+                echo '/frontend/images/XXIV-Logo-2.svg';
             ?> alt="" width="55px" height="55px">
         </a>
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
