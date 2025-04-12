@@ -37,13 +37,12 @@ try {
 
             $genders = ['Nam', 'Nu', 'Unisex'];
             foreach ($genders as $gender) {
-                $sql = "SELECT n.ma_nuoc_hoa, n.ten_nuoc_hoa, n.gia_ban, n.hinh_anh, t.ten_thuong_hieu, SUM(ct.so_luong_mua) as total_sold
+                $sql = "SELECT n.ma_nuoc_hoa, n.ten_nuoc_hoa, n.gia_ban, n.hinh_anh, t.ten_thuong_hieu, COALESCE(SUM(ct.so_luong_mua), 0) as total_sold
                         FROM nuochoa n
                         LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu
                         LEFT JOIN chitiethoadon ct ON n.ma_nuoc_hoa = ct.ma_nuoc_hoa
                         WHERE n.gioi_tinh = ?
                         GROUP BY n.ma_nuoc_hoa
-                        HAVING total_sold > 0
                         ORDER BY total_sold DESC
                         LIMIT 6";
 

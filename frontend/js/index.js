@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // Lấy dữ liệu từ API
-    fetch('/DoAnWeb2/WebBanHang_NuocHoa/backend/api/ProductAPI.php?action=getFeaturedProducts', {
+    fetch('/backend/api/ProductAPI.php?action=getFeaturedProducts', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })

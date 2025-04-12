@@ -70,7 +70,7 @@
             <div class="tabs d-flex justify-content-center mb-4">
                 <span class="tab active" data-category="nam">Nước hoa nam</span>
                 <span class="tab" data-category="nu">Nước hoa nữ</span>
-                <span class="tab" data-category="unisex">Unisex</span>
+                <span class="tab" data-category="unisex">Nước hoa Unisex</span>
             </div>
             <div class="swiper-container">
                 <div class="swiper-wrapper" id="product-list"></div>

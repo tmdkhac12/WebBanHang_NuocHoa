@@ -142,8 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         console.log("Sending request with data:", requestBody);
-
-        fetch('/DoAnWeb2/WebBanHang_NuocHoa/backend/api/ProductAPI.php?action=filterProducts', {
+        fetch('/backend/api/ProductAPI.php?action=filterProducts', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
