@@ -2,7 +2,11 @@
 session_start();
 
 if (!isset($_SESSION["username"])) {
-    
+    echo '<script>
+        alert("Bạn cần đăng nhập để truy cập trang này!");
+        window.location.href = "login.php";
+    </script>';
+    exit();
 }
 
 ?>

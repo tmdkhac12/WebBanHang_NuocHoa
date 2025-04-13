@@ -1,354 +1,613 @@
--- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
 --
--- Host: localhost    Database: db
--- ------------------------------------------------------
--- Server version	8.0.30
+-- Host: 127.0.0.1
+-- Generation Time: Apr 12, 2025 at 11:40 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `web_nuochoa`
+--
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `chitiethoadon`
 --
 
-DROP TABLE IF EXISTS `chitiethoadon`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `chitiethoadon` (
-  `ma_hoa_don` int NOT NULL,
-  `ma_nuoc_hoa` int NOT NULL,
-  `so_luong_mua` int DEFAULT NULL,
-  PRIMARY KEY (`ma_hoa_don`,`ma_nuoc_hoa`),
-  KEY `ma_nuoc_hoa` (`ma_nuoc_hoa`),
-  CONSTRAINT `chitiethoadon_ibfk_1` FOREIGN KEY (`ma_hoa_don`) REFERENCES `hoadon` (`ma_hoa_don`),
-  CONSTRAINT `chitiethoadon_ibfk_2` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `ma_nuoc_hoa` int(11) NOT NULL,
+  `ma_hoa_don` int(11) NOT NULL,
+  `so_luong_mua` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `chitiethoadon`
 --
 
-LOCK TABLES `chitiethoadon` WRITE;
-/*!40000 ALTER TABLE `chitiethoadon` DISABLE KEYS */;
-INSERT INTO `chitiethoadon` VALUES (1,1,2),(2,2,1);
-/*!40000 ALTER TABLE `chitiethoadon` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `chitiethoadon` (`ma_nuoc_hoa`, `ma_hoa_don`, `so_luong_mua`) VALUES
+(1, 4, 3),
+(2, 1, 1),
+(3, 6, 2),
+(4, 8, 1),
+(5, 2, 2),
+(6, 7, 4),
+(7, 3, 1),
+(8, 10, 1),
+(9, 9, 2),
+(10, 5, 1);
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `diachi`
 --
 
-DROP TABLE IF EXISTS `diachi`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `diachi` (
-  `ma_dia_chi` int NOT NULL,
-  `ma_khach_hang` int DEFAULT NULL,
+  `ma_dia_chi` int(11) NOT NULL,
+  `ma_khach_hang` int(11) DEFAULT NULL,
   `ten_nguoi_nhan` varchar(255) DEFAULT NULL,
-  `so_dien_thoai_nguoi_nhan` varchar(50) DEFAULT NULL,
-  `dia_chi_giao_hang` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ma_dia_chi`),
-  KEY `ma_khach_hang` (`ma_khach_hang`),
-  CONSTRAINT `diachi_ibfk_1` FOREIGN KEY (`ma_khach_hang`) REFERENCES `khachhang` (`ma_khach_hang`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `so_dien_thoai_nguoi_nhan` varchar(20) DEFAULT NULL,
+  `dia_chi_giao_hang` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `diachi`
 --
 
-LOCK TABLES `diachi` WRITE;
-/*!40000 ALTER TABLE `diachi` DISABLE KEYS */;
-INSERT INTO `diachi` VALUES (1,1,'Nguyen Van A','0123456789','Hà Nội'),(2,2,'Tran Thi B','0987654321','TP HCM'),(3,3,'Le Van C','0934567890','Đà Nẵng'),(4,4,'Pham Minh D','0912345678','Hải Phòng'),(5,5,'Hoang Hoa E','0976543210','Cần Thơ');
-/*!40000 ALTER TABLE `diachi` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `diachi` (`ma_dia_chi`, `ma_khach_hang`, `ten_nguoi_nhan`, `so_dien_thoai_nguoi_nhan`, `dia_chi_giao_hang`) VALUES
+(1, 7, 'Nguyễn Thị Mai', '0912345678', '456 Đường Trần Hưng Đạo, Quận 5, TP.HCM'),
+(2, 3, 'Lê Văn Bình', '0908765432', '789 Phố Huế, Quận Hai Bà Trưng, Hà Nội'),
+(3, 1, 'Phạm Thị Hồng', '0987654321', '12 Đường Trần Phú, Thành phố Nha Trang, Khánh Hòa'),
+(4, 10, 'Trần Văn Dũng', '0911222333', '34 Phạm Văn Đồng, Quận Cầu Giấy, Hà Nội'),
+(5, 5, 'Vũ Thị Lan', '0933445566', '56 Đường 3/2, Quận 10, TP.HCM'),
+(6, 2, 'Hoàng Văn Hoà', '0977555333', '78 Đường Lê Duẩn, Quận Hải Châu, Đà Nẵng'),
+(7, 7, 'Đỗ Thị Thu', '0966888777', '90 Phố Trần Nhân Tông, Quận Hai Bà Trưng, Hà Nội'),
+(8, 8, 'Bùi Văn Hùng', '0944332211', '123 Đường Bạch Đằng, Quận Bình Thạnh, TP.HCM'),
+(9, 4, 'Trịnh Thị Nga', '0955221144', '45 Đường Phan Đình Phùng, Quận Ba Đình, Hà Nội'),
+(10, 1, 'Phan Văn Sơn', '0922113344', '67 Đường Nguyễn Văn Cừ, Quận Long Biên, Hà Nội');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `dungtich`
 --
 
-DROP TABLE IF EXISTS `dungtich`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dungtich` (
-  `ma_dung_tich` int NOT NULL,
-  `dung_tich` double DEFAULT NULL,
-  PRIMARY KEY (`ma_dung_tich`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `ma_dung_tich` int(11) NOT NULL,
+  `dung_tich` double DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `dungtich`
 --
 
-LOCK TABLES `dungtich` WRITE;
-/*!40000 ALTER TABLE `dungtich` DISABLE KEYS */;
-INSERT INTO `dungtich` VALUES (1,50),(2,75),(3,100),(4,125),(5,150),(6,200),(7,250),(8,500),(9,750),(10,1000);
-/*!40000 ALTER TABLE `dungtich` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `dungtich` (`ma_dung_tich`, `dung_tich`) VALUES
+(1, 5),
+(2, 10),
+(3, 15),
+(4, 20),
+(5, 30),
+(6, 50),
+(7, 75),
+(8, 90),
+(9, 100),
+(10, 125),
+(11, 150),
+(12, 200);
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `dungtich_nuochoa`
 --
 
-DROP TABLE IF EXISTS `dungtich_nuochoa`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dungtich_nuochoa` (
-  `ma_dung_tich` int NOT NULL,
-  `ma_nuoc_hoa` int NOT NULL,
-  PRIMARY KEY (`ma_dung_tich`,`ma_nuoc_hoa`),
-  KEY `ma_nuoc_hoa` (`ma_nuoc_hoa`),
-  CONSTRAINT `dungtich_nuochoa_ibfk_1` FOREIGN KEY (`ma_dung_tich`) REFERENCES `dungtich` (`ma_dung_tich`),
-  CONSTRAINT `dungtich_nuochoa_ibfk_2` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `ma_dung_tich` int(11) NOT NULL,
+  `ma_nuoc_hoa` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `dungtich_nuochoa`
 --
 
-LOCK TABLES `dungtich_nuochoa` WRITE;
-/*!40000 ALTER TABLE `dungtich_nuochoa` DISABLE KEYS */;
-INSERT INTO `dungtich_nuochoa` VALUES (1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8),(9,9),(10,10);
-/*!40000 ALTER TABLE `dungtich_nuochoa` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `dungtich_nuochoa` (`ma_dung_tich`, `ma_nuoc_hoa`) VALUES
+(6, 1),
+(6, 2),
+(6, 3),
+(6, 4),
+(6, 5),
+(6, 6),
+(6, 7),
+(6, 8),
+(6, 9),
+(6, 10);
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `hoadon`
 --
 
-DROP TABLE IF EXISTS `hoadon`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `hoadon` (
-  `ma_hoa_don` int NOT NULL,
-  `ma_khach_hang` int DEFAULT NULL,
-  `ma_dia_chi` int DEFAULT NULL,
+  `ma_hoa_don` int(11) NOT NULL,
+  `ma_khach_hang` int(11) DEFAULT NULL,
+  `ma_dia_chi` int(11) DEFAULT NULL,
   `thoi_gian` datetime DEFAULT NULL,
   `tong_tien` double DEFAULT NULL,
-  `trang_thai_don_hang` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ma_hoa_don`),
-  KEY `ma_khach_hang` (`ma_khach_hang`),
-  KEY `ma_dia_chi` (`ma_dia_chi`),
-  CONSTRAINT `hoadon_ibfk_1` FOREIGN KEY (`ma_khach_hang`) REFERENCES `khachhang` (`ma_khach_hang`),
-  CONSTRAINT `hoadon_ibfk_2` FOREIGN KEY (`ma_dia_chi`) REFERENCES `diachi` (`ma_dia_chi`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `trang_thai_don_hang` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hoadon`
 --
 
-LOCK TABLES `hoadon` WRITE;
-/*!40000 ALTER TABLE `hoadon` DISABLE KEYS */;
-INSERT INTO `hoadon` VALUES (1,1,3,'2025-03-15 11:42:41',5000000,'Đã giao'),(2,2,2,'2025-03-15 11:42:41',2300000,'Chờ xác nhận');
-/*!40000 ALTER TABLE `hoadon` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `hoadon` (`ma_hoa_don`, `ma_khach_hang`, `ma_dia_chi`, `thoi_gian`, `tong_tien`, `trang_thai_don_hang`) VALUES
+(1, 7, 1, '2025-03-05 09:20:00', 12000000, 'Đang xử lý'),
+(2, 3, 2, '2025-03-15 14:45:00', 8000000, 'Đã giao'),
+(3, 1, 3, '2025-03-20 11:30:00', 15000000, 'Đã hủy'),
+(4, 10, 4, '2025-03-25 16:10:00', 20000000, 'Đã giao'),
+(5, 5, 5, '2025-03-30 10:00:00', 5000000, 'Đang xử lý'),
+(6, 2, 6, '2025-04-02 12:20:00', 18000000, 'Đã giao'),
+(7, 7, 7, '2025-04-05 18:00:00', 22000000, 'Đang xử lý'),
+(8, 8, 8, '2025-04-08 13:15:00', 13000000, 'Đã giao'),
+(9, 4, 9, '2025-04-10 15:40:00', 9000000, 'Đã hủy'),
+(10, 1, 10, '2025-04-11 17:25:00', 25000000, 'Đã giao');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `khachhang`
 --
 
-DROP TABLE IF EXISTS `khachhang`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `khachhang` (
-  `ma_khach_hang` int NOT NULL,
+  `ma_khach_hang` int(11) NOT NULL,
   `ten_khach_hang` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `username` varchar(50) DEFAULT NULL,
   `password` varchar(50) DEFAULT NULL,
-  `trang_thai_tai_khoan` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`ma_khach_hang`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `trang_thai_tai_khoan` tinyint(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `khachhang`
 --
 
-LOCK TABLES `khachhang` WRITE;
-/*!40000 ALTER TABLE `khachhang` DISABLE KEYS */;
-INSERT INTO `khachhang` VALUES (1,'Nguyen Van A','a@gmail.com','nguyenvana','pass123',1),(2,'Tran Thi B','b@gmail.com','tranthib','pass123',1),(3,'Le Van C','c@gmail.com','levanc','pass123',1),(4,'Pham Minh D','d@gmail.com','phamminhd','pass123',1),(5,'Hoang Hoa E','e@gmail.com','hoanghoae','pass123',1),(6,'Dang Thi F','f@gmail.com','dangthif','pass123',1),(7,'Vu Huu G','g@gmail.com','vuhuug','pass123',1),(8,'Bui Van H','h@gmail.com','buivanh','pass123',1),(9,'Ly Kieu I','i@gmail.com','lykieui','pass123',1),(10,'Do Anh J','j@gmail.com','doanhj','pass123',1);
-/*!40000 ALTER TABLE `khachhang` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `khachhang` (`ma_khach_hang`, `ten_khach_hang`, `email`, `username`, `password`, `trang_thai_tai_khoan`) VALUES
+(1, 'Nguyen Van A', 'a@gmail.com', 'nguyenvana', 'pass123', 1),
+(2, 'Tran Thi B', 'b@gmail.com', 'tranthib', 'pass123', 1),
+(3, 'Le Van C', 'c@gmail.com', 'levanc', 'pass123', 1),
+(4, 'Pham Minh D', 'd@gmail.com', 'phamminhd', 'pass123', 1),
+(5, 'Hoang Hoa E', 'e@gmail.com', 'hoanghoae', 'pass123', 1),
+(6, 'Dang Thi F', 'f@gmail.com', 'dangthif', 'pass123', 1),
+(7, 'Vu Huu G', 'g@gmail.com', 'vuhuug', 'pass123', 1),
+(8, 'Bui Van H', 'h@gmail.com', 'buivanh', 'pass123', 1),
+(9, 'Ly Kieu I', 'i@gmail.com', 'lykieui', 'pass123', 1),
+(10, 'Do Anh J', 'j@gmail.com', 'doanhj', 'pass123', 1);
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `nongdo`
 --
 
-DROP TABLE IF EXISTS `nongdo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `nongdo` (
-  `ma_nong_do` int NOT NULL,
-  `nong_do` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ma_nong_do`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `ma_nong_do` int(11) NOT NULL,
+  `nong_do` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `nongdo`
 --
 
-LOCK TABLES `nongdo` WRITE;
-/*!40000 ALTER TABLE `nongdo` DISABLE KEYS */;
-INSERT INTO `nongdo` VALUES (1,'Eau de Toilette'),(2,'Eau de Parfum'),(3,'Parfum'),(4,'Eau Fraîche'),(5,'Cologne'),(6,'Extrait de Parfum'),(7,'Body Mist'),(8,'Hair Mist'),(9,'Solid Perfume'),(10,'Oil Perfume');
-/*!40000 ALTER TABLE `nongdo` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `nongdo` (`ma_nong_do`, `nong_do`) VALUES
+(1, 'Parfum'),
+(2, 'EDP'),
+(3, 'EDT'),
+(4, 'EDC'),
+(5, 'Eau Fraîche'),
+(6, 'Aftershave'),
+(7, 'Perfume Oil');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `nongdo_nuochoa`
 --
 
-DROP TABLE IF EXISTS `nongdo_nuochoa`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `nongdo_nuochoa` (
-  `ma_nong_do` int NOT NULL,
-  `ma_nuoc_hoa` int NOT NULL,
-  PRIMARY KEY (`ma_nong_do`,`ma_nuoc_hoa`),
-  KEY `ma_nuoc_hoa` (`ma_nuoc_hoa`),
-  CONSTRAINT `nongdo_nuochoa_ibfk_1` FOREIGN KEY (`ma_nong_do`) REFERENCES `nongdo` (`ma_nong_do`),
-  CONSTRAINT `nongdo_nuochoa_ibfk_2` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `ma_nong_do` int(11) NOT NULL,
+  `ma_nuoc_hoa` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `nongdo_nuochoa`
 --
 
-LOCK TABLES `nongdo_nuochoa` WRITE;
-/*!40000 ALTER TABLE `nongdo_nuochoa` DISABLE KEYS */;
-INSERT INTO `nongdo_nuochoa` VALUES (1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8),(9,9),(10,10);
-/*!40000 ALTER TABLE `nongdo_nuochoa` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `nongdo_nuochoa` (`ma_nong_do`, `ma_nuoc_hoa`) VALUES
+(1, 4),
+(2, 1),
+(2, 3),
+(2, 6),
+(3, 2),
+(3, 5),
+(3, 7),
+(7, 8),
+(7, 9),
+(7, 10);
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `nothuong`
 --
 
-DROP TABLE IF EXISTS `nothuong`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `nothuong` (
-  `ma_not_huong` int NOT NULL,
-  `not_huong` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ma_not_huong`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `ma_not_huong` int(11) NOT NULL,
+  `not_huong` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `nothuong`
 --
 
-LOCK TABLES `nothuong` WRITE;
-/*!40000 ALTER TABLE `nothuong` DISABLE KEYS */;
-INSERT INTO `nothuong` VALUES (1,'Cam Bergamot'),(2,'Hoa Oải Hương'),(3,'Gỗ Đàn Hương'),(4,'Xạ Hương'),(5,'Hương Thảo'),(6,'Vani'),(7,'Quế'),(8,'Táo Xanh'),(9,'Bạc Hà'),(10,'Hổ Phách');
-/*!40000 ALTER TABLE `nothuong` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `nothuong` (`ma_not_huong`, `not_huong`) VALUES
+(1, 'Hoa Hồng'),
+(2, 'Hoa Nhài'),
+(3, 'Hoa Oải Hương'),
+(4, 'Hoa Ly'),
+(5, 'Hoa Violet'),
+(6, 'Hoa Mẫu Đơn'),
+(7, 'Hoa Lan'),
+(8, 'Hoa Dành Dành'),
+(9, 'Hoa Mộc Lan'),
+(10, 'Hoa Lan Nam Phi'),
+(11, 'Táo'),
+(12, 'Lê'),
+(13, 'Đào'),
+(14, 'Mâm Xôi Đen'),
+(15, 'Mâm Xôi Đỏ'),
+(16, 'Dâu Tây'),
+(17, 'Anh Đào'),
+(18, 'Dứa'),
+(19, 'Dừa'),
+(20, 'Dưa Gang'),
+(21, 'Chanh'),
+(22, 'Cam'),
+(23, 'Cam Bergamot'),
+(24, 'Bưởi'),
+(25, 'Quýt'),
+(26, 'Gỗ Đàn Hương'),
+(27, 'Gỗ Tuyết Tùng'),
+(28, 'Hoắc Hương'),
+(29, 'Cỏ Hương Bài'),
+(30, 'Trầm Hương'),
+(31, 'Quế'),
+(32, 'Đinh Hương'),
+(33, 'Bạch Đậu Khấu'),
+(34, 'Gừng'),
+(35, 'Nhục Đậu Khấu'),
+(36, 'Vani'),
+(37, 'Đậu Tonka'),
+(38, 'Muối Biển'),
+(39, 'Hương Biển'),
+(40, 'Hương Ozone'),
+(41, 'Hương Aldehyde'),
+(42, 'Xạ Hương'),
+(43, 'Long Diên Hương'),
+(44, 'Cầy Hương'),
+(45, 'Da Thuộc'),
+(46, 'Rêu Sồi'),
+(47, 'Húng Quế'),
+(48, 'Xô Thơm'),
+(49, 'Cỏ Xạ Hương'),
+(50, 'Bạc Hà');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `nothuong_nuochoa`
 --
 
-DROP TABLE IF EXISTS `nothuong_nuochoa`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `nothuong_nuochoa` (
-  `ma_not_huong` int NOT NULL,
-  `ma_nuoc_hoa` int NOT NULL,
-  `loai` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`ma_not_huong`,`ma_nuoc_hoa`),
-  KEY `ma_nuoc_hoa` (`ma_nuoc_hoa`),
-  CONSTRAINT `nothuong_nuochoa_ibfk_1` FOREIGN KEY (`ma_not_huong`) REFERENCES `nothuong` (`ma_not_huong`),
-  CONSTRAINT `nothuong_nuochoa_ibfk_2` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `ma_not_huong` int(11) NOT NULL,
+  `ma_nuoc_hoa` int(11) NOT NULL,
+  `loai` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `nothuong_nuochoa`
 --
 
-LOCK TABLES `nothuong_nuochoa` WRITE;
-/*!40000 ALTER TABLE `nothuong_nuochoa` DISABLE KEYS */;
-INSERT INTO `nothuong_nuochoa` VALUES (1,1,'Hương đầu'),(2,2,'Hương giữa'),(3,3,'Hương cuối'),(4,4,'Hương đầu'),(5,5,'Hương giữa'),(6,6,'Hương cuối'),(7,7,'Hương đầu'),(8,8,'Hương giữa'),(9,9,'Hương cuối'),(10,10,'Hương đầu');
-/*!40000 ALTER TABLE `nothuong_nuochoa` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `nothuong_nuochoa` (`ma_not_huong`, `ma_nuoc_hoa`, `loai`) VALUES
+(1, 1, 'Hương giữa'),
+(1, 3, 'Hương giữa'),
+(1, 6, 'Hương giữa'),
+(1, 9, 'Hương đầu'),
+(1, 10, 'Hương giữa'),
+(2, 1, 'Hương giữa'),
+(2, 3, 'Hương đầu'),
+(2, 6, 'Hương giữa'),
+(2, 9, 'Hương đầu'),
+(2, 10, 'Hương giữa'),
+(3, 1, 'Hương giữa'),
+(3, 2, 'Hương giữa'),
+(3, 3, 'Hương đầu'),
+(3, 6, 'Hương đầu'),
+(3, 9, 'Hương giữa'),
+(4, 3, 'Hương giữa'),
+(4, 9, 'Hương giữa'),
+(5, 3, 'Hương cuối'),
+(6, 3, 'Hương cuối'),
+(10, 4, 'Hương giữa'),
+(11, 5, 'Hương đầu'),
+(11, 8, 'Hương đầu'),
+(11, 10, 'Hương đầu'),
+(12, 8, 'Hương cuối'),
+(12, 10, 'Hương đầu'),
+(13, 8, 'Hương đầu'),
+(16, 8, 'Hương giữa'),
+(17, 5, 'Hương giữa'),
+(17, 8, 'Hương giữa'),
+(18, 8, 'Hương cuối'),
+(21, 1, 'Hương đầu'),
+(21, 5, 'Hương đầu'),
+(23, 1, 'Hương đầu'),
+(23, 2, 'Hương đầu'),
+(23, 4, 'Hương đầu'),
+(23, 6, 'Hương đầu'),
+(26, 1, 'Hương cuối'),
+(26, 2, 'Hương cuối'),
+(26, 7, 'Hương cuối'),
+(26, 9, 'Hương cuối'),
+(26, 10, 'Hương cuối'),
+(27, 2, 'Hương cuối'),
+(27, 5, 'Hương cuối'),
+(27, 6, 'Hương cuối'),
+(28, 7, 'Hương giữa'),
+(29, 7, 'Hương giữa'),
+(30, 1, 'Hương cuối'),
+(30, 4, 'Hương cuối'),
+(30, 7, 'Hương cuối'),
+(30, 9, 'Hương cuối'),
+(30, 10, 'Hương cuối'),
+(31, 7, 'Hương đầu'),
+(32, 2, 'Hương đầu'),
+(32, 4, 'Hương đầu'),
+(32, 7, 'Hương đầu'),
+(34, 2, 'Hương giữa'),
+(36, 1, 'Hương cuối'),
+(36, 4, 'Hương cuối'),
+(36, 5, 'Hương cuối'),
+(36, 6, 'Hương cuối'),
+(37, 5, 'Hương giữa'),
+(41, 1, 'Hương đầu'),
+(43, 4, 'Hương giữa');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `nuochoa`
 --
 
-DROP TABLE IF EXISTS `nuochoa`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `nuochoa` (
-  `ma_nuoc_hoa` int NOT NULL,
+  `ma_nuoc_hoa` int(11) NOT NULL,
   `ten_nuoc_hoa` varchar(255) DEFAULT NULL,
   `gioi_tinh` varchar(30) DEFAULT NULL,
   `gia_ban` double DEFAULT NULL,
   `tinh_trang` tinyint(1) DEFAULT NULL,
   `hinh_anh` varchar(255) DEFAULT NULL,
-  `mo_ta` text,
-  `ma_thuong_hieu` int DEFAULT NULL,
-  PRIMARY KEY (`ma_nuoc_hoa`),
-  KEY `ma_thuong_hieu` (`ma_thuong_hieu`),
-  CONSTRAINT `nuochoa_ibfk_1` FOREIGN KEY (`ma_thuong_hieu`) REFERENCES `thuonghieu` (`ma_thuong_hieu`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `mo_ta` text DEFAULT NULL,
+  `ma_thuong_hieu` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `nuochoa`
 --
 
-LOCK TABLES `nuochoa` WRITE;
-/*!40000 ALTER TABLE `nuochoa` DISABLE KEYS */;
-INSERT INTO `nuochoa` VALUES (1,'Bleu de Chanel','Nam',2500000,1,'bleu.jpg','Hương gỗ mạnh mẽ nam tính.',1),(2,'Sauvage Dior','Nam',2300000,1,'sauvage.jpg','Hương cam chanh tươi mát.',2),(3,'Gucci Guilty','Nữ',2800000,1,'guilty.jpg','Hương hoa cỏ sang trọng.',3),(4,'Eros Versace','Nam',2700000,1,'eros.jpg','Hương bạc hà, chanh tươi.',4),(5,'Oud Wood','Unisex',3500000,1,'oudwood.jpg','Hương gỗ trầm ấm áp.',5),(6,'My Burberry','Nữ',2600000,1,'myburberry.jpg','Hương hoa cỏ nhẹ nhàng.',6),(7,'CK One','Unisex',1900000,1,'ckone.jpg','Hương cam bergamot tươi mát.',7),(8,'YSL Libre','Nữ',3100000,1,'libre.jpg','Hương lavender và vani ngọt ngào.',8),(9,'Acqua di Gio','Nam',2200000,1,'acquadigio.jpg','Hương biển mát lạnh.',9),(10,'Boss Bottled','Nam',2400000,1,'bossbottled.jpg','Hương táo và quế ấm áp.',10);
-/*!40000 ALTER TABLE `nuochoa` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `nuochoa` (`ma_nuoc_hoa`, `ten_nuoc_hoa`, `gioi_tinh`, `gia_ban`, `tinh_trang`, `hinh_anh`, `mo_ta`, `ma_thuong_hieu`) VALUES
+(1, 'Bleu de Chanel', 'Nam', 2500000, 1, 'bleu.jpg', 'Hương gỗ mạnh mẽ nam tính.', 1),
+(2, 'Sauvage Dior', 'Nam', 2300000, 1, 'sauvage.jpg', 'Hương cam chanh tươi mát.', 2),
+(3, 'Gucci Guilty', 'Nữ', 2800000, 1, 'guilty.jpg', 'Hương hoa cỏ sang trọng.', 3),
+(4, 'Eros Versace', 'Nam', 2700000, 1, 'eros.jpg', 'Hương bạc hà, chanh tươi.', 4),
+(5, 'Oud Wood', 'Unisex', 3500000, 1, 'oudwood.jpg', 'Hương gỗ trầm ấm áp.', 5),
+(6, 'My Burberry', 'Nữ', 2600000, 1, 'myburberry.jpg', 'Hương hoa cỏ nhẹ nhàng.', 6),
+(7, 'CK One', 'Unisex', 1900000, 1, 'ckone.jpg', 'Hương cam bergamot tươi mát.', 7),
+(8, 'YSL Libre', 'Nữ', 3100000, 1, 'libre.jpg', 'Hương lavender và vani ngọt ngào.', 8),
+(9, 'Acqua di Gio', 'Nam', 2200000, 1, 'acquadigio.jpg', 'Hương biển mát lạnh.', 9),
+(10, 'Boss Bottled', 'Nam', 2400000, 1, 'bossbottled.jpg', 'Hương táo và quế ấm áp.', 10);
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `thuonghieu`
 --
 
-DROP TABLE IF EXISTS `thuonghieu`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `thuonghieu` (
-  `ma_thuong_hieu` int NOT NULL,
-  `ten_thuong_hieu` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`ma_thuong_hieu`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  `ma_thuong_hieu` int(11) NOT NULL,
+  `ten_thuong_hieu` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `thuonghieu`
 --
 
-LOCK TABLES `thuonghieu` WRITE;
-/*!40000 ALTER TABLE `thuonghieu` DISABLE KEYS */;
-INSERT INTO `thuonghieu` VALUES (1,'Chanel'),(2,'Dior'),(3,'Gucci'),(4,'Versace'),(5,'Tom Ford'),(6,'Burberry'),(7,'Calvin Klein'),(8,'Yves Saint Laurent'),(9,'Armani'),(10,'Hugo Boss');
-/*!40000 ALTER TABLE `thuonghieu` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+INSERT INTO `thuonghieu` (`ma_thuong_hieu`, `ten_thuong_hieu`) VALUES
+(1, 'Chanel'),
+(2, 'Dior'),
+(3, 'Gucci'),
+(4, 'Versace'),
+(5, 'Tom Ford'),
+(6, 'Burberry'),
+(7, 'Calvin Klein'),
+(8, 'Yves Saint Laurent'),
+(9, 'Armani'),
+(10, 'Hugo Boss');
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `chitiethoadon`
+--
+ALTER TABLE `chitiethoadon`
+  ADD PRIMARY KEY (`ma_nuoc_hoa`,`ma_hoa_don`),
+  ADD KEY `ma_hoa_don` (`ma_hoa_don`);
+
+--
+-- Indexes for table `diachi`
+--
+ALTER TABLE `diachi`
+  ADD PRIMARY KEY (`ma_dia_chi`),
+  ADD KEY `ma_khach_hang` (`ma_khach_hang`);
+
+--
+-- Indexes for table `dungtich`
+--
+ALTER TABLE `dungtich`
+  ADD PRIMARY KEY (`ma_dung_tich`);
+
+--
+-- Indexes for table `dungtich_nuochoa`
+--
+ALTER TABLE `dungtich_nuochoa`
+  ADD PRIMARY KEY (`ma_dung_tich`,`ma_nuoc_hoa`),
+  ADD KEY `ma_nuoc_hoa` (`ma_nuoc_hoa`);
+
+--
+-- Indexes for table `hoadon`
+--
+ALTER TABLE `hoadon`
+  ADD PRIMARY KEY (`ma_hoa_don`),
+  ADD KEY `ma_khach_hang` (`ma_khach_hang`),
+  ADD KEY `ma_dia_chi` (`ma_dia_chi`);
+
+--
+-- Indexes for table `khachhang`
+--
+ALTER TABLE `khachhang`
+  ADD PRIMARY KEY (`ma_khach_hang`);
+
+--
+-- Indexes for table `nongdo`
+--
+ALTER TABLE `nongdo`
+  ADD PRIMARY KEY (`ma_nong_do`);
+
+--
+-- Indexes for table `nongdo_nuochoa`
+--
+ALTER TABLE `nongdo_nuochoa`
+  ADD PRIMARY KEY (`ma_nong_do`,`ma_nuoc_hoa`),
+  ADD KEY `ma_nuoc_hoa` (`ma_nuoc_hoa`);
+
+--
+-- Indexes for table `nothuong`
+--
+ALTER TABLE `nothuong`
+  ADD PRIMARY KEY (`ma_not_huong`);
+
+--
+-- Indexes for table `nothuong_nuochoa`
+--
+ALTER TABLE `nothuong_nuochoa`
+  ADD PRIMARY KEY (`ma_not_huong`,`ma_nuoc_hoa`),
+  ADD KEY `ma_nuoc_hoa` (`ma_nuoc_hoa`);
+
+--
+-- Indexes for table `nuochoa`
+--
+ALTER TABLE `nuochoa`
+  ADD PRIMARY KEY (`ma_nuoc_hoa`),
+  ADD KEY `ma_thuong_hieu` (`ma_thuong_hieu`);
+
+--
+-- Indexes for table `thuonghieu`
+--
+ALTER TABLE `thuonghieu`
+  ADD PRIMARY KEY (`ma_thuong_hieu`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `khachhang`
+--
+ALTER TABLE `khachhang`
+  MODIFY `ma_khach_hang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `nuochoa`
+--
+ALTER TABLE `nuochoa`
+  MODIFY `ma_nuoc_hoa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `chitiethoadon`
+--
+ALTER TABLE `chitiethoadon`
+  ADD CONSTRAINT `chitiethoadon_ibfk_1` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`),
+  ADD CONSTRAINT `chitiethoadon_ibfk_2` FOREIGN KEY (`ma_hoa_don`) REFERENCES `hoadon` (`ma_hoa_don`);
+
+--
+-- Constraints for table `diachi`
+--
+ALTER TABLE `diachi`
+  ADD CONSTRAINT `diachi_ibfk_1` FOREIGN KEY (`ma_khach_hang`) REFERENCES `khachhang` (`ma_khach_hang`);
+
+--
+-- Constraints for table `dungtich_nuochoa`
+--
+ALTER TABLE `dungtich_nuochoa`
+  ADD CONSTRAINT `dungtich_nuochoa_ibfk_1` FOREIGN KEY (`ma_dung_tich`) REFERENCES `dungtich` (`ma_dung_tich`),
+  ADD CONSTRAINT `dungtich_nuochoa_ibfk_2` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`);
+
+--
+-- Constraints for table `hoadon`
+--
+ALTER TABLE `hoadon`
+  ADD CONSTRAINT `hoadon_ibfk_1` FOREIGN KEY (`ma_khach_hang`) REFERENCES `khachhang` (`ma_khach_hang`),
+  ADD CONSTRAINT `hoadon_ibfk_2` FOREIGN KEY (`ma_dia_chi`) REFERENCES `diachi` (`ma_dia_chi`);
+
+--
+-- Constraints for table `nongdo_nuochoa`
+--
+ALTER TABLE `nongdo_nuochoa`
+  ADD CONSTRAINT `nongdo_nuochoa_ibfk_1` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`),
+  ADD CONSTRAINT `nongdo_nuochoa_ibfk_2` FOREIGN KEY (`ma_nong_do`) REFERENCES `nongdo` (`ma_nong_do`);
+
+--
+-- Constraints for table `nothuong_nuochoa`
+--
+ALTER TABLE `nothuong_nuochoa`
+  ADD CONSTRAINT `nothuong_nuochoa_ibfk_1` FOREIGN KEY (`ma_not_huong`) REFERENCES `nothuong` (`ma_not_huong`),
+  ADD CONSTRAINT `nothuong_nuochoa_ibfk_2` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`);
+
+--
+-- Constraints for table `nuochoa`
+--
+ALTER TABLE `nuochoa`
+  ADD CONSTRAINT `nuochoa_ibfk_1` FOREIGN KEY (`ma_thuong_hieu`) REFERENCES `thuonghieu` (`ma_thuong_hieu`);
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2025-03-15 11:47:56
