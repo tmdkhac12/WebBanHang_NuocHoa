@@ -20,10 +20,10 @@
                 <div class="filter-section">
                     <h5 class="filter-title">Lọc sản phẩm</h5>
                     <div class="mb-4">
-                        <label class="filter-title">Tìm theo thương hiệu</label>
+                        <label class="filter-title">Tìm kiếm tên nước hoa</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control" id="brandSearch" placeholder="Tìm thương hiệu...">
+                            <input type="text" class="form-control" id="productNameSearch" placeholder="Tìm tên nước hoa...">
                         </div>
                     </div>
                     <div class="mb-4">

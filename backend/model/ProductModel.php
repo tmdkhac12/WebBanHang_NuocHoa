@@ -44,7 +44,7 @@ class ProductModel {
         return $total;
     }
 
-    private function buildFilterConditions($gender, $minPrice, $maxPrice, $brandSearch) {
+    private function buildFilterConditions($gender, $minPrice, $maxPrice, $productNameSearch) { // Đổi từ $brandSearch
         $conditions = ['sql' => '', 'types' => '', 'params' => []];
 
         if (!empty($gender)) {
@@ -71,18 +71,18 @@ class ProductModel {
             }
         }
 
-        if ($brandSearch) {
-            $brandSearch = $this->connection->real_escape_string($brandSearch);
-            $conditions['sql'] .= " AND t.ten_thuong_hieu LIKE ?";
+        if ($productNameSearch) { // Đổi từ $brandSearch
+            $productNameSearch = $this->connection->real_escape_string($productNameSearch);
+            $conditions['sql'] .= " AND n.ten_nuoc_hoa LIKE ?"; // Đổi từ t.ten_thuong_hieu thành n.ten_nuoc_hoa
             $conditions['types'] .= "s";
-            $conditions['params'][] = "%$brandSearch%";
+            $conditions['params'][] = "%$productNameSearch%";
         }
 
         return $conditions;
     }
 
-    public function filterProducts($gender, $minPrice, $maxPrice, $brandSearch, $limit, $offset) {
-        $conditions = $this->buildFilterConditions($gender, $minPrice, $maxPrice, $brandSearch);
+    public function filterProducts($gender, $minPrice, $maxPrice, $productNameSearch, $limit, $offset) { // Đổi từ $brandSearch
+        $conditions = $this->buildFilterConditions($gender, $minPrice, $maxPrice, $productNameSearch);
 
         $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, n.gia_ban, t.ten_thuong_hieu 
                 FROM nuochoa n 

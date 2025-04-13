@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const priceFilters = document.querySelectorAll('input[name="priceRange"]');
     const resultCount = document.getElementById("resultCount");
     const pagination = document.getElementById("pagination");
-    const brandSearch = document.getElementById("brandSearch");
+    const productNameSearch = document.getElementById("productNameSearch"); // Đổi từ brandSearch
     const clearFiltersBtn = document.getElementById("clearFilters");
 
     if (!clearFiltersBtn) {
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="col-sm-6 col-lg-4">
                         <div class="product-card" data-id="${product.ma_nuoc_hoa}" style="cursor: pointer;">
                             <img src="./images/${product.hinh_anh}" alt="${product.ten_nuoc_hoa}" loading="lazy">
-                            <h6>${product.ten_nuoc_hoa}</h6>
+                            <h5>${product.ten_nuoc_hoa}</h5>
                             <p>${product.ten_thuong_hieu}</p>
                             <p>${formatPrice(product.gia_ban)}</p>
                         </div>
@@ -58,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const start = (currentPage - 1) * productsPerPage + 1;
         const end = Math.min(currentPage * productsPerPage, totalProducts);
         resultCount.textContent = `Hiển thị ${start}-${end} của ${totalProducts} kết quả`;
-        // Luôn gọi renderPagination để đảm bảo giao diện phân trang đồng bộ với currentPage
         renderPagination();
         lastTotalProducts = totalProducts;
     };
@@ -128,11 +127,11 @@ document.addEventListener("DOMContentLoaded", () => {
             maxPrice = parseInt(max);
         }
 
-        const brandSearchValue = brandSearch.value.trim();
+        const productNameSearchValue = productNameSearch.value.trim(); // Đổi từ brandSearchValue
 
         const requestBody = {
             gender: selectedGenders.length > 0 ? selectedGenders : initialGender ? [initialGender] : [],
-            brandSearch: brandSearchValue,
+            productNameSearch: productNameSearchValue, // Đổi từ brandSearch
             page: currentPage
         };
 
@@ -183,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const resetPageAndFetch = () => {
         console.log("resetPageAndFetch called");
-        currentPage = 1; // Reset về trang 1 khi bộ lọc thay đổi
+        currentPage = 1;
         fetchProducts();
     };
 
@@ -221,8 +220,8 @@ document.addEventListener("DOMContentLoaded", () => {
             radio.checked = radio.value === "all";
             console.log(`Radio ${radio.id} set to ${radio.checked}`);
         });
-        console.log("Clearing brand search...");
-        brandSearch.value = "";
+        console.log("Clearing product name search...");
+        productNameSearch.value = ""; // Đổi từ brandSearch
         console.log("Resetting currentPage and initialGender...");
         currentPage = 1;
         initialGender = null;
@@ -235,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     genderFilters.forEach(filter => filter.addEventListener("change", debouncedFetchProducts));
     priceFilters.forEach(filter => filter.addEventListener("change", debouncedFetchProducts));
-    brandSearch.addEventListener("input", debouncedFetchProducts);
+    productNameSearch.addEventListener("input", debouncedFetchProducts); // Đổi từ brandSearch
 
     if (clearFiltersBtn) {
         clearFiltersBtn.addEventListener("click", (e) => {

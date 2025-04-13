@@ -19,12 +19,12 @@ try {
             $gender = isset($data['gender']) && is_array($data['gender']) ? $data['gender'] : [];
             $minPrice = isset($data['minPrice']) && is_numeric($data['minPrice']) ? $data['minPrice'] : null;
             $maxPrice = isset($data['maxPrice']) && is_numeric($data['maxPrice']) ? $data['maxPrice'] : null;
-            $brandSearch = isset($data['brandSearch']) ? trim($data['brandSearch']) : '';
+            $productNameSearch = isset($data['productNameSearch']) ? trim($data['productNameSearch']) : ''; // Đổi từ brandSearch
             $page = isset($data['page']) && is_numeric($data['page']) && $data['page'] > 0 ? (int)$data['page'] : 1;
             $limit = 9;
             $offset = ($page - 1) * $limit;
 
-            $result = $productModel->filterProducts($gender, $minPrice, $maxPrice, $brandSearch, $limit, $offset);
+            $result = $productModel->filterProducts($gender, $minPrice, $maxPrice, $productNameSearch, $limit, $offset);
             echo json_encode($result);
             break;
 

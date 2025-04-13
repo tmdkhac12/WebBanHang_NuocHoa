@@ -40,7 +40,7 @@ body {
 /* Product Image */
 .product-image-wrapper {
     background-color: #f8f9fa;
-    padding: 15px; /* Reduced padding */
+    padding: 50px; /* Reduced padding */
     border-radius: 10px;
     text-align: center;
 }

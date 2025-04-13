@@ -16,8 +16,8 @@ class ProductController {
         return $this->productModel->getTotalProducts();
     }
 
-    public function filterProducts($gender, $minPrice, $maxPrice, $brandSearch, $limit = null, $offset = null) {
-        return $this->productModel->filterProducts($gender, $minPrice, $maxPrice, $brandSearch, $limit, $offset);
+    public function filterProducts($gender, $minPrice, $maxPrice, $productNameSearch, $limit = null, $offset = null) { // Đổi từ $brandSearch
+        return $this->productModel->filterProducts($gender, $minPrice, $maxPrice, $productNameSearch, $limit, $offset);
     }
 }
 ?>
