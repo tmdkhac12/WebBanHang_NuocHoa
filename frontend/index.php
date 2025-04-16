@@ -17,12 +17,60 @@
     <?php require 'components/header.php'?>
     
     <div class="content">
+        <!-- Carousel -->
+        <div id="demo" class="carousel slide" data-bs-ride="carousel">
+            <!-- Indicators/dots -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
+            </div>
+
+            <!-- The slideshow/carousel -->
+            <!-- Trong file index.php -->
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <a href="sanpham.php?gender=Nam">
+                        <img src="./images/nuochoanam.jpg" alt="Nước hoa nam" class="d-block carousel-image">
+                        <div class="carousel-caption">
+                            <h3>NƯỚC HOA NAM</h3>
+                        </div>
+                    </a>
+                </div>
+                <div class="carousel-item">
+                    <a href="sanpham.php?gender=Nu"> <!-- Sửa từ gender=Nu thay vì Nữ -->
+                        <img src="./images/nuochoanu.jpg" alt="Nước hoa nữ" class="d-block carousel-image">
+                        <div class="carousel-caption">
+                            <h3>NƯỚC HOA NỮ</h3>
+                        </div>
+                    </a>
+                </div>
+                <div class="carousel-item">
+                    <a href="sanpham.php?gender=Unisex">
+                        <img src="./images/nuochoaUnisex.jpg" alt="Nước hoa unisex" class="d-block carousel-image">
+                        <div class="carousel-caption">
+                            <h3>NƯỚC HOA UNISEX</h3>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Left and right controls/icons -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+
+        <!-- Product Tabs Section -->
         <div class="container my-5">
-            <h1 class="text-center fw-bold">Sản phẩm nổi bật</h1>
-            <div class="tabs d-flex justify-content-center my-3">
+            <h1 class="text-center fw-bold mb-4">Sản phẩm nổi bật</h1>
+            <div class="tabs d-flex justify-content-center mb-4">
                 <span class="tab active" data-category="nam">Nước hoa nam</span>
                 <span class="tab" data-category="nu">Nước hoa nữ</span>
-                <span class="tab" data-category="unisex">Unisex</span>
+                <span class="tab" data-category="unisex">Nước hoa Unisex</span>
             </div>
             <div class="swiper-container">
                 <div class="swiper-wrapper" id="product-list"></div>
@@ -31,6 +79,7 @@
             </div>
         </div>
     </div>
+
     <?php require 'components/footer.php'?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
