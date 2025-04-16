@@ -29,5 +29,16 @@ class HoaDonModel {
         $connection->close();
         return (count($hoadons) > 0 ? $hoadons : null);
     }
+
+    public function huyDonHang($maHoaDon) {
+        $connection = getConnection();
+
+        $sql = "UPDATE hoadon SET trang_thai_don_hang = 'Đã hủy' WHERE ma_hoa_don = ?";
+        $statement = $connection->prepare($sql);
+        $statement->bind_param("i", $maHoaDon);
+        $statement->execute();
+
+        return ($statement->affected_rows > 0 ? true : false);
+    }
 }
 ?>

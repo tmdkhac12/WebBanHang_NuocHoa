@@ -99,6 +99,7 @@ $hoadons = $hoaDonController->getAllHoaDon($_SESSION["user_id"]);
                             <?php
                             foreach ($hoadons as $hoadon) {
                                 // Mỗi hóa đơn là 1 table  
+                                $maHoaDon = $hoadon[0]["ma_hoa_don"];
                             ?>
                                 <table class="table table-bordered">
                                     <tr>
@@ -126,11 +127,13 @@ $hoadons = $hoaDonController->getAllHoaDon($_SESSION["user_id"]);
                                         <td><strong>Thành Tiền</strong></td>
                                     </tr>
                                     <?php
+                                    $currentLength = count($hoadon);
+                                    $i = 0;
                                     foreach ($hoadon as $chiTietHoaDon) {
                                     ?>
-                                        <?php $i = 1; ?>
                                         <tr>
-                                            <td class="text-center"><?php echo $i; ?></td>
+                                            <td class="text-center"><?php echo $i + 1;
+                                                                    $i = $i + 1; ?></td>
                                             <td><?php echo $chiTietHoaDon["ten_nuoc_hoa"]; ?></td>
                                             <td class="text-right"><?php echo formatCurrency($chiTietHoaDon["gia_ban"]); ?></td>
                                             <td class="text-center"><?php echo $chiTietHoaDon["so_luong_mua"]; ?></td>
@@ -141,26 +144,31 @@ $hoadons = $hoaDonController->getAllHoaDon($_SESSION["user_id"]);
                                     ?>
                                     <tr>
                                         <th colspan="4" class="text-dark bg-light">TỔNG TIỀN:</th>
-                                        <th class="text-danger text-right bg-light"><?php echo formatCurrency($hoadon[0]["tong_tien"]) ; ?></th>
+                                        <th class="text-danger text-right bg-light"><?php echo formatCurrency($hoadon[0]["tong_tien"]); ?></th>
                                     </tr>
                                     <tr>
                                         <th colspan="4" class="text-right">
                                             Trạng thái đơn hàng:
-                                            <span class="badge <?php 
-                                                $trangthai =$hoadon[0]["trang_thai_don_hang"];
-                                                if ($trangthai === "Chờ xác nhận") {
-                                                    echo "badge-primary";
-                                                } elseif ($trangthai === "Đang xử lý") {
-                                                    echo "badge-warning";
-                                                } elseif ($trangthai === "Đã giao") {
-                                                    echo "badge-success";
-                                                } else {
-                                                    echo "badge-danger";
-                                                }
-                                            ?> p-2"><?php echo $hoadon[0]["trang_thai_don_hang"]; ?></span>
+                                            <span class="badge <?php
+                                                                $trangthai = $hoadon[0]["trang_thai_don_hang"];
+                                                                if ($trangthai === "Chờ xác nhận") {
+                                                                    echo "badge-primary";
+                                                                } elseif ($trangthai === "Đang xử lý") {
+                                                                    echo "badge-warning";
+                                                                } elseif ($trangthai === "Đã giao") {
+                                                                    echo "badge-success";
+                                                                } else {
+                                                                    echo "badge-danger";
+                                                                }
+                                                                ?> p-2"><?php echo $hoadon[0]["trang_thai_don_hang"]; ?></span>
                                         </th>
                                         <td class="text-center">
-                                            <button class="btn btn-secondary btn-sm" <?php if ($trangthai !== "Chờ xác nhận") {echo "disabled";}?>>Hủy Đơn</button>
+                                            <button onclick="addHuyDonHandler(this)" 
+                                                    id="btn-huydon<?php echo $maHoaDon; ?>" 
+                                                    data-maHoaDon="<?php echo $maHoaDon; ?>" 
+                                                    class="btn <?php if ($trangthai === "Chờ xác nhận") echo "btn-danger";else echo "btn-secondary"; ?> btn-sm" 
+                                                    <?php if ($trangthai !== "Chờ xác nhận") {echo "disabled"; } ?>>
+                                            Hủy Đơn</button>
                                         </td>
                                     </tr>
                                 </table>

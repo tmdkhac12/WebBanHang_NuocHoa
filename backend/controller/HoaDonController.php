@@ -23,6 +23,10 @@ class HoaDonController
         return $hoadons_grouped;
     }
 
+    public function huyDonHang($maDonHang) {
+        return $this->hoaDonModel->huyDonHang($maDonHang);
+    }
+
     // Private Functions
     private function groupHoaDonByMa($hoadons) {
         $hoadons_grouped = [];

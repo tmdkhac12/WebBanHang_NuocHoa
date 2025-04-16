@@ -74,8 +74,9 @@ class UserModel
                 VALUES (?,?,?,?,?)";
         $statement = $connection->prepare($sql);
         $statement->bind_param("ssssi", $hoten, $email, $username, $password, $status);
-        
-        return $statement->execute();
+        $statement->execute();
+
+        return ($statement->affected_rows > 0 ? true : false);
     }
 
     public function updateUserInfo($hoten, $email, $username) {
@@ -84,8 +85,9 @@ class UserModel
         $sql = "UPDATE khachhang SET ten_khach_hang = ?, email = ? WHERE username = ?";
         $statement = $connection->prepare($sql);
         $statement->bind_param("sss", $hoten, $email, $username);
+        $statement->execute();
 
-        return $statement->execute();
+        return ($statement->affected_rows > 0 ? true : false);
     }
 
     
@@ -95,8 +97,9 @@ class UserModel
         $sql = "UPDATE khachhang SET ten_khach_hang = ?, email = ?, khachhang.password = ? WHERE username = ?";
         $statement = $connection->prepare($sql);
         $statement->bind_param("ssss", $hoten, $email, $newPassword, $username);
-        
-        return $statement->execute();
+        $statement->execute();
+
+        return ($statement->affected_rows > 0 ? true : false);
     }
     
 }

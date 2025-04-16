@@ -75,6 +75,36 @@ function addUpdateAccountEventHandler() {
     })
 }
 
+function addHuyDonHandler(btn_huydon) {
+    // 1. Confirm user muốn  xóa đơn hàng
+    if (!confirm("Bạn có chắc chắn muốn hủy đơn hàng này?")) {
+        return;
+    }
+
+    // 2. Lấy mã hóa đơn và gọi API 
+    const maHoaDon = btn_huydon.getAttribute("data-maHoaDon");
+
+    fetch("/backend/api/HoaDonAPI.php?action=huydon", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            maHoaDon
+        })
+    })
+        .then((respond) => {
+            return respond.json();
+        })
+        .then((data) => {
+            alert(data.message);
+            window.location.href = window.location.href;
+        })
+        .catch(error => {
+            console.log(error);
+        })
+}
+
 function validateInput(hoten, email, currentPassword, newPassword, confirmPassword) {
 
     // Kiểm tra 1 trong 3 trường password có giá trị ?
