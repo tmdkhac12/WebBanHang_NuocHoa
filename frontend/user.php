@@ -1,5 +1,8 @@
-<?php 
+<?php
 session_start();
+
+require __DIR__ . "/../backend/controller/HoaDonController.php";
+require __DIR__ . "/../backend/util/Formatter.php";
 
 if (!isset($_SESSION["username"])) {
     echo '<script>
@@ -8,6 +11,9 @@ if (!isset($_SESSION["username"])) {
     </script>';
     exit();
 }
+
+$hoaDonController = new HoaDonController();
+$hoadons = $hoaDonController->getAllHoaDon($_SESSION["user_id"]);
 
 ?>
 
@@ -57,72 +63,117 @@ if (!isset($_SESSION["username"])) {
             <div class="col-9 p-5">
                 <div class="tab-content">
                     <div class="tab-pane show fade active" id="account-tab">
-                        <p>Họ và tên</p>
-                        <input type="text" class="form-control" value="Nguyễn Văn A" disabled>
-                        <p>Tên đăng nhập</p>
-                        <input type="text" class="form-control" value="abc" disabled>
-                        <p>Địa chỉ email</p>
-                        <input type="text" class="form-control" value="nguyenvana@gmail.com" disabled>
+                        <form id="acoount-form" action="" method="post">
+                            <p>Tên đăng nhập</p>
+                            <input type="text" id="input_username" class="form-control" value="<?php echo $_SESSION["username"] ?>" disabled>
+                            <p>Họ và tên</p>
+                            <div class="d-flex">
+                                <input type="text" id="input_hoten" class="form-control" value="<?php echo isset($_SESSION["ten_khach_hang"]) ? $_SESSION["ten_khach_hang"] : ""; ?>" disabled>
+                                <button type="button" id="editBtn-hoten" class="btn btn-outline-secondary px-2 ml-1">✏️</button>
+                            </div>
+                            <p>Địa chỉ email</p>
+                            <div class="d-flex">
+                                <input type="text" id="input_email" class="form-control" value="<?php echo (isset($_SESSION["email"]) ? $_SESSION["email"] : "") ?>" disabled>
+                                <button type="button" id="editBtn-email" class="btn btn-outline-secondary px-2 ml-1">✏️</button>
+                            </div>
 
-                        <h2 class="pt-5 pb-2">Thay đổi mật khẩu</h2>
-                        <p>Mật khẩu hiện tại</p>
-                        <input type="text" class="form-control">
-                        <p>Mật khẩu mới</p>
-                        <input type="password" class="form-control">
-                        <p>Xác nhận mật khẩu mới</p>
-                        <input type="password" class="form-control">
-                        <button type="button" class="btn btn-primary mt-4 float-right">Lưu thay đổi</button>
+                            <h2 class="pt-5 pb-2">Thay đổi mật khẩu</h2>
+
+                            <p>Mật khẩu hiện tại (bỏ trống nếu không đổi)</p>
+                            <input type="password" id="input_currentpass" class="form-control">
+                            <p>Mật khẩu mới (bỏ trống nếu không đổi)</p>
+                            <input type="password" id="input-password" class="form-control">
+                            <p>Xác nhận mật khẩu mới</p>
+                            <input type="password" id="cf-password" class="form-control">
+                            <button type="submit" class="btn btn-primary mt-4 float-right">Lưu thay đổi</button>
+                        </form>
                     </div>
 
                     <div class="tab-pane fade" id="order-tab">
-                        <table class="table table-bordered">
-                            <tr>
-                                <th colspan="5" class="text-primary">
-                                    Địa chỉ nhận hàng: <br>
-                                    273 An Dương Vương, P3, Q5
-                                </th>
-                            </tr>
-                            <tr>
-                                <th colspan="5" class="text-center bg-primary text-white">
-                                    Đơn hàng ngày: 24/02/2025, 3:25:32 PM
-                                </th>
-                            </tr>
-                            <tr class="bg-light text-dark text-center">
-                                <td><strong>STT</strong></td>
-                                <td><strong>Sản Phẩm</strong></td>
-                                <td><strong>Đơn Giá</strong></td>
-                                <td><strong>Số Lượng</strong></td>
-                                <td><strong>Thành Tiền</strong></td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>Lelabo Another 13</td>
-                                <td>7,900,000</td>
-                                <td>1</td>
-                                <td>7,900,000</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Tomford Neroli Portofino</td>
-                                <td>6,800,000</td>
-                                <td>1</td>
-                                <td>6,800,000</td>
-                            </tr>
-                            <tr>
-                                <th colspan="4" class="text-dark bg-light">TỔNG TIỀN:</th>
-                                <th class="text-danger bg-light">14,700,000</th>
-                            </tr>
-                            <tr>
-                                <th colspan="4" class="text-right">
-                                    Trạng thái đơn hàng: 
-                                    <span class="badge badge-success p-2">Đã Giao Hàng</span>
-                                </th>
-                                <td class="text-center">
-                                    <button class="btn btn-secondary btn-sm" disabled>Hủy Đơn</button>
-                                </td>
-                            </tr>
-                        </table>
-                        
+                        <!-- Start table -->
+                        <?php
+                        if (!$hoadons) {
+                            echo "Bạn chưa có đơn hàng nào!";
+                        } else {
+                        ?>
+                            <?php
+                            foreach ($hoadons as $hoadon) {
+                                // Mỗi hóa đơn là 1 table  
+                            ?>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th colspan="5" class="text-primary">
+                                            <span class="d-flex justify-content-between">
+                                                <p class="m-0 my-1">Địa chỉ nhận hàng: </p>
+                                                <p class="m-0 my-1">Người Nhận: </p>
+                                            </span>
+                                            <span class="d-flex justify-content-between">
+                                                <p class="m-0 my-1"><?php echo $hoadon[0]["dia_chi_giao_hang"]; ?></p>
+                                                <p class="m-0 my-1"><?php echo $hoadon[0]["ten_nguoi_nhan"] . " (" . $hoadon[0]["so_dien_thoai_nguoi_nhan"] . ")"; ?></p>
+                                            </span>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="5" class="text-center bg-primary text-white">
+                                            Đơn hàng ngày: <?php echo formatDateTime($hoadon[0]["thoi_gian"]); ?>
+                                        </th>
+                                    </tr>
+                                    <tr class="bg-light text-dark text-center">
+                                        <td><strong>STT</strong></td>
+                                        <td><strong>Sản Phẩm</strong></td>
+                                        <td><strong>Đơn Giá</strong></td>
+                                        <td><strong>Số Lượng</strong></td>
+                                        <td><strong>Thành Tiền</strong></td>
+                                    </tr>
+                                    <?php
+                                    foreach ($hoadon as $chiTietHoaDon) {
+                                    ?>
+                                        <?php $i = 1; ?>
+                                        <tr>
+                                            <td class="text-center"><?php echo $i; ?></td>
+                                            <td><?php echo $chiTietHoaDon["ten_nuoc_hoa"]; ?></td>
+                                            <td class="text-right"><?php echo formatCurrency($chiTietHoaDon["gia_ban"]); ?></td>
+                                            <td class="text-center"><?php echo $chiTietHoaDon["so_luong_mua"]; ?></td>
+                                            <td class="text-right"><?php echo formatCurrency($chiTietHoaDon["gia_ban"] * $chiTietHoaDon["so_luong_mua"]); ?></td>
+                                        </tr>
+                                    <?php
+                                    }
+                                    ?>
+                                    <tr>
+                                        <th colspan="4" class="text-dark bg-light">TỔNG TIỀN:</th>
+                                        <th class="text-danger text-right bg-light"><?php echo formatCurrency($hoadon[0]["tong_tien"]) ; ?></th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="4" class="text-right">
+                                            Trạng thái đơn hàng:
+                                            <span class="badge <?php 
+                                                $trangthai =$hoadon[0]["trang_thai_don_hang"];
+                                                if ($trangthai === "Chờ xác nhận") {
+                                                    echo "badge-primary";
+                                                } elseif ($trangthai === "Đang xử lý") {
+                                                    echo "badge-warning";
+                                                } elseif ($trangthai === "Đã giao") {
+                                                    echo "badge-success";
+                                                } else {
+                                                    echo "badge-danger";
+                                                }
+                                            ?> p-2"><?php echo $hoadon[0]["trang_thai_don_hang"]; ?></span>
+                                        </th>
+                                        <td class="text-center">
+                                            <button class="btn btn-secondary btn-sm" <?php if ($trangthai !== "Chờ xác nhận") {echo "disabled";}?>>Hủy Đơn</button>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- Gap between invoice -->
+                                <p class="py-2"></p>
+                            <?php
+                            }
+                            ?>
+                        <?php
+                        }
+                        ?>
+                        <!-- End Table -->
                     </div>
                 </div>
             </div>
@@ -131,7 +182,7 @@ if (!isset($_SESSION["username"])) {
 
     <!-- Footer -->
     <?php require "./components/footer.php" ?>
-    
+
 </body>
 
 </html>

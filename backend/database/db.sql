@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 12, 2025 at 11:40 AM
+-- Generation Time: Apr 16, 2025 at 04:55 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,8 +41,10 @@ INSERT INTO `chitiethoadon` (`ma_nuoc_hoa`, `ma_hoa_don`, `so_luong_mua`) VALUES
 (1, 4, 3),
 (2, 1, 1),
 (3, 6, 2),
+(4, 3, 3),
 (4, 8, 1),
 (5, 2, 2),
+(5, 10, 4),
 (6, 7, 4),
 (7, 3, 1),
 (8, 10, 1),
@@ -155,16 +157,16 @@ CREATE TABLE `hoadon` (
 --
 
 INSERT INTO `hoadon` (`ma_hoa_don`, `ma_khach_hang`, `ma_dia_chi`, `thoi_gian`, `tong_tien`, `trang_thai_don_hang`) VALUES
-(1, 7, 1, '2025-03-05 09:20:00', 12000000, 'Đang xử lý'),
+(1, 7, 1, '2025-03-05 09:20:00', 2300000, 'Đang xử lý'),
 (2, 3, 2, '2025-03-15 14:45:00', 8000000, 'Đã giao'),
-(3, 1, 3, '2025-03-20 11:30:00', 15000000, 'Đã hủy'),
-(4, 10, 4, '2025-03-25 16:10:00', 20000000, 'Đã giao'),
-(5, 5, 5, '2025-03-30 10:00:00', 5000000, 'Đang xử lý'),
-(6, 2, 6, '2025-04-02 12:20:00', 18000000, 'Đã giao'),
-(7, 7, 7, '2025-04-05 18:00:00', 22000000, 'Đang xử lý'),
-(8, 8, 8, '2025-04-08 13:15:00', 13000000, 'Đã giao'),
-(9, 4, 9, '2025-04-10 15:40:00', 9000000, 'Đã hủy'),
-(10, 1, 10, '2025-04-11 17:25:00', 25000000, 'Đã giao');
+(3, 1, 3, '2025-03-20 11:30:00', 10000000, 'Đã hủy'),
+(4, 10, 4, '2025-03-25 16:10:00', 2500000, 'Đã giao'),
+(5, 5, 5, '2025-03-30 10:00:00', 2400000, 'Đang xử lý'),
+(6, 2, 6, '2025-04-02 12:20:00', 5600000, 'Đã giao'),
+(7, 7, 7, '2025-04-05 18:00:00', 10400000, 'Đang xử lý'),
+(8, 8, 8, '2025-04-08 13:15:00', 2700000, 'Đã giao'),
+(9, 4, 9, '2025-04-10 15:40:00', 4400000, 'Đã hủy'),
+(10, 1, 10, '2025-04-11 17:25:00', 17100000, 'Đã giao');
 
 -- --------------------------------------------------------
 
@@ -195,7 +197,8 @@ INSERT INTO `khachhang` (`ma_khach_hang`, `ten_khach_hang`, `email`, `username`,
 (7, 'Vu Huu G', 'g@gmail.com', 'vuhuug', 'pass123', 1),
 (8, 'Bui Van H', 'h@gmail.com', 'buivanh', 'pass123', 1),
 (9, 'Ly Kieu I', 'i@gmail.com', 'lykieui', 'pass123', 1),
-(10, 'Do Anh J', 'j@gmail.com', 'doanhj', 'pass123', 1);
+(10, 'Do Anh J', 'j@gmail.com', 'doanhj', 'pass123', 1),
+(11, 'Nguyễn Khắc Khổ', 'khoquet12@gmail.com', 'choco', 'bi', 1);
 
 -- --------------------------------------------------------
 
@@ -499,7 +502,8 @@ ALTER TABLE `hoadon`
 -- Indexes for table `khachhang`
 --
 ALTER TABLE `khachhang`
-  ADD PRIMARY KEY (`ma_khach_hang`);
+  ADD PRIMARY KEY (`ma_khach_hang`),
+  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- Indexes for table `nongdo`
@@ -548,7 +552,7 @@ ALTER TABLE `thuonghieu`
 -- AUTO_INCREMENT for table `khachhang`
 --
 ALTER TABLE `khachhang`
-  MODIFY `ma_khach_hang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `ma_khach_hang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `nuochoa`
@@ -559,13 +563,6 @@ ALTER TABLE `nuochoa`
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `chitiethoadon`
---
-ALTER TABLE `chitiethoadon`
-  ADD CONSTRAINT `chitiethoadon_ibfk_1` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`),
-  ADD CONSTRAINT `chitiethoadon_ibfk_2` FOREIGN KEY (`ma_hoa_don`) REFERENCES `hoadon` (`ma_hoa_don`);
 
 --
 -- Constraints for table `diachi`
@@ -584,8 +581,8 @@ ALTER TABLE `dungtich_nuochoa`
 -- Constraints for table `hoadon`
 --
 ALTER TABLE `hoadon`
-  ADD CONSTRAINT `hoadon_ibfk_1` FOREIGN KEY (`ma_khach_hang`) REFERENCES `khachhang` (`ma_khach_hang`),
-  ADD CONSTRAINT `hoadon_ibfk_2` FOREIGN KEY (`ma_dia_chi`) REFERENCES `diachi` (`ma_dia_chi`);
+  ADD CONSTRAINT `hoadon_ibfk_1` FOREIGN KEY (`ma_dia_chi`) REFERENCES `diachi` (`ma_dia_chi`),
+  ADD CONSTRAINT `hoadon_ibfk_2` FOREIGN KEY (`ma_khach_hang`) REFERENCES `khachhang` (`ma_khach_hang`);
 
 --
 -- Constraints for table `nongdo_nuochoa`
