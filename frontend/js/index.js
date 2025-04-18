@@ -38,15 +38,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
         swiperInstance = new Swiper(".swiper-container", {
             slidesPerView: 4,
+            slidesPerGroup: 4, // Di chuyển 4 slide mỗi lần nhấn nút next/prev
             spaceBetween: 20,
             navigation: {
                 nextEl: ".swiper-button-next",
                 prevEl: ".swiper-button-prev",
             },
             breakpoints: {
-                1024: { slidesPerView: 4 },
-                768: { slidesPerView: 3 },
-                480: { slidesPerView: 1 }
+                1024: { 
+                    slidesPerView: 4,
+                    slidesPerGroup: 4
+                },
+                768: { 
+                    slidesPerView: 3,
+                    slidesPerGroup: 3
+                },
+                480: { 
+                    slidesPerView: 1,
+                    slidesPerGroup: 1
+                }
+            }
+        });
+
+        // Hiển thị nút "Xem thêm" tương ứng với danh mục
+        document.querySelectorAll(".view-more").forEach(btn => {
+            btn.classList.add("d-none");
+            if (btn.dataset.category === category) {
+                btn.classList.remove("d-none");
             }
         });
     }

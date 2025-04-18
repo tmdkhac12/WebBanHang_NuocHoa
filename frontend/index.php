@@ -27,7 +27,6 @@
             </div>
 
             <!-- The slideshow/carousel -->
-            <!-- Trong file index.php -->
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <a href="sanpham.php?gender=Nam">
@@ -38,7 +37,7 @@
                     </a>
                 </div>
                 <div class="carousel-item">
-                    <a href="sanpham.php?gender=Nu"> <!-- Sửa từ gender=Nu thay vì Nữ -->
+                    <a href="sanpham.php?gender=Nu">
                         <img src="./images/nuochoanu.jpg" alt="Nước hoa nữ" class="d-block carousel-image">
                         <div class="carousel-caption">
                             <h3>NƯỚC HOA NỮ</h3>
@@ -76,6 +75,11 @@
                 <div class="swiper-wrapper" id="product-list"></div>
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="sanpham.php?gender=Nam" class="btn btn-primary view-more" data-category="nam">Xem thêm nước hoa nam</a>
+                <a href="sanpham.php?gender=Nu" class="btn btn-primary view-more d-none" data-category="nu">Xem thêm nước hoa nữ</a>
+                <a href="sanpham.php?gender=Unisex" class="btn btn-primary view-more d-none" data-category="unisex">Xem thêm nước hoa Unisex</a>
             </div>
         </div>
     </div>
