@@ -33,21 +33,9 @@
     margin: 0;
 }
 
-.quantity-control {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 .quantity-btn {
-    width: 15px;
-    height: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background: none;
     border: 1px solid #dee2e6;
-    margin: 5px 0;
     color: #6c757d;
     font-size: 0.8rem;
     cursor: pointer;
@@ -59,7 +47,6 @@
 }
 
 .quantity-input {
-    width: 60px;
     border: 1px solid #dee2e6;
     text-align: center;
     font-weight: bold;
