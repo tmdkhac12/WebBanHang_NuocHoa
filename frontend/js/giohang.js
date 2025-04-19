@@ -1,66 +1,3 @@
-
-localStorage.setItem("cart", JSON.stringify([
-    {
-        name: "Old Fashioned - 50ml",
-        price: 6700000,
-        quantity: 2,
-        image: "https://xxivstore.com/wp-content/uploads/2025/02/Kilian-Old-Fashioned-300x300.png"
-    },
-    {
-        name: "Matcha Latte - 50ml",
-        price: 1200000,
-        quantity: 2,
-        image: "https://xxivstore.com/wp-content/uploads/2025/02/Kira-Matcha-Latte-300x300.png"
-    }
-]));
-localStorage.clear();
-document.addEventListener("DOMContentLoaded", function () {
-    const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
-    const cartContainer = document.getElementById("cart-items-container");
-    const emptyCartMessage = document.getElementById("empty-cart-message");
-
-    if (cartItems.length === 0) {
-        emptyCartMessage.style.display = "block";
-        cartContainer.innerHTML = "";
-        return;
-    }
-
-    emptyCartMessage.style.display = "none";
-
-    cartItems.forEach(item => {
-        const subtotal = item.price * item.quantity;
-        const cartItem = document.createElement("div");
-        cartItem.className = "cart-item";
-        cartItem.innerHTML = `
-            <div class="row align-items-center row-gap-3">
-                <div class="col-md-2">
-                    <img src="${item.image}" alt="${item.name}" class="product-image img-fluid" />
-                </div>
-                <div class="col-md-4">
-                    <h5 class="mb-1">${item.name}</h5>
-                </div>
-                <div class="col-md-2">
-                    <span class="price">${item.price.toLocaleString()}₫</span>
-                </div>
-                <div class="col-md-1">
-                    <div class="quantity-control">
-                        <button type="button" class="quantity-btn plus"><i class="fas fa-plus"></i></button>
-                        <input type="number" class="quantity-input" value="${item.quantity}" min="1" max="99" />
-                        <button type="button" class="quantity-btn minus"><i class="fas fa-minus"></i></button>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <span class="subtotal">${subtotal.toLocaleString()}₫</span>
-                </div>
-                <div class="col-md-1 text-end">
-                    <button type="button" class="remove-item"><i class="fas fa-trash"></i></button>
-                </div>
-            </div>
-        `;
-        cartContainer.appendChild(cartItem);
-    });
-});
-
 async function handleCheckout() {
     try {
         // Lấy dữ liệu từ các sản phẩm trong giỏ hàng
@@ -74,8 +11,6 @@ async function handleCheckout() {
                 subtotal: item.querySelector(".subtotal")?.textContent || "",
             };
         });
-        alert(JSON.stringify(cartItems, null, 2));
-
 
         const cartData = {
             items: cartItems,
@@ -90,7 +25,7 @@ async function handleCheckout() {
         console.log("Cart data saved:", cartData);
 
         // Chuyển đến trang checkout
-        window.location.href = "checkout.html";
+        window.location.href = "checkout.php";
     } catch (error) {
         console.error("Error details:", error);
         alert("Không thể xử lý đơn hàng: " + error.message);
