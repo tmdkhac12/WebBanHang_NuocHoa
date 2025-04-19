@@ -134,7 +134,7 @@ $hoadons = $hoaDonController->getAllHoaDon($_SESSION["user_id"]);
                                         <tr>
                                             <td class="text-center"><?php echo $i + 1;
                                                                     $i = $i + 1; ?></td>
-                                            <td><?php echo $chiTietHoaDon["ten_nuoc_hoa"]; ?></td>
+                                            <td><?php echo $chiTietHoaDon["ten_nuoc_hoa"] . " - " . $chiTietHoaDon["dung_tich"] . "ml"; ?></td>
                                             <td class="text-right"><?php echo formatCurrency($chiTietHoaDon["gia_ban"]); ?></td>
                                             <td class="text-center"><?php echo $chiTietHoaDon["so_luong_mua"]; ?></td>
                                             <td class="text-right"><?php echo formatCurrency($chiTietHoaDon["gia_ban"] * $chiTietHoaDon["so_luong_mua"]); ?></td>

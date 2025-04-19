@@ -1,17 +1,20 @@
-<?php 
+<?php
 require __DIR__ . "/../config/connection.php";
 
-class HoaDonModel {
-    public function getAllHoaDonOf($maKhachHang) {
+class HoaDonModel
+{
+    public function getAllHoaDonOf($maKhachHang)
+    {
         $connection = getConnection();
 
-        $sql = "SELECT hd.ma_hoa_don, hd.thoi_gian, hd.tong_tien, hd.trang_thai_don_hang, ct.so_luong_mua, dc.ten_nguoi_nhan, dc.so_dien_thoai_nguoi_nhan, dc.dia_chi_giao_hang, n.ten_nuoc_hoa, n.gia_ban
-                From hoadon hd
-                INNER JOIN chitiethoadon ct on hd.ma_hoa_don = ct.ma_hoa_don 
-                INNER JOIN khachhang kh on hd.ma_khach_hang = kh.ma_khach_hang
+        $sql = "SELECT hd.ma_hoa_don, hd.thoi_gian, hd.tong_tien, hd.trang_thai_don_hang, ct.so_luong_mua, dc.ten_nguoi_nhan, dc.so_dien_thoai_nguoi_nhan, dc.dia_chi_giao_hang, nh.ten_nuoc_hoa, dt_nh.gia_ban, dt.dung_tich
+                FROM hoadon hd
+                INNER JOIN chitiethoadon ct on hd.ma_hoa_don = ct.ma_hoa_don
+                INNER JOIN nuochoa nh on ct.ma_nuoc_hoa = nh.ma_nuoc_hoa
+                INNER JOIN dungtich_nuochoa dt_nh on ct.ma_nuoc_hoa = dt_nh.ma_nuoc_hoa AND ct.ma_dung_tich = dt_nh.ma_dung_tich
                 INNER JOIN diachi dc on hd.ma_dia_chi = dc.ma_dia_chi
-                INNER JOIN nuochoa n on ct.ma_nuoc_hoa = n.ma_nuoc_hoa
-                WHERE hd.ma_khach_hang =  ?
+                INNER JOIN dungtich dt on dt_nh.ma_dung_tich = dt.ma_dung_tich
+                WHERE hd.ma_khach_hang = ?
                 ORDER BY hd.thoi_gian DESC
                 ";
 
@@ -30,7 +33,8 @@ class HoaDonModel {
         return (count($hoadons) > 0 ? $hoadons : null);
     }
 
-    public function huyDonHang($maHoaDon) {
+    public function huyDonHang($maHoaDon)
+    {
         $connection = getConnection();
 
         $sql = "UPDATE hoadon SET trang_thai_don_hang = 'Đã hủy' WHERE ma_hoa_don = ?";
@@ -41,4 +45,3 @@ class HoaDonModel {
         return ($statement->affected_rows > 0 ? true : false);
     }
 }
-?>
