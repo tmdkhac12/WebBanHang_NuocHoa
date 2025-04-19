@@ -76,7 +76,7 @@ if ($productId) {
     
                     <div class="mb-4 quantity-selector">
                         <label class="form-label">Số lượng:</label>
-                        <div class="input-group w-50">
+                        <div class="input-group w-20">
                             <button class="btn btn-outline-secondary" type="button" id="decreaseQty">-</button>
                             <input type="text" class="form-control text-center" id="quantity" value="1" readonly>
                             <button class="btn btn-outline-secondary" type="button" id="increaseQty">+</button>
