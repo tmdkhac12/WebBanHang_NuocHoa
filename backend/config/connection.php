@@ -5,7 +5,7 @@ function getConnection()
     $username = "root";
     $password = "";
 
-    $connection = mysqli_connect($host, $username, $password, "web_nuochoa");
+    $connection = mysqli_connect($host, $username, $password, "db");
 
     if (!$connection) {
         echo "Connection failed: " . mysqli_connect_error();
