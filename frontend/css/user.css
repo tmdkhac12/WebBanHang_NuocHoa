@@ -10,3 +10,9 @@
 .col-9 p {
     margin: 10px;
 }
+
+input.changed {
+    border-color: #ffc107;
+    /* vàng cảnh báo */
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, .25);
+}

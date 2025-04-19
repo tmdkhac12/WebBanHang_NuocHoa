@@ -35,12 +35,12 @@ class UserModel
         return $isExist;
     }
 
-    public function isExistUsernameAndPassword($username, $password)
+    public function isCurrentPasswordMatched($username, $currentPassword)
     {
         $connection = getConnection();
 
         $statement = $connection->prepare("SELECT * FROM khachhang WHERE username = ? AND password = ?");
-        $statement->bind_param("ss", $username, $password);
+        $statement->bind_param("ss", $username, $currentPassword);
         $statement->execute();
 
         $queryResult = $statement->get_result();
@@ -51,6 +51,21 @@ class UserModel
         return $isExist;
     }
 
+    public function getAccount($username, $password) {
+        $connection = getConnection();
+
+        $statement = $connection->prepare("SELECT * FROM khachhang WHERE username = ? AND password = ?");
+        $statement->bind_param("ss", $username, $password);
+        $statement->execute();
+
+        $queryResult = $statement->get_result();
+        $account = $queryResult->fetch_assoc(); // return associative array 
+
+        $statement->close();
+        $connection->close();
+        return $account;
+    }
+
     public function addUser($hoten, $email, $username, $password, $status)
     {
         $connection = getConnection();
@@ -59,7 +74,32 @@ class UserModel
                 VALUES (?,?,?,?,?)";
         $statement = $connection->prepare($sql);
         $statement->bind_param("ssssi", $hoten, $email, $username, $password, $status);
-        
-        return $statement->execute();
+        $statement->execute();
+
+        return ($statement->affected_rows > 0 ? true : false);
     }
+
+    public function updateUserInfo($hoten, $email, $username) {
+        $connection = getConnection();
+
+        $sql = "UPDATE khachhang SET ten_khach_hang = ?, email = ? WHERE username = ?";
+        $statement = $connection->prepare($sql);
+        $statement->bind_param("sss", $hoten, $email, $username);
+        $statement->execute();
+
+        return ($statement->affected_rows > 0 ? true : false);
+    }
+
+    
+    public function updateUserInfoAndPassword($hoten, $email, $username, $newPassword) {
+        $connection = getConnection();
+        
+        $sql = "UPDATE khachhang SET ten_khach_hang = ?, email = ?, khachhang.password = ? WHERE username = ?";
+        $statement = $connection->prepare($sql);
+        $statement->bind_param("ssss", $hoten, $email, $newPassword, $username);
+        $statement->execute();
+
+        return ($statement->affected_rows > 0 ? true : false);
+    }
+    
 }
