@@ -8,6 +8,8 @@ body {
 
 .container {
     max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 15px;
 }
 
 /* Carousel */
@@ -98,6 +100,8 @@ body {
 
 /* Swiper Container */
 .swiper-container {
+    max-width: 100%; /* Đảm bảo Swiper không vượt quá container cha */
+    overflow: hidden; /* Ẩn các phần tử tràn ra ngoài */
     padding: 20px 0;
     position: relative;
     border-radius: 10px;
@@ -105,14 +109,28 @@ body {
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05); /* Bóng đổ nhẹ */
 }
 
+/* Swiper Wrapper */
+.swiper-wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+/* Swiper Slide */
+.swiper-slide {
+    flex: 0 0 auto; /* Đảm bảo slide không bị co giãn */
+    width: auto; /* Để Swiper tính toán chiều rộng dựa trên slidesPerView */
+}
+
 /* Product Card */
 .product-card {
+    width: 100%; /* Đảm bảo card chiếm toàn bộ chiều rộng của slide */
+    max-width: 250px; /* Giới hạn chiều rộng tối đa của mỗi card */
     background: #fff;
     border-radius: 10px;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    padding: 20px !important;
+    box-sizing: border-box;
 }
 
 .product-card:hover {
@@ -210,6 +228,20 @@ body {
     font-size: 18px !important;
 }
 
+/* Nút Xem thêm */
+.view-more {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.view-more:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .tab {
@@ -219,6 +251,10 @@ body {
 
     .product-image {
         height: 150px;
+    }
+
+    .product-card {
+        max-width: 200px; /* Thu nhỏ card trên tablet */
     }
 
     .product-card h5 {
@@ -242,6 +278,10 @@ body {
 
     .product-image {
         height: 120px;
+    }
+
+    .product-card {
+        max-width: 100%; /* Card chiếm toàn bộ slide trên mobile */
     }
 
     .swiper-button-next,
