@@ -16,9 +16,10 @@ class ProductModel {
     }
 
     public function getAllProducts($limit, $offset) {
-        $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, n.gia_ban, t.ten_thuong_hieu 
+        $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, dn.gia_ban, t.ten_thuong_hieu 
                 FROM nuochoa n 
                 LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
+                LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
                 LIMIT ? OFFSET ?";
         $stmt = $this->connection->prepare($sql);
         $stmt->bind_param("ii", $limit, $offset);
@@ -44,7 +45,7 @@ class ProductModel {
         return $total;
     }
 
-    private function buildFilterConditions($gender, $minPrice, $maxPrice, $productNameSearch) { // Đổi từ $brandSearch
+    private function buildFilterConditions($gender, $minPrice, $maxPrice, $productNameSearch) {
         $conditions = ['sql' => '', 'types' => '', 'params' => []];
 
         if (!empty($gender)) {
@@ -56,24 +57,24 @@ class ProductModel {
 
         if ($minPrice !== null && $maxPrice !== null && is_numeric($minPrice) && is_numeric($maxPrice)) {
             if ($minPrice == 0) {
-                $conditions['sql'] .= " AND n.gia_ban <= ?";
+                $conditions['sql'] .= " AND dn.gia_ban <= ?";
                 $conditions['types'] .= "d";
                 $conditions['params'][] = $maxPrice;
             } elseif ($maxPrice == 999999999) {
-                $conditions['sql'] .= " AND n.gia_ban >= ?";
+                $conditions['sql'] .= " AND dn.gia_ban >= ?";
                 $conditions['types'] .= "d";
                 $conditions['params'][] = $minPrice;
             } else {
-                $conditions['sql'] .= " AND n.gia_ban BETWEEN ? AND ?";
+                $conditions['sql'] .= " AND dn.gia_ban BETWEEN ? AND ?";
                 $conditions['types'] .= "dd";
                 $conditions['params'][] = $minPrice;
                 $conditions['params'][] = $maxPrice;
             }
         }
 
-        if ($productNameSearch) { // Đổi từ $brandSearch
+        if ($productNameSearch) {
             $productNameSearch = $this->connection->real_escape_string($productNameSearch);
-            $conditions['sql'] .= " AND n.ten_nuoc_hoa LIKE ?"; // Đổi từ t.ten_thuong_hieu thành n.ten_nuoc_hoa
+            $conditions['sql'] .= " AND n.ten_nuoc_hoa LIKE ?";
             $conditions['types'] .= "s";
             $conditions['params'][] = "%$productNameSearch%";
         }
@@ -81,14 +82,15 @@ class ProductModel {
         return $conditions;
     }
 
-    public function filterProducts($gender, $minPrice, $maxPrice, $productNameSearch, $limit, $offset) { // Đổi từ $brandSearch
+    public function filterProducts($gender, $minPrice, $maxPrice, $productNameSearch, $limit, $offset) {
         $conditions = $this->buildFilterConditions($gender, $minPrice, $maxPrice, $productNameSearch);
 
-        $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, n.gia_ban, t.ten_thuong_hieu 
+        $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, dn.gia_ban, t.ten_thuong_hieu 
                 FROM nuochoa n 
                 LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
+                LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
                 WHERE 1=1" . $conditions['sql'];
-        $sql .= " ORDER BY n.gia_ban ASC LIMIT ? OFFSET ?";
+        $sql .= " ORDER BY dn.gia_ban ASC LIMIT ? OFFSET ?";
         $conditions['types'] .= "ii";
         $conditions['params'][] = $limit;
         $conditions['params'][] = $offset;
@@ -108,6 +110,7 @@ class ProductModel {
         $totalSql = "SELECT COUNT(*) as total 
                      FROM nuochoa n 
                      LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
+                     LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
                      WHERE 1=1" . $conditions['sql'];
         $totalStmt = $this->connection->prepare($totalSql);
         if (!empty($conditions['params']) && count($conditions['params']) > 2) {
@@ -124,7 +127,7 @@ class ProductModel {
     }
 
     public function getProductById($id) {
-        $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, n.gia_ban, n.gioi_tinh, n.mo_ta, t.ten_thuong_hieu 
+        $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, n.gioi_tinh, n.mo_ta, t.ten_thuong_hieu 
                 FROM nuochoa n 
                 LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
                 WHERE n.ma_nuoc_hoa = ?";
@@ -135,7 +138,7 @@ class ProductModel {
         $stmt->close();
 
         if ($product) {
-            $sql = "SELECT d.dung_tich 
+            $sql = "SELECT d.dung_tich, dn.gia_ban 
                     FROM dungtich d 
                     JOIN dungtich_nuochoa dn ON d.ma_dung_tich = dn.ma_dung_tich 
                     WHERE dn.ma_nuoc_hoa = ?";
@@ -145,7 +148,10 @@ class ProductModel {
             $result = $stmt->get_result();
             $dungtich = [];
             while ($row = $result->fetch_assoc()) {
-                $dungtich[] = $row['dung_tich'];
+                $dungtich[] = [
+                    'dung_tich' => $row['dung_tich'],
+                    'gia_ban' => $row['gia_ban']
+                ];
             }
             $stmt->close();
             $product['dung_tich'] = $dungtich;
@@ -188,6 +194,50 @@ class ProductModel {
         }
 
         return $product;
+    }
+
+    public function getFeaturedProducts() {
+        $featuredProducts = [
+            'nam' => [],
+            'nu' => [],
+            'unisex' => []
+        ];
+
+        $genders = ['Nam', 'Nu', 'Unisex'];
+        foreach ($genders as $gender) {
+            $sql = "SELECT n.ma_nuoc_hoa, n.ten_nuoc_hoa, dn.gia_ban, n.hinh_anh, t.ten_thuong_hieu, COALESCE(SUM(ct.so_luong_mua), 0) as total_sold
+                    FROM nuochoa n
+                    LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu
+                    LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
+                    LEFT JOIN chitiethoadon ct ON n.ma_nuoc_hoa = ct.ma_nuoc_hoa AND ct.ma_dung_tich = 6
+                    WHERE n.gioi_tinh = ?
+                    GROUP BY n.ma_nuoc_hoa
+                    ORDER BY total_sold DESC
+                    LIMIT 6";
+
+            $stmt = $this->connection->prepare($sql);
+            $stmt->bind_param("s", $gender);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            $products = [];
+            while ($row = $result->fetch_assoc()) {
+                $products[] = [
+                    'ma_nuoc_hoa' => $row['ma_nuoc_hoa'],
+                    'ten_nuoc_hoa' => $row['ten_nuoc_hoa'],
+                    'gia_ban' => $row['gia_ban'],
+                    'hinh_anh' => $row['hinh_anh'],
+                    'ten_thuong_hieu' => $row['ten_thuong_hieu'],
+                    'total_sold' => $row['total_sold'] ?: 0
+                ];
+            }
+            $stmt->close();
+
+            $key = strtolower($gender);
+            $featuredProducts[$key] = $products;
+        }
+
+        return $featuredProducts;
     }
 }
 ?>

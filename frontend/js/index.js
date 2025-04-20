@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const productContainer = document.getElementById("product-list");
     const tabs = document.querySelectorAll(".tab");
     let swiperInstance = null;
-    let perfumes = { nam: [], nu: [], unisex: [] }; // Dữ liệu sẽ được lấy từ API
+    let perfumes = { nam: [], nu: [], unisex: [] };
 
     function destroySwiper() {
         if (swiperInstance) {
@@ -14,19 +14,19 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderProducts(category) {
         productContainer.innerHTML = "";
         perfumes[category].slice(0, 6).forEach(perfume => {
+            const giaBan = perfume.gia_ban ? formatPrice(perfume.gia_ban) : "Liên hệ";
             const productCard = `
                 <div class="swiper-slide">
                     <div class="product-card p-3 text-center" data-id="${perfume.ma_nuoc_hoa}" style="cursor: pointer;">
                         <img src="./images/${perfume.hinh_anh}" alt="${perfume.ten_nuoc_hoa}" class="product-image mb-2">
                         <h5 class="text-danger fw-bold">${perfume.ten_thuong_hieu}</h5>
                         <p class="mb-1">${perfume.ten_nuoc_hoa}</p>
-                        <p class="text-success fw-bold">${formatPrice(perfume.gia_ban)}</p>
+                        <p class="text-success fw-bold">${giaBan}</p>
                     </div>
                 </div>`;
             productContainer.innerHTML += productCard;
         });
 
-        // Thêm sự kiện nhấp chuột để chuyển hướng đến trang chi tiết sản phẩm
         document.querySelectorAll('.product-card').forEach(card => {
             card.addEventListener('click', () => {
                 const productId = card.getAttribute('data-id');
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         swiperInstance = new Swiper(".swiper-container", {
             slidesPerView: 4,
-            slidesPerGroup: 4, // Di chuyển 4 slide mỗi lần nhấn nút next/prev
+            slidesPerGroup: 4,
             spaceBetween: 20,
             navigation: {
                 nextEl: ".swiper-button-next",
@@ -68,7 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // Hiển thị nút "Xem thêm" tương ứng với danh mục
         document.querySelectorAll(".view-more").forEach(btn => {
             btn.classList.add("d-none");
             if (btn.dataset.category === category) {
@@ -77,20 +76,18 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Hàm định dạng giá
     const formatPrice = (price) => {
-        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " đ";
+        return Number(price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
     };
 
-    // Lấy dữ liệu từ API
     fetch('/backend/api/ProductAPI.php?action=getFeaturedProducts', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
     .then(response => response.json())
     .then(data => {
-        perfumes = data; // Gán dữ liệu từ API vào perfumes
-        renderProducts("nam"); // Hiển thị tab "Nam" mặc định
+        perfumes = data;
+        renderProducts("nam");
     })
     .catch(error => {
         console.error('Error fetching featured products:', error);
