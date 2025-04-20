@@ -58,13 +58,17 @@ if ($productId) {
                     <h1 class="product-title"><?php echo htmlspecialchars($product['ten_nuoc_hoa']); ?></h1>
                     <h6><?php echo htmlspecialchars($product['ten_thuong_hieu']); ?></h6>
                     <p class="product-gender"><i class="fas fa-venus-mars"></i> <?php echo htmlspecialchars($product['gioi_tinh']); ?></p>
-                    <p class="product-price"><?php echo number_format($product['gia_ban'], 0, ',', '.') . ' đ'; ?></p>
+                    <p class="product-price" id="product-price"><?php echo number_format($product['dung_tich'][0]['gia_ban'], 0, ',', '.') . ' đ'; ?></p>
     
                     <div class="mb-4">
                         <label class="form-label">Dung tích:</label>
                         <div class="btn-group" role="group">
                             <?php foreach ($product['dung_tich'] as $index => $dt): ?>
-                                <button type="button" class="btn btn-outline-secondary size-btn <?php echo $index === 0 ? 'active' : ''; ?>" data-size="<?php echo htmlspecialchars($dt); ?>"><?php echo htmlspecialchars($dt); ?>ml</button>
+                                <button type="button" class="btn btn-outline-secondary size-btn <?php echo $index === 0 ? 'active' : ''; ?>" 
+                                        data-size="<?php echo htmlspecialchars($dt['dung_tich']); ?>" 
+                                        data-price="<?php echo $dt['gia_ban']; ?>">
+                                    <?php echo htmlspecialchars($dt['dung_tich']); ?>ml
+                                </button>
                             <?php endforeach; ?>
                         </div>
                     </div>
