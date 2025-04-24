@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . "/../config/connection.php";
+require_once __DIR__ . "/../config/connection.php";
 
 class HoaDonModel
 {
@@ -43,5 +43,15 @@ class HoaDonModel
         $statement->execute();
 
         return ($statement->affected_rows > 0 ? true : false);
+    }
+
+    public function addHoaDon($connection, $maKhachHang, $maDiaChi, $thoiGian, $tongTien, $trangThai) {
+        $sql = "INSERT INTO hoadon (ma_khach_hang, ma_dia_chi, thoi_gian, tong_tien, trang_thai_don_hang) 
+                VALUES (?,?,?,?,?)";
+        $statement = $connection->prepare($sql);
+        $statement->bind_param("iisds", $maKhachHang, $maDiaChi, $thoiGian, $tongTien, $trangThai);
+        $statement->execute();
+
+        return ($statement->affected_rows > 0 ? $connection->insert_id : false);
     }
 }

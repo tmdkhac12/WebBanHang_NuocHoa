@@ -1,7 +1,8 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 
-require __DIR__ . "/../controller/HoaDonController.php";
+require_once __DIR__ . "/../controller/HoaDonController.php";
 
 $hoaDonController = new HoaDonController();
 
@@ -20,6 +21,17 @@ switch ($action) {
         } else {
             echo json_encode(["success" => false, "message" => "Có lỗi, vui lòng thử lại sau!"]);
         }
+        break;
+    case 'taoHoaDon': 
+        // Get checkoutInfo from body fetch when user onclick 
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        $maKhachHang = $_SESSION["user_id"];
+        $diachi = $data["diachi"];
+        $hoadon = $data["hoadon"];
+        $chitiets = $data["chitiet"];
+
+        echo json_encode($hoaDonController->addFullHoaDon($maKhachHang, $diachi, $hoadon, $chitiets));
         break;
     default:
         http_response_code(400);

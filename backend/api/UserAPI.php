@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 
-require __DIR__ . "/../controller/UserController.php";
+require_once __DIR__ . "/../controller/UserController.php";
 
 $userController = new UserController();
 

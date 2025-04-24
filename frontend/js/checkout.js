@@ -9,11 +9,11 @@ document.addEventListener("DOMContentLoaded", function () {
             } catch (error) {
                 console.error("Error parsing cart data:", error);
                 alert("Có lỗi khi tải dữ liệu giỏ hàng");
-                window.location.href = "giohang.html";
+                window.location.href = "giohang.php";
             }
         } else {
             // Nếu không có dữ liệu, quay về trang giỏ hàng
-            window.location.href = "giohang.html";
+            window.location.href = "giohang.php";
         }
     }
 
@@ -104,11 +104,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 pattern: /^[A-Za-zÀ-ỹ\s]{2,}$/,
                 message: "Tên phải có ít nhất 2 ký tự và chỉ chứa chữ cái",
             },
-            {
-                field: document.getElementById("email"),
-                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Email không hợp lệ",
-            },
+            // {
+            //     field: document.getElementById("email"),
+            //     pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            //     message: "Email không hợp lệ",
+            // },
             {
                 field: document.getElementById("phone"),
                 pattern: /^[0-9]{10,11}$/,
@@ -177,12 +177,60 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (isValid) {
+            // 1. Lấy các thông tin cần thiết 
+            const o_cartData = JSON.parse(localStorage.getItem("cartData"));
+
+            const fullName = (shippingFields[0].field.value + " " + shippingFields[1].field.value).trim();
+            const phone = shippingFields[2].field.value.trim();
+            const address = shippingFields[3].field.value.trim();
+
+            // 2. Lưu thành 1 object 
+            const checkoutInfo = {
+                diachi: {
+                    fullName,
+                    phone,
+                    address
+                },
+                hoadon: {
+                    thoigian: getCurrentDateTimeString(),
+                    tongtien: parseCurrency(o_cartData.total),
+                    trangthai: "Chờ xác nhận"
+                },
+                chitiet: o_cartData.items
+            };
+
+            // 3. Gọi API tạo hóa đơn 
+            fetch("/backend/api/HoaDonAPI.php?action=taoHoaDon", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(
+                    checkoutInfo
+                )
+            })
+            .then((respond) => {
+                return respond.json();
+            })
+            .then((data) => {
+                console.log(data);
+
+                alert(data.message);
+                if (data.success) {
+                    window.location.href = "index.php";
+                    localStorage.clear();
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
             // Xử lý đặt hàng thành công
-            alert("Đặt hàng thành công!");
+            // alert("Đặt hàng thành công!");
             // Xóa dữ liệu giỏ hàng
-            localStorage.removeItem("cartData");
+            // localStorage.removeItem("cartData");
             // Chuyển về trang chủ
-            window.location.href = "index.php";
+            // window.location.href = "index.php";
         }
     });
 });
@@ -299,4 +347,23 @@ function loadWards() {
     } else {
         wardSelect.disabled = true;
     }
+}
+
+function getCurrentDateTimeString() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+    const day = String(now.getDate()).padStart(2, '0');
+
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+function parseCurrency(str) {
+    // Xóa dấu chấm ngăn cách hàng nghìn và ký tự "đ", sau đó chuyển về số
+    return parseFloat(str.replace(/\./g, '').replace(/[^\d]/g, ''), 10);
 }

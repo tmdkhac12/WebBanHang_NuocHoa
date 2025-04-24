@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . "/../config/connection.php";
+require_once __DIR__ . "/../config/connection.php";
 
 class ProductModel {
     private $connection;
@@ -238,6 +238,30 @@ class ProductModel {
         }
 
         return $featuredProducts;
+    }
+
+    public function getProductsInList($nuochoas) {
+        $sql = "SELECT n.ma_nuoc_hoa, n.ten_nuoc_hoa, n.gioi_tinh, n.hinh_anh, dt.dung_tich, dt.ma_dung_tich, dtnh.gia_ban
+                FROM nuochoa n 
+                INNER JOIN dungtich dt on dt.dung_tich = ?
+                INNER JOIN dungtich_nuochoa dtnh on dt.ma_dung_tich = dtnh.ma_dung_tich and n.ma_nuoc_hoa = dtnh.ma_nuoc_hoa
+                WHERE n.ma_nuoc_hoa = ?";
+        $statement = $this->connection->prepare($sql);
+
+        $products = [];
+        foreach ($nuochoas as $nuochoa) {
+            $id = $nuochoa["id"];
+            $dungtich = $nuochoa["dungtich"];
+
+            $statement->bind_param("ii", $dungtich, $id);
+            $statement->execute();
+
+            $row = $statement->get_result()->fetch_assoc(); 
+
+            $products[] = $row;
+        }
+
+        return (count($products) > 0 ? $products : null);
     }
 }
 ?>

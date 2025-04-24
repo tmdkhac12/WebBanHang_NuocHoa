@@ -1,7 +1,9 @@
 <?php 
 session_start();
 
-
+echo "<pre>";
+echo var_dump($_SESSION);
+echo "</pre>";
 ?>
 
 <!DOCTYPE html>
@@ -39,13 +41,6 @@ session_start();
                                         <input type="text" class="form-control" id="lastName" placeholder="Tên" />
                                         <label for="lastName">Tên</label>
                                         <div class="invalid-feedback">Vui lòng nhập tên của bạn</div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="email" placeholder="Email" />
-                                        <label for="email">Email</label>
-                                        <div class="invalid-feedback">Vui lòng nhập email hợp lệ</div>
                                     </div>
                                 </div>
                                 <div class="col-12">

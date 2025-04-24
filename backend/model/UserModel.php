@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . "/../config/connection.php";
+require_once __DIR__ . "/../config/connection.php";
 
 class UserModel
 {
@@ -16,7 +16,7 @@ class UserModel
         }
 
         $connection->close();
-        return $users;
+        return (count($users) > 0 ? $users : null);
     }
 
     public function isExistUsername($username)

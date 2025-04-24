@@ -3,12 +3,13 @@ async function handleCheckout() {
         // Lấy dữ liệu từ các sản phẩm trong giỏ hàng
         const cartItems = Array.from(document.querySelectorAll(".cart-item")).map((item) => {
             return {
-                product_id: item.querySelector('input[name="product_id[]"]')?.value || "",
+                product_id: parseInt(item.getAttribute("product-id")) || "",
                 image: item.querySelector("img")?.src || "",
                 name: item.querySelector("h5")?.textContent || "",
                 price: item.querySelector(".price")?.textContent || "",
-                quantity: item.querySelector(".quantity-input")?.value || "1",
+                quantity: parseInt(item.querySelector(".quantity-input").value) || "1",
                 subtotal: item.querySelector(".subtotal")?.textContent || "",
+                size_id: parseInt(item.getAttribute("size_id")) || "",
             };
         });
 
@@ -33,6 +34,8 @@ async function handleCheckout() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    const ao_nuochoasStorage = JSON.parse(localStorage.getItem("nuochoas")) || [];
+
     // Gắn sự kiện click cho nút checkout
     document.getElementById("checkoutButton").addEventListener("click", handleCheckout);
 
@@ -42,23 +45,69 @@ document.addEventListener("DOMContentLoaded", function () {
             const input = this.parentElement.querySelector(".quantity-input");
             const currentValue = parseInt(input.value);
 
+            //Lấy index của sản phẩm trong ao_nuochoasStorage 
+            const index = parseInt(this.closest(".cart-item").getAttribute("index"));
+
             if (this.classList.contains("plus")) {
                 input.value = currentValue + 1;
+
+                // Lưu thay đổi số lượng vào localStorage
+                ao_nuochoasStorage[index].soluong++;
+                localStorage.setItem("nuochoas", JSON.stringify(ao_nuochoasStorage));
             } else if (this.classList.contains("minus") && currentValue > 1) {
                 input.value = currentValue - 1;
+
+                ao_nuochoasStorage[index].soluong--;
+                localStorage.setItem("nuochoas", JSON.stringify(ao_nuochoasStorage));
             }
 
             updateSubtotal(this.closest(".cart-item"));
         });
     });
 
+    // Quantity outfocus envent
+    document.querySelectorAll(".quantity-input").forEach((quantityInput) => {
+        quantityInput.addEventListener("focusout", () => {
+            if (quantityInput.value < 1) {
+                quantityInput.value = 1;
+            }
+
+            //Lấy index của sản phẩm trong ao_nuochoasStorage 
+            const index = parseInt(quantityInput.closest(".cart-item").getAttribute("index"));
+
+            // Cập nhật giá 
+            updateSubtotal(quantityInput.closest(".cart-item"));
+            updateTotal();
+
+            // Lưu Local Storage 
+            ao_nuochoasStorage[index].soluong = quantityInput.value;
+            localStorage.setItem("nuochoas", JSON.stringify(ao_nuochoasStorage));
+        });
+
+        quantityInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); 
+                quantityInput.blur(); 
+            }
+        })
+    })
+
+
     // Remove item functionality
     document.querySelectorAll(".remove-item").forEach((button) => {
         button.addEventListener("click", function () {
+            const index = parseInt(this.closest(".cart-item").getAttribute("index"));
+
             if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
                 this.closest(".cart-item").remove();
                 updateTotal();
                 checkEmptyCart();
+
+                // Xóa phần tử thứ index 
+                ao_nuochoasStorage.splice(index, 1);
+                localStorage.setItem("nuochoas", JSON.stringify(ao_nuochoasStorage));
+
+                console.log(ao_nuochoasStorage);
             }
         });
     });
@@ -91,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 currency: "VND",
             })
                 .format(price)
-                .replace("₫", "") + "₫"
+                .replace("₫", "") + "đ"
         );
     }
 
@@ -122,4 +171,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initial check for empty cart
     checkEmptyCart();
+    updateTotal();
+    sendLocalStorage();
+
+    window.addEventListener("load", function () {
+        sessionStorage.removeItem("nuochoas_submitted");
+    });
 });
+
+function sendLocalStorage() {
+    const nuochoas = localStorage.getItem("nuochoas");
+
+    if (nuochoas && !sessionStorage.getItem("nuochoas_submitted")) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.style.display = "none";
+
+        const input = document.createElement("input");
+        input.name = "nuochoas";
+        input.value = nuochoas;
+
+        form.appendChild(input);
+        document.body.appendChild(form);
+
+        // Đánh dấu đã submit
+        sessionStorage.setItem("nuochoas_submitted", "true");
+
+        form.submit();
+    }
+}

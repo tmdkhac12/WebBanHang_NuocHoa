@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . "/../model/ProductModel.php";
+require_once __DIR__ . "/../model/ProductModel.php";
 
 class ProductController {
     private $productModel;
@@ -22,6 +22,10 @@ class ProductController {
 
     public function getFeaturedProducts() {
         return $this->productModel->getFeaturedProducts();
+    }
+
+    public function getProductsInList($nuochoas) {
+        return $this->productModel->getProductsInList($nuochoas);
     }
 }
 ?>

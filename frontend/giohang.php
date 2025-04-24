@@ -1,6 +1,23 @@
 <?php
 session_start();
 
+require __DIR__ . "/../backend/controller/ProductController.php";
+require __DIR__ . "/../backend/util/Formatter.php";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["nuochoas"])) {
+    $nuochoasStorage = json_decode($_POST["nuochoas"], true);
+
+    $productController = new ProductController();
+    $nuochoasCart = $productController->getProductsInList($nuochoasStorage);
+
+    echo "<pre>";
+    echo var_dump($nuochoasCart);
+    echo "</pre>";
+
+    echo "<pre>";
+    echo var_dump($nuochoasStorage);
+    echo "</pre>";
+}
 
 ?>
 
@@ -59,7 +76,7 @@ session_start();
                                     <i class="fas fa-shopping-cart fa-3x text-muted"></i>
                                 </div>
                                 <h3 class="mb-4">Chưa có sản phẩm nào trong giỏ hàng</h3>
-                                <a href="index.html" class="btn btn-primary">
+                                <a href="/frontend/sanpham.php" class="btn btn-primary">
                                     <i class="fas fa-arrow-left me-2"></i>Quay trở lại cửa hàng
                                 </a>
                             </div>
@@ -67,88 +84,53 @@ session_start();
                             <!-- Cart Items Container -->
                             <div id="cart-items-container">
                                 <!-- Cart Item 1 -->
-                                <div class="cart-item">
-                                    <div class="row align-items-center row-gap-3">
-                                        <div class="col-md-2">
-                                            <img
-                                                src="https://xxivstore.com/wp-content/uploads/2025/02/Kilian-Old-Fashioned-300x300.png"
-                                                alt="Old Fashioned"
-                                                class="product-image img-fluid" />
-                                        </div>
-                                        <div class="col-md-3">
-                                            <h5 class="mb-1">Old Fashioned - 50ml</h5>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <span class="price">6.700.000₫</span>
-                                        </div>
-                                        <div class="col-md-2 d-flex justify-content-center">
-                                            <div class="quantity-control d-flex">
-                                                <button type="button" class="quantity-btn minus">
-                                                    <i class="fas fa-minus"></i>
-                                                </button>
-                                                <input
-                                                    type="number"
-                                                    class="quantity-input"
-                                                    value="2"
-                                                    min="1"
-                                                    max="99" />
-                                                <button type="button" class="quantity-btn plus">
-                                                    <i class="fas fa-plus"></i>
+                                <?php
+                                $i = 0;
+                                foreach ($nuochoasCart as $nuochoa) {
+                                ?>
+                                    <div class="cart-item" index=<?php echo $i; ?> product-id=<?php echo $nuochoasStorage[$i]["id"]; ?> size_id=<?php echo $nuochoa["ma_dung_tich"]; ?>>
+                                        <div class="row align-items-center row-gap-3">
+                                            <div class="col-md-2">
+                                                <img
+                                                    src="/frontend/images/<?php echo $nuochoa["hinh_anh"]; ?>"
+                                                    class="product-image img-fluid" />
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h5 class="mb-1"><?php echo $nuochoa["ten_nuoc_hoa"] . " - " . $nuochoa["dung_tich"] . "ml"; ?></h5>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <span class="price"><?php echo formatCurrency($nuochoa["gia_ban"]) . " đ"; ?></span>
+                                            </div>
+                                            <div class="col-md-2 d-flex justify-content-center">
+                                                <div class="quantity-control d-flex">
+                                                    <button type="button" class="quantity-btn minus">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                    <input
+                                                        type="number"
+                                                        class="quantity-input"
+                                                        value="<?php echo $nuochoasStorage[$i]["soluong"]; ?>"
+                                                        min="1"
+                                                        max="99" />
+                                                    <button type="button" class="quantity-btn plus">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <span class="subtotal"><?php echo formatCurrency($nuochoa["gia_ban"] * $nuochoasStorage[$i]["soluong"]) . " đ"; ?></span>
+                                            </div>
+                                            <div class="col-md-1 text-end">
+                                                <button type="button" class="remove-item">
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <span class="subtotal">13.400.000₫</span>
-                                        </div>
-                                        <div class="col-md-1 text-end">
-                                            <button type="button" class="remove-item">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
                                     </div>
-                                </div>
-
-                                <!-- Cart Item 2 -->
-                                <div class="cart-item">
-                                    <div class="row align-items-center row-gap-3">
-                                        <div class="col-md-2">
-                                            <img
-                                                src="https://xxivstore.com/wp-content/uploads/2025/02/Kira-Matcha-Latte-300x300.png"
-                                                alt="Matcha Latte"
-                                                class="product-image img-fluid" />
-                                        </div>
-                                        <div class="col-md-3">
-                                            <h5 class="mb-1">Matcha Latte - 50ml</h5>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <span class="price">1.200.000₫</span>
-                                        </div>
-                                        <div class="col-md-2 d-flex justify-content-center">
-                                            <div class="quantity-control d-flex">
-                                                <button type="button" class="quantity-btn minus">
-                                                    <i class="fas fa-minus"></i>
-                                                </button>
-                                                <input
-                                                    type="number"
-                                                    class="quantity-input"
-                                                    value="2"
-                                                    min="1"
-                                                    max="99" />
-                                                <button type="button" class="quantity-btn plus">
-                                                    <i class="fas fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <span class="subtotal">2.400.000₫</span>
-                                        </div>
-                                        <div class="col-md-1 text-end">
-                                            <button type="button" class="remove-item">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <?php
+                                $i++;
+                                }
+                                ?>
                             </div>
                         </form>
 
