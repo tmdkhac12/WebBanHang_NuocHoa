@@ -1,9 +1,9 @@
 <?php 
 session_start();
 
-echo "<pre>";
-echo var_dump($_SESSION);
-echo "</pre>";
+// echo "<pre>";
+// echo var_dump($_SESSION);
+// echo "</pre>";
 ?>
 
 <!DOCTYPE html>
@@ -71,10 +71,10 @@ echo "</pre>";
                                     <i class="fas fa-credit-card"></i>
                                     <div>Thẻ tín dụng</div>
                                 </div>
-                                <div class="payment-method" data-method="bank">
+                                <!-- <div class="payment-method" data-method="bank">
                                     <i class="fas fa-university"></i>
                                     <div>Chuyển khoản</div>
-                                </div>
+                                </div> -->
                             </div>
 
                             <div id="creditCardForm" class="mt-4" style="display: none">

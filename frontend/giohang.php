@@ -10,13 +10,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["nuochoas"])) {
     $productController = new ProductController();
     $nuochoasCart = $productController->getProductsInList($nuochoasStorage);
 
-    echo "<pre>";
-    echo var_dump($nuochoasCart);
-    echo "</pre>";
+    // echo "<pre>";
+    // echo var_dump($nuochoasCart);
+    // echo "</pre>";
 
-    echo "<pre>";
-    echo var_dump($nuochoasStorage);
-    echo "</pre>";
+    // echo "<pre>";
+    // echo var_dump($nuochoasStorage);
+    // echo "</pre>";
 }
 
 ?>

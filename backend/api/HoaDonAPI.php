@@ -23,15 +23,26 @@ switch ($action) {
         }
         break;
     case 'taoHoaDon': 
-        // Get checkoutInfo from body fetch when user onclick 
-        $data = json_decode(file_get_contents("php://input"), true);
+        try {
+            // Get checkoutInfo from body fetch when user onclick 
+            $data = json_decode(file_get_contents("php://input"), true);
 
-        $maKhachHang = $_SESSION["user_id"];
-        $diachi = $data["diachi"];
-        $hoadon = $data["hoadon"];
-        $chitiets = $data["chitiet"];
+            if (!isset($_SESSION["user_id"])) {
+                echo json_encode(["message" => "Chưa đăng nhập"]);
+                break;
+            }
 
-        echo json_encode($hoaDonController->addFullHoaDon($maKhachHang, $diachi, $hoadon, $chitiets));
+            $maKhachHang = $_SESSION["user_id"];
+            $diachi = $data["diachi"];
+            $hoadon = $data["hoadon"];
+            $chitiets = $data["chitiet"];
+
+            echo json_encode($hoaDonController->addFullHoaDon($maKhachHang, $diachi, $hoadon, $chitiets));
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["message" => "Lỗi server: " . $e->getMessage()]);
+        }
+        
         break;
     default:
         http_response_code(400);

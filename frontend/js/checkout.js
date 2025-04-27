@@ -1,14 +1,24 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Load cart data from localStorage
     function loadCartData() {
-        const cartDataString = localStorage.getItem("cartData");
-        if (cartDataString) {
+        if (localStorage.getItem("buynow")) {
             try {
-                const cartData = JSON.parse(cartDataString);
+                let cartData = JSON.parse(localStorage.getItem("buynow"));
+                displayCartData(cartData);
+            } catch (error) {
+                console.log(JSON.parse(localStorage.getItem("buynow")))
+                console.log(JSON.parse(localStorage.getItem("cartData")))
+                console.error("Error parsing cart data:", error);
+                alert("Có lỗi khi tải dữ liệu giỏ hàng buynow ");
+                window.location.href = "giohang.php";
+            }
+        } else if (localStorage.getItem("cartData")) {
+            try {
+                let cartData = JSON.parse(localStorage.getItem("cartData"));
                 displayCartData(cartData);
             } catch (error) {
                 console.error("Error parsing cart data:", error);
-                alert("Có lỗi khi tải dữ liệu giỏ hàng");
+                alert("Có lỗi khi tải dữ liệu giỏ hàng cartData");
                 window.location.href = "giohang.php";
             }
         } else {
@@ -43,6 +53,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load cart data when page loads
     loadCartData();
+
+    // Remove buynow storage if user change url 
+    document.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", function(e) {
+            localStorage.removeItem("buynow");
+        });
+    });
 
     // Payment method selection
     const paymentMethods = document.querySelectorAll(".payment-method");
@@ -179,6 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isValid) {
             // 1. Lấy các thông tin cần thiết 
             const o_cartData = JSON.parse(localStorage.getItem("cartData"));
+            const o_buynow = JSON.parse(localStorage.getItem("buynow"));
 
             const fullName = (shippingFields[0].field.value + " " + shippingFields[1].field.value).trim();
             const phone = shippingFields[2].field.value.trim();
@@ -193,10 +211,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 hoadon: {
                     thoigian: getCurrentDateTimeString(),
-                    tongtien: parseCurrency(o_cartData.total),
+                    tongtien: parseCurrency((o_buynow ? o_buynow.total : o_cartData.total)),
                     trangthai: "Chờ xác nhận"
                 },
-                chitiet: o_cartData.items
+                chitiet: (o_buynow ? o_buynow.items : o_cartData.items)
             };
 
             // 3. Gọi API tạo hóa đơn 
@@ -213,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return respond.json();
             })
             .then((data) => {
-                console.log(data);
+                // console.log(data);
 
                 alert(data.message);
                 if (data.success) {
@@ -226,11 +244,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             // Xử lý đặt hàng thành công
-            // alert("Đặt hàng thành công!");
-            // Xóa dữ liệu giỏ hàng
-            // localStorage.removeItem("cartData");
-            // Chuyển về trang chủ
-            // window.location.href = "index.php";
+            // console.log(checkoutInfo)
         }
     });
 });

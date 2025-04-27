@@ -17,6 +17,7 @@ if ($productId) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,9 +29,10 @@ if ($productId) {
     <link rel="stylesheet" href="./css/chitietSP.css">
     <script defer src="./js/chitietSP.js"></script>
 </head>
+
 <body>
     <!-- Header -->
-    <?php require 'components/header.php'?>
+    <?php require 'components/header.php' ?>
 
     <div class="content">
         <div class="container my-5">
@@ -43,41 +45,41 @@ if ($productId) {
                     <li class="breadcrumb-item active" aria-current="page"><?php echo htmlspecialchars($product['ten_nuoc_hoa']); ?></li>
                 </ol>
             </nav>
-    
+
             <!-- Product Details -->
             <div class="row product-details">
                 <!-- Product Image -->
                 <div class="col-md-6">
                     <div class="product-image-wrapper">
-                        <img src="./images/<?php echo htmlspecialchars($product['hinh_anh']); ?>" alt="<?php echo htmlspecialchars($product['ten_nuoc_hoa']); ?>" class="img-fluid product-image">
+                        <img src="./images/<?php echo htmlspecialchars($product['hinh_anh']); ?>" alt="<?php echo htmlspecialchars($product['ten_nuoc_hoa']); ?>" class="img-fluid product-image" id="product-image">
                     </div>
                 </div>
-    
+
                 <!-- Product Info -->
                 <div class="col-md-6">
                     <h1 class="product-title"><?php echo htmlspecialchars($product['ten_nuoc_hoa']); ?></h1>
                     <h6><?php echo htmlspecialchars($product['ten_thuong_hieu']); ?></h6>
                     <p class="product-gender"><i class="fas fa-venus-mars"></i> <?php echo htmlspecialchars($product['gioi_tinh']); ?></p>
                     <p class="product-price" id="product-price"><?php echo number_format($product['dung_tich'][0]['gia_ban'], 0, ',', '.') . ' đ'; ?></p>
-    
+
                     <div class="mb-4">
                         <label class="form-label">Dung tích:</label>
                         <div class="btn-group" role="group">
                             <?php foreach ($product['dung_tich'] as $index => $dt): ?>
-                                <button type="button" class="btn btn-outline-secondary size-btn <?php echo $index === 0 ? 'active' : ''; ?>" 
-                                        data-size="<?php echo htmlspecialchars($dt['dung_tich']); ?>" 
-                                        data-price="<?php echo $dt['gia_ban']; ?>">
+                                <button type="button" class="btn btn-outline-secondary size-btn <?php echo $index === 0 ? 'active' : ''; ?>"
+                                    data-size="<?php echo htmlspecialchars($dt['dung_tich']); ?>"
+                                    data-price="<?php echo $dt['gia_ban']; ?>">
                                     <?php echo htmlspecialchars($dt['dung_tich']); ?>ml
                                 </button>
                             <?php endforeach; ?>
                         </div>
                     </div>
-    
+
                     <div class="mb-4">
                         <label class="form-label">Nồng độ:</label>
                         <p><?php echo implode(', ', array_map('htmlspecialchars', $product['nong_do'])); ?></p>
                     </div>
-    
+
                     <div class="mb-4 quantity-selector">
                         <label class="form-label">Số lượng:</label>
                         <div class="input-group w-20">
@@ -86,11 +88,11 @@ if ($productId) {
                             <button class="btn btn-outline-secondary" type="button" id="increaseQty">+</button>
                         </div>
                     </div>
-    
+
                     <div class="d-flex gap-3 mb-3">
                         <button class="btn btn-outline-primary flex-fill add-to-cart">THÊM VÀO GIỎ HÀNG</button>
                     </div>
-    
+
                     <div class="additional-info mb-3">
                         <button class="btn btn-danger w-100 buy-now-btn" id="buyNow">
                             <span class="d-block"><strong>MUA NGAY</strong></span>
@@ -99,7 +101,7 @@ if ($productId) {
                     </div>
                 </div>
             </div>
-    
+
             <!-- Product Features and Description -->
             <div class="product-info-wrapper mt-4">
                 <!-- Product Features -->
@@ -120,7 +122,7 @@ if ($productId) {
                         </div>
                     </div>
                 </div>
-    
+
                 <!-- Product Description -->
                 <div class="product-description mt-3">
                     <h2 class="section-title">Mô tả</h2>
@@ -131,9 +133,13 @@ if ($productId) {
     </div>
 
     <!-- Footer -->
-    <?php require 'components/footer.php'?>
+    <?php require 'components/footer.php' ?>
 
+    <script>
+        const isLoggedIn = <?= isset($_SESSION["user_id"]) ? "true" : "false" ?>;
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 </body>
+
 </html>
