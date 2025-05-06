@@ -1,9 +1,22 @@
+<?php
+require_once '../../backend/controller/ProductController.php';
+
+$productController = new ProductController();
+
+$limit = 10;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+$products = $productController->getAllProducts($limit, $offset);
+$totalProducts = $productController->getTotalProducts();
+$totalPages = ceil($totalProducts / $limit);
+?>
 <!DOCTYPE html>
 <html lang="en">
-    <head>  
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Tables - SB Admin</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Product List</title>
         <?php include "./components/common-head.php"; ?>
     </head>
     <body class="sb-nav-fixed">
@@ -23,39 +36,47 @@
                                 <table id="datatablesSimple">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
+                                            <th>Mã sản phẩm</th>
+                                            <th>Tên sản phẩm</th>
+                                            <th>Giá bán</th>
+                                            <th>Tên thương hiệu</th>
+                                            <th>Hành động</th>
+                                           
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
-                                        </tr>
-                                    </tfoot>
                                     <tbody>
-                                        <?php foreach ($products as $product): ?>
+                                        <?php if (!empty($products)): ?>
+                                            <?php foreach ($products as $product): ?>
+                                                <tr>
+                                                    <td><?php echo $product['ma_nuoc_hoa']; ?></td>
+                                                    <td><?php echo $product['ten_nuoc_hoa']; ?></td>
+                                                    <td><?php echo $product['gia_ban']; ?></td>
+                                                    <td><?php echo $product['ten_thuong_hieu']; ?></td>
+                                                    <td>
+                                                        <a class="btn btn-success btn-sm" href="#">View</a>
+                                                        <a class="btn btn-warning btn-sm btn-update" data-id="<?= $user['ma_khach_hang'] ?>">Update</a>
+                                                        <a class="btn btn-danger btn-sm" href="#">Delete</a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
                                             <tr>
-                                                <td><?php echo $product['name']; ?></td>
-                                                <td><?php echo $product['position']; ?></td>
-                                                <td><?php echo $product['office']; ?></td>
-                                                <td><?php echo $product['age']; ?></td>
-                                                <td><?php echo $product['start_date']; ?></td>
-                                                <td><?php echo $product['salary']; ?></td>
+                                                <td colspan="4">Không có sản phẩm nào.</td>
                                             </tr>
-                                        <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        <nav>
+                            <ul class="pagination">
+                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                    <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    </li>
+                                <?php endfor; ?>
+                            </ul>
+                        </nav>
                     </div>
                 </main>
                 <?php include "./components/footer.php"; ?>

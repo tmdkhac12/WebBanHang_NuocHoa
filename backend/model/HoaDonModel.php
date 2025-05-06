@@ -3,6 +3,31 @@ require_once __DIR__ . "/../config/connection.php";
 
 class HoaDonModel
 {
+    public function getAllHoaDon($limit, $offset) {
+        $connection = getConnection();
+    
+        $sql = "SELECT hd.ma_hoa_don, hd.thoi_gian, hd.tong_tien, hd.trang_thai_don_hang, 
+                       c.ten_khach_hang, dc.ten_nguoi_nhan, dc.so_dien_thoai_nguoi_nhan, dc.dia_chi_giao_hang
+                FROM hoadon hd
+                LEFT JOIN khachhang c ON hd.ma_khach_hang = c.ma_khach_hang
+                LEFT JOIN diachi dc ON hd.ma_dia_chi = dc.ma_dia_chi
+                ORDER BY hd.thoi_gian DESC
+                LIMIT ? OFFSET ?";
+        $statement = $connection->prepare($sql);
+        $statement->bind_param("ii", $limit, $offset);
+        $statement->execute();
+    
+        $hoadons = [];
+        $queryResult = $statement->get_result();
+        while ($row = $queryResult->fetch_assoc()) {
+            $hoadons[] = $row;
+        }
+    
+        $statement->close();
+        $connection->close();
+        return (count($hoadons) > 0 ? $hoadons : null);
+    }
+    
     public function getAllHoaDonOf($maKhachHang)
     {
         $connection = getConnection();

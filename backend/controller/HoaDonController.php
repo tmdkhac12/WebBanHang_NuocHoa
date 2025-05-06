@@ -13,7 +13,11 @@ class HoaDonController
         $this->hoaDonModel = new HoaDonModel();
     }
 
-    public function getAllHoaDon($maKhachHang)
+    public function getAllHoaDon($limit = 10, $offset = 0) {
+        return $this->hoaDonModel->getAllHoaDon($limit, $offset);
+    }
+
+    public function getAllHoaDonOf($maKhachHang)
     {
         $hoadons = $this->hoaDonModel->getAllHoaDonOf($maKhachHang);
 

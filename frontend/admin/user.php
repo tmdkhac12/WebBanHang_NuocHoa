@@ -30,11 +30,11 @@ $users = $userController->getAllUsers(); // Lấy danh sách người dùng
                             <table id="datatablesSimple">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
+                                        <th>Tên khách hàng</th>
                                         <th>Email</th>
                                         <th>User name</th>
                                         <th>Password</th>
-                                        <th>Action</th>
+                                        <th>Hành Động</th>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($users as $user): ?>
