@@ -30,15 +30,17 @@ $users = $userController->getAllUsers(); // Lấy danh sách người dùng
                             <table id="datatablesSimple">
                                 <thead>
                                     <tr>
+                                        <th>Mã khách hàng</th>
                                         <th>Tên khách hàng</th>
                                         <th>Email</th>
-                                        <th>User name</th>
-                                        <th>Password</th>
-                                        <th>Hành Động</th>
+                                        <th>Tài khoản</th>
+                                        <th>Mật khẩu</th>
+                                        <th>Hành động</th>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($users as $user): ?>
                                         <tr>
+                                            <td><?php echo $user['ma_khach_hang']; ?></td>
                                             <td><?php echo $user['ten_khach_hang']; ?></td>
                                             <td><?php echo $user['email']; ?></td>
                                             <td><?php echo $user['username']; ?></td>
