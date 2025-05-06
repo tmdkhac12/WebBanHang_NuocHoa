@@ -33,6 +33,21 @@ try {
             echo json_encode($featuredProducts);
             break;
 
+        case 'getProductByID':
+            if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+                $productId = (int)$_GET['id'];
+                $product = $productController->getProductByID($productId);
+                if ($product) {
+                    echo json_encode($product);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Sản phẩm không tồn tại']);
+                }
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'Thiếu ID sản phẩm hoặc ID không hợp lệ']);
+            }
+            break;
         default:
             echo json_encode(['error' => 'Hành động không hợp lệ']);
             break;
@@ -40,4 +55,3 @@ try {
 } catch (Exception $e) {
     echo json_encode(['error' => 'Lỗi server: ' . $e->getMessage()]);
 }
-?>

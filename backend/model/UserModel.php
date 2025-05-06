@@ -101,5 +101,23 @@ class UserModel
 
         return ($statement->affected_rows > 0 ? true : false);
     }
+
+    public function getUserById($id)
+{
+    $connection = getConnection(); // Kết nối cơ sở dữ liệu
+
+    $sql = "SELECT * FROM khachhang WHERE ma_khach_hang = ?";
+    $statement = $connection->prepare($sql);
+    $statement->bind_param("i", $id); // `i` là kiểu dữ liệu integer
+    $statement->execute();
+
+    $result = $statement->get_result();
+    $user = $result->fetch_assoc(); // Lấy bản ghi đầu tiên dưới dạng mảng kết hợp
+
+    $statement->close();
+    $connection->close();
+
+    return $user; // Trả về thông tin người dùng
+}
     
 }

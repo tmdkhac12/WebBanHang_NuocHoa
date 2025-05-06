@@ -46,8 +46,9 @@ $users = $userController->getAllUsers(); // Lấy danh sách người dùng
                                             <td><?php echo $user['username']; ?></td>
                                             <td><?php echo $user['password']; ?></td>
                                             <td>
-                                                <a class="btn btn-success btn-sm" href="#">View</a>
+                                                <a class="btn btn-success btn-sm btn-view" data-id="<?= $user['ma_khach_hang'] ?>">View</a>
                                                 <a class="btn btn-warning btn-sm btn-update" data-id="<?= $user['ma_khach_hang'] ?>">Update</a>
+
                                                 <a class="btn btn-danger btn-sm" href="#">Delete</a>
                                             </td>
                                         </tr>
@@ -65,7 +66,7 @@ $users = $userController->getAllUsers(); // Lấy danh sách người dùng
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Modal title</h5>
+                    <h5 class="modal-title">Thông tin người dùng</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -73,29 +74,22 @@ $users = $userController->getAllUsers(); // Lấy danh sách người dùng
                         <!-- password input -->
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="password1">Tên Khách hàng</label>
-                            <input type="password" id="password1" class="form-control" />
+                            <input type="text" id="name" class="form-control" />
                         </div>
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="email1">Email address</label>
-                            <input type="email" id="email1" class="form-control" />
+                            <input type="email" id="email" class="form-control" />
                         </div>
 
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="email1">UserName</label>
-                            <input type="email" id="email1" class="form-control" />
+                            <input type="text" id="username" class="form-control" />
                         </div>
                         <!-- password input -->
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="password1">Password</label>
-                            <input type="password" id="password1" class="form-control" />
+                            <input type="password" id="password" class="form-control" />
                         </div>
-                        <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="avatar">Avatar</label>
-                            <input type="file" id="avatar" class="form-control" accept="image/*" />
-                        </div>
-
-                        <div id="avatar-preview" class="mb-4" style="display: none;">
-                        <img id="avatar-img" src="" alt="Avatar Preview" style="width: 200px; height: 200px;" />
                     </div>
 
                         <div class="modal-footer">
@@ -110,32 +104,63 @@ $users = $userController->getAllUsers(); // Lấy danh sách người dùng
     <?php include "components/common-scripts.php"; ?>
 </body>
 <script>
-    $(document).ready(function() {
-        // Khi nhấn vào nút "Update"
-        $('.btn-update').on('click', function(e) {
-            e.preventDefault(); // Ngăn chuyển trang
+$(document).ready(function () {
+    function loadUserData(userId, isUpdate) {
+        $.ajax({
+            url: '../../backend/api/UserAPI.php?action=getUserById&id=' + userId, // Đường dẫn đến API
+            method: 'GET', 
+            data: { id: userId }, 
+            dataType: 'json', 
+            success: function (user) {
+                console.log("User data:", user);
+                console.log("Avatar path:", user.avatar);
+                $('#name').val(user.ten_khach_hang);
+                $('#email').val(user.email);
+                $('#username').val(user.username);
+                $('#password').val(user.password);
 
-            // Lấy ID người dùng từ thuộc tính data-id của nút
-            var userId = $(this).data('id');
-            console.log("User ID: " + userId);
-            var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
-            modal.show();
+                $('#staticBackdrop4 input').prop('disabled', !isUpdate);
+                $('#staticBackdrop4 button[type="submit"]').toggle(isUpdate);
+
+                var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
+                modal.show();
+            },
+            error: function (xhr, status, error) {
+                console.error('Lỗi khi lấy dữ liệu người dùng:', error);
+                alert('Không thể lấy dữ liệu người dùng. Vui lòng thử lại!');
+            }
         });
+    }
+
+    // Khi click nút "View"
+    $('.btn-view').on('click', function (e) {
+        e.preventDefault();
+        var userId = $(this).data('id');
+        loadUserData(userId, false); // false: xem
     });
 
-    document.getElementById('avatar').addEventListener('change', function(event) {
-        var file = event.target.files[0];  // Lấy tệp đã chọn
-        if (file) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                // Hiển thị ảnh đã chọn
-                var imgElement = document.getElementById('avatar-img');
-                imgElement.src = e.target.result;  // Cập nhật đường dẫn ảnh
-                document.getElementById('avatar-preview').style.display = 'block';  // Hiển thị ảnh
-            };
-            reader.readAsDataURL(file);  // Đọc tệp ảnh dưới dạng URL
-        }
+    // Khi click nút "Update"
+    $('.btn-update').on('click', function (e) {
+        e.preventDefault();
+        var userId = $(this).data('id');
+        loadUserData(userId, true); // true: cập nhật
     });
+});
+    // document.getElementById('avatar').addEventListener('change', function(event) {
+    //     var file = event.target.files[0];  // Lấy tệp đã chọn
+    //     if (file) {
+    //         var reader = new FileReader();
+    //         reader.onload = function(e) {
+    //             // Hiển thị ảnh đã chọn
+    //             var imgElement = document.getElementById('avatar-img');
+    //             imgElement.src = e.target.result;  // Cập nhật đường dẫn ảnh
+    //             document.getElementById('avatar-preview').style.display = 'block';  // Hiển thị ảnh
+    //         };
+    //         reader.readAsDataURL(file);  // Đọc tệp ảnh dưới dạng URL
+    //     }
+    // });
+
+    
 </script>
 
 </html>

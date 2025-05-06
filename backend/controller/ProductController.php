@@ -27,5 +27,8 @@ class ProductController {
     public function getProductsInList($nuochoas) {
         return $this->productModel->getProductsInList($nuochoas);
     }
+    public function getProductById($id) {
+        return $this->productModel->getProductById($id);
+    }
 }
 ?>

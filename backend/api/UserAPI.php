@@ -69,6 +69,21 @@ switch ($action) {
             }
             break;
         }
+        case 'getUserById':
+            if (isset($_GET['id'])) {
+                $userId = $_GET['id'];
+                $user = $userController->getUserById($userId);
+                if ($user) {
+                    echo json_encode($user); 
+                } else {
+                    http_response_code(404); 
+                    echo json_encode(["error" => "User not found"]);
+                }
+            } else {
+                http_response_code(400); 
+                echo json_encode(["error" => "Missing user ID"]);
+            }
+            break;
     case 'updateUser': {
             // Get Fetch data
             $data = json_decode(file_get_contents("php://input"), true);

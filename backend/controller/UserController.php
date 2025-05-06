@@ -10,6 +10,11 @@ class UserController
         $this->userModel = new UserModel();
     }
 
+    public function getUserById($id)
+    {
+        return $this->userModel->getUserById($id);
+    }
+
     public function getAllUsers()
     {
         return $this->userModel->getAllUsers();
@@ -30,9 +35,9 @@ class UserController
         // If username existed 
         if ($this->userModel->isExistUsername($username)) {
             return -1; // Username existed
-        } 
+        }
 
-        if($this->userModel->addUser($hoten, $email, $username, $password, $status)) {
+        if ($this->userModel->addUser($hoten, $email, $username, $password, $status)) {
             return 1;
         }
         return 0;
