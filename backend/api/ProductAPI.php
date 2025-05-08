@@ -48,6 +48,28 @@ try {
                 echo json_encode(['error' => 'Thiếu ID sản phẩm hoặc ID không hợp lệ']);
             }
             break;
+        case 'deleteProduct':
+            if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
+                http_response_code(405);
+                echo json_encode(['error' => 'Phương thức không được hỗ trợ']);
+                break;
+            }
+            if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+                $productId = (int)$_GET['id'];
+                $deleted = $productController->deleteProduct($productId);
+        
+                if ($deleted) {
+                    echo json_encode(['success' => true, 'message' => 'Sản phẩm đã được xóa']);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Không thể xóa sản phẩm. Sản phẩm có thể không tồn tại']);
+                }
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'ID sản phẩm không hợp lệ']);
+            }
+            break;
+
         default:
             echo json_encode(['error' => 'Hành động không hợp lệ']);
             break;

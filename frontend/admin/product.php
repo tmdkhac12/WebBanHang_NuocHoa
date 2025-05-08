@@ -57,7 +57,7 @@ $totalPages = ceil($totalProducts / $limit);
                                                 <td>
                                                     <a class="btn btn-success btn-sm btn-view" data-id="<?= $product['ma_nuoc_hoa'] ?>">View</a>
                                                     <a class="btn btn-warning btn-sm btn-update" data-id="<?= $product['ma_nuoc_hoa'] ?>">Update</a>
-                                                    <a class="btn btn-danger btn-sm" href="#">Delete</a>
+                                                    <a class="btn btn-danger btn-sm btn-delete"  data-id="<?= $product['ma_nuoc_hoa'] ?>">Delete</a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -182,6 +182,25 @@ $totalPages = ceil($totalProducts / $limit);
             e.preventDefault();
             var productId = $(this).data('id');
             loadProductData(productId, true); // true: cập nhật
+        });
+        $('.btn-delete').on('click', function(e) {
+            e.preventDefault();
+            var productId = $(this).data('id');
+
+            if (confirm('Are you sure you want to delete this product?')) {
+                $.ajax({
+                    url: '../../backend/api/ProductAPI.php?action=deleteProduct&id=' + productId,
+                    method: 'DELETE',
+                    success: function(response) {
+                        alert('Product deleted successfully!');
+                        location.reload(); 
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Delete error:', error);
+                        alert('Failed to delete product. Please try again.');
+                    }
+                });
+            }
         });
     });
 

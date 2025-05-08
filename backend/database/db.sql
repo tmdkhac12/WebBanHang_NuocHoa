@@ -569,54 +569,38 @@ ALTER TABLE `nuochoa`
 -- Constraints for dumped tables
 --
 
---
--- Constraints for table `chitiethoadon`
---
 ALTER TABLE `chitiethoadon`
-  ADD CONSTRAINT `chitiethoadon_ibfk_1` FOREIGN KEY (`ma_hoa_don`) REFERENCES `hoadon` (`ma_hoa_don`),
-  ADD CONSTRAINT `fk_cthd_dungtich` FOREIGN KEY (`ma_nuoc_hoa`,`ma_dung_tich`) REFERENCES `dungtich_nuochoa` (`ma_nuoc_hoa`, `ma_dung_tich`);
+  ADD CONSTRAINT `chitiethoadon_ibfk_1` FOREIGN KEY (`ma_hoa_don`) REFERENCES `hoadon` (`ma_hoa_don`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_cthd_dungtich` FOREIGN KEY (`ma_nuoc_hoa`,`ma_dung_tich`) REFERENCES `dungtich_nuochoa` (`ma_nuoc_hoa`, `ma_dung_tich`) ON DELETE CASCADE;
 
---
 -- Constraints for table `diachi`
---
 ALTER TABLE `diachi`
-  ADD CONSTRAINT `diachi_ibfk_1` FOREIGN KEY (`ma_khach_hang`) REFERENCES `khachhang` (`ma_khach_hang`);
+  ADD CONSTRAINT `diachi_ibfk_1` FOREIGN KEY (`ma_khach_hang`) REFERENCES `khachhang` (`ma_khach_hang`) ON DELETE CASCADE;
 
---
 -- Constraints for table `dungtich_nuochoa`
---
 ALTER TABLE `dungtich_nuochoa`
-  ADD CONSTRAINT `dungtich_nuochoa_ibfk_1` FOREIGN KEY (`ma_dung_tich`) REFERENCES `dungtich` (`ma_dung_tich`),
-  ADD CONSTRAINT `dungtich_nuochoa_ibfk_2` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`);
+  ADD CONSTRAINT `dungtich_nuochoa_ibfk_1` FOREIGN KEY (`ma_dung_tich`) REFERENCES `dungtich` (`ma_dung_tich`) ON DELETE CASCADE,
+  ADD CONSTRAINT `dungtich_nuochoa_ibfk_2` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`) ON DELETE CASCADE;
 
---
 -- Constraints for table `hoadon`
---
 ALTER TABLE `hoadon`
-  ADD CONSTRAINT `hoadon_ibfk_1` FOREIGN KEY (`ma_dia_chi`) REFERENCES `diachi` (`ma_dia_chi`),
-  ADD CONSTRAINT `hoadon_ibfk_2` FOREIGN KEY (`ma_khach_hang`) REFERENCES `khachhang` (`ma_khach_hang`);
+  ADD CONSTRAINT `hoadon_ibfk_1` FOREIGN KEY (`ma_dia_chi`) REFERENCES `diachi` (`ma_dia_chi`) ON DELETE CASCADE,
+  ADD CONSTRAINT `hoadon_ibfk_2` FOREIGN KEY (`ma_khach_hang`) REFERENCES `khachhang` (`ma_khach_hang`) ON DELETE CASCADE;
 
---
 -- Constraints for table `nongdo_nuochoa`
---
 ALTER TABLE `nongdo_nuochoa`
-  ADD CONSTRAINT `nongdo_nuochoa_ibfk_1` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`),
-  ADD CONSTRAINT `nongdo_nuochoa_ibfk_2` FOREIGN KEY (`ma_nong_do`) REFERENCES `nongdo` (`ma_nong_do`);
+  ADD CONSTRAINT `nongdo_nuochoa_ibfk_1` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`) ON DELETE CASCADE,
+  ADD CONSTRAINT `nongdo_nuochoa_ibfk_2` FOREIGN KEY (`ma_nong_do`) REFERENCES `nongdo` (`ma_nong_do`) ON DELETE CASCADE;
 
---
 -- Constraints for table `nothuong_nuochoa`
---
 ALTER TABLE `nothuong_nuochoa`
-  ADD CONSTRAINT `nothuong_nuochoa_ibfk_1` FOREIGN KEY (`ma_not_huong`) REFERENCES `nothuong` (`ma_not_huong`),
-  ADD CONSTRAINT `nothuong_nuochoa_ibfk_2` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`);
+  ADD CONSTRAINT `nothuong_nuochoa_ibfk_1` FOREIGN KEY (`ma_not_huong`) REFERENCES `nothuong` (`ma_not_huong`) ON DELETE CASCADE,
+  ADD CONSTRAINT `nothuong_nuochoa_ibfk_2` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`) ON DELETE CASCADE;
 
---
 -- Constraints for table `nuochoa`
---
 ALTER TABLE `nuochoa`
-  ADD CONSTRAINT `nuochoa_ibfk_1` FOREIGN KEY (`ma_thuong_hieu`) REFERENCES `thuonghieu` (`ma_thuong_hieu`);
+  ADD CONSTRAINT `nuochoa_ibfk_1` FOREIGN KEY (`ma_thuong_hieu`) REFERENCES `thuonghieu` (`ma_thuong_hieu`) ON DELETE CASCADE;
 COMMIT;
-
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

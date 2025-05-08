@@ -263,5 +263,46 @@ class ProductModel {
 
         return (count($products) > 0 ? $products : null);
     }
+   
+    public function deleteProduct($productId) {
+        // Start a transaction to ensure data integrity
+        $this->connection->begin_transaction();
+        
+        try {
+            // First, delete related records in the chitiethoadon table
+            $deleteCTHDSql = "DELETE FROM chitiethoadon WHERE ma_nuoc_hoa = ?";
+            $stmt = $this->connection->prepare($deleteCTHDSql);
+            $stmt->bind_param("i", $productId);
+            $stmt->execute();
+            $stmt->close();
+    
+            // Next, delete related records in the dungtich_nuochoa table
+            $deleteRelatedSql = "DELETE FROM dungtich_nuochoa WHERE ma_nuoc_hoa = ?";
+            $stmt = $this->connection->prepare($deleteRelatedSql);
+            $stmt->bind_param("i", $productId);
+            $stmt->execute();
+            $stmt->close();
+    
+            // Now delete the product from the nuochoa table
+            $sql = "DELETE FROM nuochoa WHERE ma_nuoc_hoa = ?";
+            $stmt = $this->connection->prepare($sql);
+            $stmt->bind_param("i", $productId);
+            $stmt->execute();
+            $stmt->close();
+    
+            // Commit the transaction
+            $this->connection->commit();
+            
+            return true; // Successfully deleted product and related records
+        } catch (Exception $e) {
+            // If any error occurs, roll back the transaction
+            $this->connection->rollback();
+            error_log("Error deleting product: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+        
+    
 }
 ?>
