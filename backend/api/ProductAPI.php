@@ -69,6 +69,30 @@ try {
                 echo json_encode(['error' => 'ID sản phẩm không hợp lệ']);
             }
             break;
+        case 'updateProduct':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $data = $_POST;
+                $productId = isset($data['productId']) ? (int)$data['productId'] : null;
+                $name = isset($data['name']) ? $data['name'] : '';
+                $brand = isset($data['brand']) ? $data['brand'] : '';
+                $description = isset($data['description']) ? $data['description'] : '';
+                $price = isset($data['price']) ? (float)$data['price'] : 0;
+
+               
+                if ($productId && $name && $brand && $description && $price) {
+                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand);  // Removed the extra comma
+                    if ($updated) {
+                        echo json_encode(['success' => true, 'message' => 'Sản phẩm đã được cập nhật']);
+                    } else {
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Không thể cập nhật sản phẩm']);
+                    }
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Dữ liệu không hợp lệ']);
+                }
+            }
+
 
         default:
             echo json_encode(['error' => 'Hành động không hợp lệ']);

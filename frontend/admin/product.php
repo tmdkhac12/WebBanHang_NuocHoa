@@ -92,8 +92,8 @@ $totalPages = ceil($totalProducts / $limit);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <!-- password input -->
+                    <form id="productForm" enctype="multipart/form-data">
+                        <input type="hidden" id="productId" name="productId" />
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="password1">Tên sản phẩm</label>
                             <input type="text" id="name" class="form-control" />
@@ -111,16 +111,12 @@ $totalPages = ceil($totalProducts / $limit);
 
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="email1">Giá bán</label>
-                            <input type="text" id="username" class="form-control" />
+                            <input type="text" id="price" class="form-control" />
                         </div>
-                        <!-- password input -->
-                        <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="password1">Password</label>
-                            <input type="password" id="password" class="form-control" />
-                        </div>
+                        
 
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="avatar">Avatar</label>
+                            <label class="form-label" for="avatar">Product Image</label>
                             <input type="file" id="avatar" class="form-control" accept="image/*" />
                         </div>
 
@@ -150,9 +146,11 @@ $totalPages = ceil($totalProducts / $limit);
                     console.log("Product data:", product);
                     console.log("Product image path:", product.hinh_anh);
                     $('#name').val(product.ten_nuoc_hoa);
-                    $('#email').val(product.gia_ban); 
+                    $('#price').val(product.gia_ban); 
                     $('#thuonghieu').val(product.ten_thuong_hieu); 
                     $('#description').val(product.mo_ta); 
+                    $('#productId').val(product.ma_nuoc_hoa);
+
                     if (product.hinh_anh) {
                         $('#avatar-img').attr('src', '../images/' + product.hinh_anh).show();
                         $('#avatar-preview').show(); // Hiển thị thẻ div chứa ảnh
@@ -160,6 +158,9 @@ $totalPages = ceil($totalProducts / $limit);
                         $('#avatar-preview').attr('src', '../images/'+product.hinh_anh).show(); // Hình ảnh mặc định
                     }
                     $('#staticBackdrop4 input').prop('disabled', !isUpdate);
+                    $('#staticBackdrop4 input, #staticBackdrop4 textarea').prop('disabled', !isUpdate);
+                    $('#avatar').closest('.form-outline').toggle(isUpdate);
+
                     $('#staticBackdrop4 button[type="submit"]').toggle(isUpdate);
 
                     var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
@@ -202,7 +203,47 @@ $totalPages = ceil($totalProducts / $limit);
                 });
             }
         });
-    });
+        $('#productForm').on('submit', function(e) {
+            e.preventDefault()
+            
+            var name = $('#name').val();
+            var brand = $('#thuonghieu').val();
+            var description = $('#description').val();
+            var price = $('#price').val();
+            var imageFile = $('#avatar')[0].files[0]
+            var formData = new FormData();
+            var productId = $('#productId').val();
+
+            formData.append('productId', productId);
+            formData.append('name', name);
+            formData.append('brand', brand);
+            formData.append('description', description);
+            formData.append('price', price);
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+            for (var pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+            $.ajax({
+                url: '../../backend/api/ProductAPI.php?action=updateProduct',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    alert('Product updated!');
+                    location.reload();
+                },
+                error: function(error) {
+                    console.error('Error updating:', error);
+                    alert('Failed to update product.');
+                    location.reload();
+                }
+            });
+        });
+});
+    
 
     document.getElementById('avatar').addEventListener('change', function(event) {
         var file = event.target.files[0]; // Lấy tệp đã chọn

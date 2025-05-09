@@ -3,19 +3,19 @@
         <div class="sb-sidenav-menu">
             <div class="nav">
                 <div class="sb-sidenav-menu-heading">Core</div>
-                <a class="nav-link" href="../admin/index.php">
+                <a class="nav-link" href="/frontend/admin/index.php">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Home
                 </a>
-                <a class="nav-link" href="../admin/user.php">
+                <a class="nav-link" href="/frontend/admin/user.php">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     User
                 </a>
-                <a class="nav-link" href="../admin/product.php">
+                <a class="nav-link" href="/frontend/admin/product.php">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Product
                 </a>
-                <a class="nav-link" href="../admin/order.php">
+                <a class="nav-link" href="/frontend/admin/order.php">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Order
                 </a>

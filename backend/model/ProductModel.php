@@ -287,6 +287,39 @@ class ProductModel {
             
             return $success;
     }
+    public function updateProduct($productId, $name, $price, $description, $brand) {
+         if (!is_int($brand) && !ctype_digit($brand)) {
+        return ['success' => false, 'message' => 'Thương hiệu phải là một số nguyên'];
+    }
+
+        $sql = "UPDATE nuochoa 
+                SET ten_nuoc_hoa = ?, mo_ta = ?, ma_thuong_hieu = ? 
+                WHERE ma_nuoc_hoa = ?";
+    
+        $stmt = $this->connection->prepare($sql);
+        if (!$stmt) {
+            error_log("Error preparing update statement: " . $this->connection->error);
+            return false;
+        }
+    
+        $stmt->bind_param("sssi", $name, $description, $brand, $productId);
+        file_put_contents('C:/xampp/php/logs/debug.txt', "Name: $name\nDescription: $description\nBrand: $brand\nProduct ID: $productId\n", FILE_APPEND);
+
+        $success = $stmt->execute();
+         if ($success) {
+            return ['success' => true, 'message' => 'Sản phẩm đã được cập nhật'];
+        } else {
+            return ['success' => false, 'message' => 'Không thể cập nhật sản phẩm'];
+        }
+        if (!$success) {
+            error_log("Error executing update statement: " . $stmt->error);
+            error_log("Statement bind parameters: " . $name . ", " . $description . ", " . $brand . ", " . $productId);
+        }
+    
+        $stmt->close();
+    
+        return $success;
+    }
         
     
 }
