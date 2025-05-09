@@ -78,17 +78,20 @@ try {
                 $description = isset($data['description']) ? $data['description'] : '';
                 $price = isset($data['price']) ? (float)$data['price'] : 0;
 
-               
                 if ($productId && $name && $brand && $description && $price) {
-                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand);  // Removed the extra comma
+                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand);
+
+                    header('Content-Type: application/json');
+
                     if ($updated) {
                         echo json_encode(['success' => true, 'message' => 'Sản phẩm đã được cập nhật']);
                     } else {
                         http_response_code(500);
-                        echo json_encode(['error' => 'Không thể cập nhật sản phẩm']);
+                        echo json_encode(['success' => false, 'message' => 'Không thể cập nhật sản phẩm']);
                     }
                 } else {
                     http_response_code(400);
+                    header('Content-Type: application/json');
                     echo json_encode(['error' => 'Dữ liệu không hợp lệ']);
                 }
             }
