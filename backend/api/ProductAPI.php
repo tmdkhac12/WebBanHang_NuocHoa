@@ -95,6 +95,7 @@ try {
                     echo json_encode(['error' => 'Dữ liệu không hợp lệ']);
                 }
             }
+            break;
 
 
         default:

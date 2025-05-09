@@ -229,6 +229,7 @@ $totalPages = ceil($totalProducts / $limit);
                 url: '../../backend/api/ProductAPI.php?action=updateProduct',
                 type: 'POST',
                 data: formData,
+                dataType: 'json',
                 contentType: false,
                 processData: false,
                 success: function(response) {
