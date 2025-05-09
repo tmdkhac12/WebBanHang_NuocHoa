@@ -81,7 +81,6 @@ try {
                 if ($productId && $name && $brand && $description && $price) {
                     $updated = $productController->updateProduct($productId, $name, $price, $description, $brand);
 
-                    header('Content-Type: application/json');
 
                     if ($updated) {
                         echo json_encode(['success' => true, 'message' => 'Sản phẩm đã được cập nhật']);

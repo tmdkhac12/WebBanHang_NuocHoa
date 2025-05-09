@@ -117,8 +117,10 @@ $totalPages = ceil($totalProducts / $limit);
                             <input type="text" id="name" class="form-control" />
                         </div>
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="email1">Tên thương hiệu</label>
-                            <input type="text" id="thuonghieu" class="form-control" />
+                            <label class="form-label" for="brand">Tên thương hiệu</label>
+                            <select id="thuonghieu" class="form-select">
+                                <option value="">-- Chọn thương hiệu --</option>
+                            </select>
                         </div>
 
                         <div data-mdb-input-init class="form-outline mb-4">
@@ -206,12 +208,15 @@ $totalPages = ceil($totalProducts / $limit);
                 method: 'GET',
                 dataType: 'json',
                 success: function(product) {
+
                     console.log("Product data:", product);
                     console.log("Product image path:", product.hinh_anh);
+                    populateBrands(product.ten_thuong_hieu);
                     $('#name').val(product.ten_nuoc_hoa);
-                    $('#price').val(product.gia_ban);
-                    $('#thuonghieu').val(product.ten_thuong_hieu);
-                    $('#description').val(product.mo_ta);
+
+                    $('#price').val(product.gia_ban); 
+                    $('#description').val(product.mo_ta); 
+
                     $('#productId').val(product.ma_nuoc_hoa);
                     $('#huongdau').val((product.nothuong?.huong_dau || []).join(', '));
                     $('#huonggiua').val((product.nothuong?.huong_giua || []).join(', '));
@@ -311,7 +316,27 @@ $totalPages = ceil($totalProducts / $limit);
                 }
             });
         });
-    });
+
+});
+    function populateBrands(selectedBrandName = null) {
+        $.ajax({
+            url: '../../backend/api/ThuongHieuAPI.php?action=getAllBrands',
+            method: 'GET',
+            dataType: 'json',   
+            success: function(brands) {
+                const $select = $('#thuonghieu');
+                $select.empty().append('<option value="">-- Chọn thương hiệu --</option>');
+                brands.forEach(brand => {
+                    const selected = selectedBrandName == brand.ten_thuong_hieu ? 'selected' : '';
+                    $select.append(`<option value="${brand.ma_thuong_hieu}" ${selected}>${brand.ten_thuong_hieu}</option>`);
+                });
+            },
+            error: function() {
+                alert('Không thể tải danh sách thương hiệu.');
+            }
+        });
+    }
+
 
 
     document.getElementById('avatar').addEventListener('change', function(event) {
