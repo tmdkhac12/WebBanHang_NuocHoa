@@ -208,8 +208,8 @@ $totalPages = ceil($totalProducts / $limit);
                     } else {
                         $('#avatar-preview').attr('src', '../images/'+product.hinh_anh).show(); // Hình ảnh mặc định
                     }
-                    $('#staticBackdrop4 input').prop('disabled', !isUpdate);
-                    $('#staticBackdrop4 input, #staticBackdrop4 textarea').prop('disabled', !isUpdate);
+                    $('#staticBackdrop4 input, #staticBackdrop4 textarea, #staticBackdrop4 select').prop('disabled', !isUpdate);
+
                     $('#avatar').closest('.form-outline').toggle(isUpdate);
 
                     $('#staticBackdrop4 button[type="submit"]').toggle(isUpdate);
