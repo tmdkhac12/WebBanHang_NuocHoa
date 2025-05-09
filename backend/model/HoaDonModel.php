@@ -11,7 +11,7 @@ class HoaDonModel
                 FROM hoadon hd
                 LEFT JOIN khachhang c ON hd.ma_khach_hang = c.ma_khach_hang
                 LEFT JOIN diachi dc ON hd.ma_dia_chi = dc.ma_dia_chi
-                ORDER BY hd.thoi_gian DESC
+                ORDER BY hd.thoi_gian 
                 LIMIT ? OFFSET ?";
         $statement = $connection->prepare($sql);
         $statement->bind_param("ii", $limit, $offset);
@@ -28,6 +28,20 @@ class HoaDonModel
         return (count($hoadons) > 0 ? $hoadons : null);
     }
     
+    public function getTotalOrders()
+    {
+        $connection = getConnection(); 
+        $sql = "SELECT COUNT(*) as total FROM hoadon"; // Giả sử bảng hóa đơn là `hoa_don`
+        $result = $connection->query($sql);
+
+        if ($result) {
+            $row = $result->fetch_assoc();
+            return $row['total'];
+        }
+
+        return 0; 
+    }
+
     public function getAllHoaDonOf($maKhachHang)
     {
         $connection = getConnection();

@@ -3,7 +3,7 @@ require_once '../../backend/controller/ProductController.php';
 
 $productController = new ProductController();
 
-$limit = 10;
+$limit = 6;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
@@ -35,7 +35,7 @@ $totalPages = ceil($totalProducts / $limit);
                     </ol>
                     <div class="card mb-4">
                         <div class="card-body">
-                            <table id="datatablesSimple">
+                            <table id="datatablesSimple" class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th>Mã sản phẩm</th>
@@ -43,7 +43,6 @@ $totalPages = ceil($totalProducts / $limit);
                                         <th>Giá bán</th>
                                         <th>Tên thương hiệu</th>
                                         <th>Hành động</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -57,30 +56,49 @@ $totalPages = ceil($totalProducts / $limit);
                                                 <td>
                                                     <a class="btn btn-success btn-sm btn-view" data-id="<?= $product['ma_nuoc_hoa'] ?>">View</a>
                                                     <a class="btn btn-warning btn-sm btn-update" data-id="<?= $product['ma_nuoc_hoa'] ?>">Update</a>
-                                                    <a class="btn btn-danger btn-sm btn-delete"  data-id="<?= $product['ma_nuoc_hoa'] ?>">Delete</a>
+                                                    <a class="btn btn-danger btn-sm btn-delete" data-id="<?= $product['ma_nuoc_hoa'] ?>">Delete</a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="4">Không có sản phẩm nào.</td>
+                                            <td colspan="5">Không có sản phẩm nào.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
+                        <div class="card-footer">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-end mb-0">
+                                    <?php if ($page > 1): ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+
+                                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                        <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                        </li>
+                                    <?php endfor; ?>
+
+                                    <?php if ($page < $totalPages): ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
-                    <nav>
-                        <ul class="pagination">
-                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
-                                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                                </li>
-                            <?php endfor; ?>
-                        </ul>
-                    </nav>
                 </div>
             </main>
+
             <?php include "./components/footer.php"; ?>
         </div>
     </div>
@@ -120,16 +138,16 @@ $totalPages = ceil($totalProducts / $limit);
                         <div class="row">
                             <div class="col-6">
                                 <div data-mdb-input-init class="form-outline mb-4">
-                                <label class="form-label" for="nongdo">Nồng độ</label>
-                                <select id="nongdo" class="form-select">
-                                    <option value="Parfum">Parfum</option>
-                                    <option value="EDP">EDP</option>
-                                    <option value="EDT">EDT</option>
-                                    <option value="EDC">EDC</option>
-                                    <option value="Eau Fraîche">Eau Fraîche</option>
-                                    <option value="Aftershave">Aftershave</option>
-                                    <option value="Perfume Oil">Perfume Oil</option>
-                                </select>
+                                    <label class="form-label" for="nongdo">Nồng độ</label>
+                                    <select id="nongdo" class="form-select">
+                                        <option value="Parfum">Parfum</option>
+                                        <option value="EDP">EDP</option>
+                                        <option value="EDT">EDT</option>
+                                        <option value="EDC">EDC</option>
+                                        <option value="Eau Fraîche">Eau Fraîche</option>
+                                        <option value="Aftershave">Aftershave</option>
+                                        <option value="Perfume Oil">Perfume Oil</option>
+                                    </select>
 
                                 </div>
                             </div>
@@ -181,10 +199,12 @@ $totalPages = ceil($totalProducts / $limit);
     <?php include "./components/common-scripts.php"; ?>
 </body>
 <script>
+    $('.dataTables_info').remove();
+    
     $(document).ready(function() {
         function loadProductData(productId, isUpdate) {
             $.ajax({
-                url: '../../backend/api/ProductAPI.php?action=getProductByID&id=' + productId, 
+                url: '../../backend/api/ProductAPI.php?action=getProductByID&id=' + productId,
                 method: 'GET',
                 dataType: 'json',
                 success: function(product) {
@@ -193,8 +213,10 @@ $totalPages = ceil($totalProducts / $limit);
                     console.log("Product image path:", product.hinh_anh);
                     populateBrands(product.ten_thuong_hieu);
                     $('#name').val(product.ten_nuoc_hoa);
+
                     $('#price').val(product.gia_ban); 
                     $('#description').val(product.mo_ta); 
+
                     $('#productId').val(product.ma_nuoc_hoa);
                     $('#huongdau').val((product.nothuong?.huong_dau || []).join(', '));
                     $('#huonggiua').val((product.nothuong?.huong_giua || []).join(', '));
@@ -206,7 +228,7 @@ $totalPages = ceil($totalProducts / $limit);
                         $('#avatar-img').attr('src', '../images/' + product.hinh_anh).show();
                         $('#avatar-preview').show(); // Hiển thị thẻ div chứa ảnh
                     } else {
-                        $('#avatar-preview').attr('src', '../images/'+product.hinh_anh).show(); // Hình ảnh mặc định
+                        $('#avatar-preview').attr('src', '../images/' + product.hinh_anh).show(); // Hình ảnh mặc định
                     }
                     $('#staticBackdrop4 input').prop('disabled', !isUpdate);
                     $('#staticBackdrop4 input, #staticBackdrop4 textarea').prop('disabled', !isUpdate);
@@ -245,7 +267,7 @@ $totalPages = ceil($totalProducts / $limit);
                     method: 'DELETE',
                     success: function(response) {
                         alert('Product deleted successfully!');
-                        location.reload(); 
+                        location.reload();
                     },
                     error: function(xhr, status, error) {
                         console.error('Delete error:', error);
@@ -256,7 +278,7 @@ $totalPages = ceil($totalProducts / $limit);
         });
         $('#productForm').on('submit', function(e) {
             e.preventDefault()
-            
+
             var name = $('#name').val();
             var brand = $('#thuonghieu').val();
             var description = $('#description').val();
@@ -294,6 +316,7 @@ $totalPages = ceil($totalProducts / $limit);
                 }
             });
         });
+
 });
     function populateBrands(selectedBrandName = null) {
         $.ajax({
@@ -315,6 +338,7 @@ $totalPages = ceil($totalProducts / $limit);
     }
 
 
+
     document.getElementById('avatar').addEventListener('change', function(event) {
         var file = event.target.files[0]; // Lấy tệp đã chọn
         if (file) {
@@ -328,6 +352,8 @@ $totalPages = ceil($totalProducts / $limit);
             reader.readAsDataURL(file); // Đọc tệp ảnh dưới dạng URL
         }
     });
+    $('.dataTables_info').remove();
+    
 </script>
 
 </html>

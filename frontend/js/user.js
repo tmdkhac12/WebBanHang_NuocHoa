@@ -215,4 +215,3 @@ function addEditButtonFeature() {
     enableEdit(inputField_email, originalEmailValue);
   });
 }
-

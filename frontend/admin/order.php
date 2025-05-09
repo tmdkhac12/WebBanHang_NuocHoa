@@ -3,13 +3,13 @@ require_once '../../backend/controller/HoaDonController.php';
 
 $orderController = new HoaDonController();
 
-$limit = 10;
+$limit = 6;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
 $orders = $orderController->getAllHoaDon($limit, $offset);
-// $totalOrders = $orderController->getTotalHo();
-// $totalPages = ceil($totalOrders / $limit);
+$totalOrders = $orderController->getTotalOrders(); // Tổng số đơn hàng
+$totalPages = ceil($totalOrders / $limit); // Tổng số trang
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,7 +35,7 @@ $orders = $orderController->getAllHoaDon($limit, $offset);
                     </ol>
                     <div class="card mb-4">
                         <div class="card-body">
-                            <table id="datatablesSimple">
+                            <table id="datatablesSimple" class="table table-bordered" >
                                 <thead>
                                     <tr>
                                         <th>Mã hoá đơn</th>
@@ -75,15 +75,33 @@ $orders = $orderController->getAllHoaDon($limit, $offset);
                             </table>
                         </div>
                     </div>
-                    <nav>
-                        <ul class="pagination">
-                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
-                                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                                </li>
-                            <?php endfor; ?>
-                        </ul>
-                    </nav>
+                    <div class="card-footer">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-end mb-0">
+                                    <?php if ($page > 1): ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+
+                                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                        <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                        </li>
+                                    <?php endfor; ?>
+
+                                    <?php if ($page < $totalPages): ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+                                </ul>
+                            </nav>
+                        </div>
                 </div>
             </main>
             <?php include "./components/footer.php" ?>
@@ -91,5 +109,8 @@ $orders = $orderController->getAllHoaDon($limit, $offset);
     </div>
     <?php include "./components/common-scripts.php" ?>
 </body>
-
+<script>
+    $('.dataTables_info').remove();
+       $('.dataTables_info').remove();
+</script>
 </html>
