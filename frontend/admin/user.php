@@ -27,7 +27,7 @@ $users = $userController->getAllUsers(); // Lấy danh sách người dùng
                     </ol>
                     <div class="card mb-4">
                         <div class="card-body">
-                            <table id="datatablesSimple">
+                            <table id="datatablesSimple" class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th>Mã khách hàng</th>

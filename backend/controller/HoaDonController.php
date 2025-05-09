@@ -16,6 +16,11 @@ class HoaDonController
     public function getAllHoaDon($limit = 10, $offset = 0) {
         return $this->hoaDonModel->getAllHoaDon($limit, $offset);
     }
+    
+    public function getTotalOrders()
+    {
+        return $this->hoaDonModel->getTotalOrders();
+    }
 
     public function getAllHoaDonOf($maKhachHang)
     {
