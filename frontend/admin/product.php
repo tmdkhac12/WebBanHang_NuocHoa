@@ -52,7 +52,7 @@ $totalPages = ceil($totalProducts / $limit);
                                             <tr>
                                                 <td><?php echo $product['ma_nuoc_hoa']; ?></td>
                                                 <td><?php echo $product['ten_nuoc_hoa']; ?></td>
-                                                <td><?php echo $product['gia_ban']; ?></td>
+                                                <td><?php echo number_format($product['gia_ban'], 0, ',', '.'); ?> VND</td>
                                                 <td><?php echo $product['ten_thuong_hieu']; ?></td>
                                                 <td>
                                                     <a class="btn btn-success btn-sm btn-view" data-id="<?= $product['ma_nuoc_hoa'] ?>">View</a>
@@ -113,10 +113,53 @@ $totalPages = ceil($totalProducts / $limit);
                             <label class="form-label" for="email1">Giá bán</label>
                             <input type="text" id="price" class="form-control" />
                         </div>
-                        
+
+
+                        <div class="row">
+                            <div class="col-6">
+                                <div data-mdb-input-init class="form-outline mb-4">
+                                <label class="form-label" for="nongdo">Nồng độ</label>
+                                <select id="nongdo" class="form-select">
+                                    <option value="Parfum">Parfum</option>
+                                    <option value="EDP">EDP</option>
+                                    <option value="EDT">EDT</option>
+                                    <option value="EDC">EDC</option>
+                                    <option value="Eau Fraîche">Eau Fraîche</option>
+                                    <option value="Aftershave">Aftershave</option>
+                                    <option value="Perfume Oil">Perfume Oil</option>
+                                </select>
+
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div data-mdb-input-init class="form-outline mb-4">
+                                    <label class="form-label" for="gioitinh">Giới tính</label>
+                                    <select id="gioitinh" class="form-select">
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
+                                        <option value="Unisex">Unisex</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="avatar">Product Image</label>
+                            <label class="form-label" for="email1">Hương đầu</label>
+                            <input type="text" id="huongdau" class="form-control" />
+                        </div>
+
+                        <div data-mdb-input-init class="form-outline mb-4">
+                            <label class="form-label" for="email1">Hương giữa</label>
+                            <input type="text" id="huonggiua" class="form-control" />
+                        </div>
+                        <div data-mdb-input-init class="form-outline mb-4">
+                            <label class="form-label" for="email1">Hương cuối</label>
+                            <input type="text" id="huongcuoi" class="form-control" />
+                        </div>
+
+                        <div data-mdb-input-init class="form-outline mb-4">
+                            <label class="form-label" for="avatar">Ảnh sản phẩm</label>
                             <input type="file" id="avatar" class="form-control" accept="image/*" />
                         </div>
 
@@ -150,6 +193,11 @@ $totalPages = ceil($totalProducts / $limit);
                     $('#thuonghieu').val(product.ten_thuong_hieu); 
                     $('#description').val(product.mo_ta); 
                     $('#productId').val(product.ma_nuoc_hoa);
+                    $('#huongdau').val((product.nothuong?.huong_dau || []).join(', '));
+                    $('#huonggiua').val((product.nothuong?.huong_giua || []).join(', '));
+                    $('#huongcuoi').val((product.nothuong?.huong_cuoi || []).join(', '));
+                    $('#nongdo').val((product.nong_do));
+                    $('#gioitinh').val((product.gioi_tinh));
 
                     if (product.hinh_anh) {
                         $('#avatar-img').attr('src', '../images/' + product.hinh_anh).show();
