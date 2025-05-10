@@ -3,7 +3,7 @@ require_once '../../backend/controller/HoaDonController.php';
 
 $orderController = new HoaDonController();
 
-$limit = 6;
+$limit = 8;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
@@ -28,14 +28,23 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Order</h1>
+                    <h1 class="mt-4">Đơn hàng</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Order</li>
+                        <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
+                        <li class="breadcrumb-item active">Đơn hàng</li>
                     </ol>
+                    <div class="row align-items-center mb-3">
+                        <!-- Tìm kiếm với nút tích hợp -->
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <input type="text" id="searchUser" class="form-control" placeholder="Tìm kiếm đơn hàng...">
+                                <button class="btn btn-outline-primary" id="btnSearchUser">Tìm</button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card mb-4">
                         <div class="card-body">
-                            <table id="datatablesSimple" class="table table-bordered" >
+                            <table id="datatablesSimple" class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th>Mã hoá đơn</th>
@@ -45,7 +54,7 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                                         <th>Số điện thoại</th>
                                         <th>Địa chỉ giao hàng</th>
                                         <th>Trạng thái đơn hàng</th>
-                                        <th>Hàng động</th>
+                                        <th>Hành động</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -76,32 +85,32 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                         </div>
                     </div>
                     <div class="card-footer">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-end mb-0">
-                                    <?php if ($page > 1): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
-                                            </a>
-                                        </li>
-                                    <?php endif; ?>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-end mb-0">
+                                <?php if ($page > 1): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
 
-                                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                        <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
-                                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                                        </li>
-                                    <?php endfor; ?>
+                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                    <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    </li>
+                                <?php endfor; ?>
 
-                                    <?php if ($page < $totalPages): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
-                                            </a>
-                                        </li>
-                                    <?php endif; ?>
-                                </ul>
-                            </nav>
-                        </div>
+                                <?php if ($page < $totalPages): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </main>
             <?php include "./components/footer.php" ?>
@@ -111,6 +120,7 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
 </body>
 <script>
     $('.dataTables_info').remove();
-       $('.dataTables_info').remove();
+    $('.dataTables_info').remove();
 </script>
+
 </html>

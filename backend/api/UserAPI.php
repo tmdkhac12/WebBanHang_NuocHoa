@@ -15,8 +15,8 @@ switch ($action) {
     case 'getAllUsers':
         // echo ở đây ghi dữ liệu vào output stream của HTTP respond tức là đối tượng Respond khi fetch 
         // nên nó không hiển thị ở dạng html trên client  
-        echo json_encode($userController->getAllUsers());
-        break;
+        // echo json_encode($userController->getAllUsers());
+        // break;
     case 'login': {
             // Get username and password from body fetch when user onclick 
             $data = json_decode(file_get_contents("php://input"), true);

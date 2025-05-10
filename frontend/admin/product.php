@@ -3,7 +3,7 @@ require_once '../../backend/controller/ProductController.php';
 
 $productController = new ProductController();
 
-$limit = 6;
+$limit = 8;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
@@ -28,11 +28,27 @@ $totalPages = ceil($totalProducts / $limit);
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Product</h1>
+                    <h1 class="mt-4">Sản phẩm</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Product</li>
+                        <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
+                        <li class="breadcrumb-item active">Sản phẩm</li>
                     </ol>
+                    <div class="row align-items-center mb-3">
+                        <!-- Tìm kiếm với nút tích hợp -->
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <input type="text" id="searchUser" class="form-control" placeholder="Tìm kiếm sản phẩm...">
+                                <button class="btn btn-outline-primary" id="btnSearchUser">Tìm</button>
+                            </div>
+                        </div>
+
+                        <!-- Nút thêm người dùng -->
+                        <div class="col-md-8 text-end pe-5 ">
+                            <button class="btn btn-primary me-6" id="btnAddUser" data-bs-toggle="modal" data-bs-target="#staticBackdrop4">
+                                Thêm sản phẩm
+                            </button>
+                        </div>
+                    </div>
                     <div class="card mb-4">
                         <div class="card-body">
                             <table id="datatablesSimple" class="table table-bordered">
@@ -68,33 +84,33 @@ $totalPages = ceil($totalProducts / $limit);
                                 </tbody>
                             </table>
                         </div>
-                        <div class="card-footer">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-end mb-0">
-                                    <?php if ($page > 1): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
-                                            </a>
-                                        </li>
-                                    <?php endif; ?>
+                    </div>
+                    <div class="card-footer">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-end mb-0">
+                                <?php if ($page > 1): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
 
-                                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                        <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
-                                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                                        </li>
-                                    <?php endfor; ?>
+                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                    <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    </li>
+                                <?php endfor; ?>
 
-                                    <?php if ($page < $totalPages): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
-                                            </a>
-                                        </li>
-                                    <?php endif; ?>
-                                </ul>
-                            </nav>
-                        </div>
+                                <?php if ($page < $totalPages): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </main>
@@ -200,7 +216,7 @@ $totalPages = ceil($totalProducts / $limit);
 </body>
 <script>
     $('.dataTables_info').remove();
-    
+
     $(document).ready(function() {
         function loadProductData(productId, isUpdate) {
             $.ajax({
@@ -214,8 +230,8 @@ $totalPages = ceil($totalProducts / $limit);
                     populateBrands(product.ten_thuong_hieu);
                     $('#name').val(product.ten_nuoc_hoa);
 
-                    $('#price').val(product.gia_ban); 
-                    $('#description').val(product.mo_ta); 
+                    $('#price').val(product.gia_ban);
+                    $('#description').val(product.mo_ta);
 
                     $('#productId').val(product.ma_nuoc_hoa);
                     $('#huongdau').val((product.nothuong?.huong_dau || []).join(', '));
@@ -317,12 +333,13 @@ $totalPages = ceil($totalProducts / $limit);
             });
         });
 
-});
+    });
+
     function populateBrands(selectedBrandName = null) {
         $.ajax({
             url: '../../backend/api/ThuongHieuAPI.php?action=getAllBrands',
             method: 'GET',
-            dataType: 'json',   
+            dataType: 'json',
             success: function(brands) {
                 const $select = $('#thuonghieu');
                 $select.empty().append('<option value="">-- Chọn thương hiệu --</option>');
@@ -353,7 +370,6 @@ $totalPages = ceil($totalProducts / $limit);
         }
     });
     $('.dataTables_info').remove();
-    
 </script>
 
 </html>

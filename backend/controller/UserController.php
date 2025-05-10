@@ -15,9 +15,14 @@ class UserController
         return $this->userModel->getUserById($id);
     }
 
-    public function getAllUsers()
+    public function getTotalUsers()
     {
-        return $this->userModel->getAllUsers();
+        return $this->userModel->getTotalUsers();
+    }
+
+    public function getAllUsers($limit, $offset)
+    {
+        return $this->userModel->getAllUsers($limit, $offset);
     }
 
     public function isExistUsername($username)
