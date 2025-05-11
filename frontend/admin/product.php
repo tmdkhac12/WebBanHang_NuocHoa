@@ -19,6 +19,13 @@ $totalPages = ceil($totalProducts / $limit);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product List</title>
     <?php include "./components/common-head.php"; ?>
+    <style>
+        .select2-container--default .select2-dropdown {
+            z-index: 9999 !important; 
+        }
+    </style>
+    
+    
 </head>
 
 <body class="sb-nav-fixed">
@@ -96,8 +103,11 @@ $totalPages = ceil($totalProducts / $limit);
                             </nav>
                         </div>
                     </div>
+
                 </div>
+                
             </main>
+
 
             <?php include "./components/footer.php"; ?>
         </div>
@@ -165,17 +175,23 @@ $totalPages = ceil($totalProducts / $limit);
                         </div>
 
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="email1">Hương đầu</label>
-                            <input type="text" id="huongdau" class="form-control" />
+                            <label for="huongdau" class="form-label">Hương đầu</label>
+                            <select id="huongdau" name="states[]" multiple="multiple" style="width: 100%;">
+                                
+                            </select>
                         </div>
 
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="email1">Hương giữa</label>
-                            <input type="text" id="huonggiua" class="form-control" />
+                            <label for="huonggiua" class="form-label">Hương giua</label>
+                            <select id="huonggiua" name="abc" multiple="multiple" style="width: 100%;">
+                                
+                            </select>
                         </div>
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="email1">Hương cuối</label>
-                            <input type="text" id="huongcuoi" class="form-control" />
+                            <label for="huongcuoi" class="form-label">Hương cuoi</label>
+                            <select id="huongcuoi" name="bdas" multiple="multiple" style="width: 100%;">
+                                
+                            </select>
                         </div>
 
                         <div data-mdb-input-init class="form-outline mb-4">
@@ -202,7 +218,9 @@ $totalPages = ceil($totalProducts / $limit);
     $('.dataTables_info').remove();
     
     $(document).ready(function() {
+        $('.js-example-basic-multiple').select2();
         function loadProductData(productId, isUpdate) {
+            
             $.ajax({
                 url: '../../backend/api/ProductAPI.php?action=getProductByID&id=' + productId,
                 method: 'GET',
@@ -211,6 +229,8 @@ $totalPages = ceil($totalProducts / $limit);
 
                     console.log("Product data:", product);
                     console.log("Product image path:", product.hinh_anh);
+                    console.log("Initializing Select2...");
+                    $('.js-example-basic-multiple').select2();
                     populateBrands(product.ten_thuong_hieu);
                     $('#name').val(product.ten_nuoc_hoa);
 
@@ -218,9 +238,39 @@ $totalPages = ceil($totalProducts / $limit);
                     $('#description').val(product.mo_ta); 
 
                     $('#productId').val(product.ma_nuoc_hoa);
-                    $('#huongdau').val((product.nothuong?.huong_dau || []).join(', '));
-                    $('#huonggiua').val((product.nothuong?.huong_giua || []).join(', '));
-                    $('#huongcuoi').val((product.nothuong?.huong_cuoi || []).join(', '));
+                    
+
+                    $('#huongdau').empty().trigger('change');
+                    $('#huonggiua').empty().trigger('change');
+                    $('#huongcuoi').empty().trigger('change');
+
+                    
+                    $('#huongdau, #huonggiua, #huongcuoi').select2();
+                    const notHuong = product.nothuong || [];
+
+                    const huongDauItems = notHuong.filter(n => n.loai === 'Hương đầu');
+                    const huongDauIds = huongDauItems.map(n => n.id);
+
+
+                    const huongGiuaItems = notHuong.filter(n => n.loai === 'Hương giữa');
+                    const huongGiuaIds = huongGiuaItems.map(n => n.id);
+
+                 
+
+                    const huongCuoiItems = notHuong.filter(n => n.loai === 'Hương cuối');
+                    const huongCuoiIds = huongCuoiItems.map(n => n.id);
+
+                    
+
+                    
+                    $('#huongdau').val(huongDauIds).trigger('change');
+                    $('#huonggiua').val(huongGiuaIds).trigger('change');
+                    $('#huongcuoi').val(huongCuoiIds).trigger('change');;
+                    populateNotHuongOptions({
+                        huongDau: huongDauIds,
+                        huongGiua: huongGiuaIds,
+                        huongCuoi: huongCuoiIds
+                    });
                     $('#nongdo').val((product.nong_do));
                     $('#gioitinh').val((product.gioi_tinh));
 
@@ -336,6 +386,40 @@ $totalPages = ceil($totalProducts / $limit);
             }
         });
     }
+    function populateNotHuongOptions(selectedHuongIds = {}) {
+    $.ajax({
+        url: '../../backend/api/NotHuongAPI.php?action=getAllNotHuong',
+        method: 'GET',
+        dataType: 'json',
+        success: function(nothuongs) {
+            console.log("NotHuong data:", nothuongs);
+
+            nothuongs.forEach(note => {
+                const option1 = new Option(note.not_huong, note.ma_not_huong, false, false);
+                const option2 = new Option(note.not_huong, note.ma_not_huong, false, false);
+                const option3 = new Option(note.not_huong, note.ma_not_huong, false, false);
+                
+                $('#huongdau').append(option1);
+                $('#huonggiua').append(option2);
+                $('#huongcuoi').append(option3);
+            });
+
+            // Pre-select values if provided
+            if (selectedHuongIds.huongDau) {
+                $('#huongdau').val(selectedHuongIds.huongDau).trigger('change');
+            }
+            if (selectedHuongIds.huongGiua) {
+                $('#huonggiua').val(selectedHuongIds.huongGiua).trigger('change');
+            }
+            if (selectedHuongIds.huongCuoi) {
+                $('#huongcuoi').val(selectedHuongIds.huongCuoi).trigger('change');
+            }
+        },
+        error: function() {
+            alert('Không thể tải danh sách nốt hương.');
+        }
+    });
+}
 
 
 

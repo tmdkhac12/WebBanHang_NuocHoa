@@ -172,7 +172,7 @@ class ProductModel {
             $stmt->close();
             $product['nong_do'] = $nongdo;
 
-            $sql = "SELECT n.not_huong, nn.loai 
+            $sql = "SELECT n.not_huong, nn.loai ,n.ma_not_huong
                     FROM nothuong n 
                     JOIN nothuong_nuochoa nn ON n.ma_not_huong = nn.ma_not_huong 
                     WHERE nn.ma_nuoc_hoa = ?";
@@ -180,15 +180,13 @@ class ProductModel {
             $stmt->bind_param("i", $id);
             $stmt->execute();
             $result = $stmt->get_result();
-            $nothuong = ['huong_dau' => [], 'huong_giua' => [], 'huong_cuoi' => []];
+            $nothuong = [];
             while ($row = $result->fetch_assoc()) {
-                if ($row['loai'] == 'Hương đầu') {
-                    $nothuong['huong_dau'][] = $row['not_huong'];
-                } elseif ($row['loai'] == 'Hương giữa') {
-                    $nothuong['huong_giua'][] = $row['not_huong'];
-                } elseif ($row['loai'] == 'Hương cuối') {
-                    $nothuong['huong_cuoi'][] = $row['not_huong'];
-                }
+                $nothuong[] = [
+                    'id' => $row['ma_not_huong'],
+                    'loai' => $row['loai'],
+                    'name' => $row['not_huong']
+                ];
             }
             $stmt->close();
             $product['nothuong'] = $nothuong;

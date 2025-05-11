@@ -3,7 +3,7 @@ function getConnection()
 {
     $host = "localhost";
     $username = "root";
-    $password = "";
+    $password = "admin";
 
     $connection = mysqli_connect($host, $username, $password, "web_nuochoa");
 
