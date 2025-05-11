@@ -42,8 +42,8 @@ $totalPages = ceil($totalUsers / $limit);
                         </div>
 
                         <!-- Nút thêm người dùng -->
-                        <div class="col-md-8 text-end pe-3 ">
-                            <button class="btn btn-primary me-6" id="btnAddUser" data-bs-toggle="modal" data-bs-target="#staticBackdrop4">
+                        <div class="col-md-8 text-end">
+                            <button class="btn btn-primary" id="btnAddUser" data-bs-toggle="modal" data-bs-target="#staticBackdrop4">
                                 Thêm người dùng
                             </button>
                         </div>
@@ -58,6 +58,7 @@ $totalPages = ceil($totalUsers / $limit);
                                         <th>Email</th>
                                         <th>Tài khoản</th>
                                         <th>Mật khẩu</th>
+                                        <th>Trạng thái</th>
                                         <th>Hành động</th>
                                 </thead>
                                 <tbody>
@@ -68,11 +69,11 @@ $totalPages = ceil($totalUsers / $limit);
                                             <td><?php echo $user['email']; ?></td>
                                             <td><?php echo $user['username']; ?></td>
                                             <td><?php echo $user['password']; ?></td>
+                                            <td><?php echo $user['trang_thai_tai_khoan'] == 1 ? 'Hoạt động' : 'Khóa'; ?>
                                             <td>
                                                 <a class="btn btn-success btn-sm btn-view" data-id="<?= $user['ma_khach_hang'] ?>">View</a>
                                                 <a class="btn btn-warning btn-sm btn-update" data-id="<?= $user['ma_khach_hang'] ?>">Update</a>
-
-                                                <a class="btn btn-danger btn-sm" href="#">Delete</a>
+                                                <!-- <a class="btn btn-danger btn-sm btn-delete" data-id="<?= $user['ma_khach_hang'] ?>" data-name="<?= $user['username'] ?>">Delete</a> -->
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -109,7 +110,7 @@ $totalPages = ceil($totalUsers / $limit);
                     </div>
                 </div>
             </main>
-            <? include "components/footer.php"; ?>
+            <?php include "components/footer.php"; ?>
         </div>
     </div>
     <div class="modal" id="staticBackdrop4" tabindex="-1">
@@ -120,25 +121,36 @@ $totalPages = ceil($totalUsers / $limit);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <!-- password input -->
+                    <form id="userForm">
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="password1">Tên Khách hàng</label>
+                            <label class="form-label" for="name">Tên Khách hàng</label>
                             <input type="text" id="name" class="form-control" />
+                            <div class="invalid-feedback" id="nameError"></div>
                         </div>
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="email1">Email address</label>
+                            <label class="form-label" for="email">Email address</label>
                             <input type="email" id="email" class="form-control" />
+                            <div class="invalid-feedback" id="emailError"></div> 
+                        </div>
+                        <div data-mdb-input-init class="form-outline mb-4">
+                            <label class="form-label" for="username">UserName</label>
+                            <input type="text" id="username" class="form-control" />
+                            <div class="invalid-feedback" id="usernameError"></div>
+                        </div>
+                        <div data-mdb-input-init class="form-outline mb-4">
+                            <label class="form-label" for="password">Password</label>
+                            <input type="password" id="password" class="form-control" />
+                            <div class="invalid-feedback" id="passwordError"></div> 
                         </div>
 
-                        <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="email1">UserName</label>
-                            <input type="text" id="username" class="form-control" />
-                        </div>
-                        <!-- password input -->
-                        <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="password1">Password</label>
-                            <input type="password" id="password" class="form-control" />
+                        <div class="col-6">
+                            <div data-mdb-input-init class="form-outline mb-4">
+                                <label class="form-label" for="trangthai">Trạng thái</label>
+                                <select id="trangthai" class="form-select">
+                                    <option value="1">Hoạt động</option>
+                                    <option value="0">Khoá</option>
+                                </select>
+                            </div>
                         </div>
                 </div>
 
@@ -150,29 +162,156 @@ $totalPages = ceil($totalUsers / $limit);
             </div>
         </div>
     </div>
-    </div>
     <?php include "components/common-scripts.php"; ?>
 </body>
 <script>
     $(document).ready(function() {
+        let isUpdateMode = false;
+        let userIdToUpdate = null;
+
+        // Reset form
+        function resetUserForm() {
+            $('#userForm')[0].reset();
+            $('#name, #email, #username, #password').val('');
+            $('#staticBackdrop4 input').prop('disabled', false);
+            $('#staticBackdrop4 select').prop('disabled', false);
+            $('#username').prop('readonly', false);
+            $('#saveUserButton').show();
+        }
+
+        // Khi nhấn nút "Thêm người dùng"
+        $('#btnAddUser').on('click', function() {
+            isUpdateMode = false;
+            userIdToUpdate = null;
+            $('#modalTitle').text('Thêm người dùng');
+            resetUserForm();
+            var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
+            modal.show();
+        });
+
+        // Xử lý sự kiện submit của form
+        $('#userForm').on('submit', function(e) {
+            e.preventDefault(); // Ngăn hành vi mặc định của form
+
+            const userData = {
+                name: $('#name').val().trim(),
+                email: $('#email').val().trim(),
+                username: $('#username').val().trim(),
+                password: $('#password').val().trim(),
+                trangthai: $('#trangthai').val().trim()
+            };
+
+            $('.invalid-feedback').text('');
+            $('.form-control').removeClass('is-invalid');
+
+            let isValid = true;
+            if (!userData.name) {
+                $('#nameError').text('Tên khách hàng không được bỏ trống.');
+                $('#name').addClass('is-invalid');
+                isValid = false;
+            }
+            if (!userData.email) {
+                $('#emailError').text('Email không được bỏ trống.');
+                $('#email').addClass('is-invalid');
+                isValid = false;
+            }
+            if (!userData.username) {
+                $('#usernameError').text('Username không được bỏ trống.');
+                $('#username').addClass('is-invalid');
+                isValid = false;
+            }
+            if (!userData.password) {
+                $('#passwordError').text('Password không được bỏ trống.');
+                $('#password').addClass('is-invalid');
+                isValid = false;
+            }
+            if (!isValid) {
+                return;
+            }
+            if (isUpdateMode) {
+                $.ajax({
+                    url: '../../backend/api/UserAPI.php?action=updateUser&id=' + userIdToUpdate,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(userData),
+                    success: function(response) {
+                        alert('Người dùng đã được cập nhật thành công!');
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Lỗi khi cập nhật người dùng:', error);
+                        alert('Không thể cập nhật người dùng. Vui lòng thử lại!');
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: '../../backend/api/UserAPI.php?action=addUser',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(userData),
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            location.reload(); // Reload lại trang
+                        } else {
+                            alert(response.message); // Hiển thị thông báo lỗi
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.message.includes('Username đã tồn tại')) {
+                            $('#usernameError').text(response.message);
+                            $('#username').addClass('is-invalid');
+                        }
+                        if (response.message.includes('Email đã tồn tại')) {
+                            $('#emailError').text(response.message);
+                            $('#email').addClass('is-invalid');
+                        }
+
+                        console.error('Lỗi khi thêm người dùng:', error);
+                    }
+                });
+            }
+        });
+
+        // Khi nhấn nút "Cập nhật"
+        $('.btn-update').on('click', function(e) {
+            e.preventDefault();
+            isUpdateMode = true;
+            userIdToUpdate = $(this).data('id');
+            loadUserData(userIdToUpdate, true);
+        });
+
+        // Khi nhấn nút "Xem"
+        $('.btn-view').on('click', function(e) {
+            e.preventDefault();
+            const userId = $(this).data('id');
+            loadUserData(userId, false);
+        });
+
+        // Hàm load dữ liệu người dùng
         function loadUserData(userId, isUpdate) {
             $.ajax({
-                url: '../../backend/api/UserAPI.php?action=getUserById&id=' + userId, // Đường dẫn đến API
+                url: '../../backend/api/UserAPI.php?action=getUserById&id=' + userId,
                 method: 'GET',
-                data: {
-                    id: userId
-                },
                 dataType: 'json',
                 success: function(user) {
-                    console.log("User data:", user);
-                    console.log("Avatar path:", user.avatar);
+                    $('#modalTitle').text(isUpdate ? 'Cập nhật người dùng' : 'Xem thông tin người dùng');
+                    resetUserForm();
                     $('#name').val(user.ten_khach_hang);
                     $('#email').val(user.email);
                     $('#username').val(user.username);
                     $('#password').val(user.password);
+                    $('#trangthai').val(user.trang_thai_tai_khoan);
 
-                    $('#staticBackdrop4 input').prop('disabled', !isUpdate);
-                    $('#staticBackdrop4 button[type="submit"]').toggle(isUpdate);
+                    if (!isUpdate) {
+                        $('#staticBackdrop4 input, #staticBackdrop4 select').prop('disabled', true);
+                        $('#saveUserButton').hide();
+                    } else {
+                        $('#staticBackdrop4 input, #staticBackdrop4 select').prop('disabled', false);
+                        $('#username').prop('readonly', true);
+                        $('#saveUserButton').show();
+                    }
 
                     var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
                     modal.show();
@@ -183,34 +322,14 @@ $totalPages = ceil($totalUsers / $limit);
                 }
             });
         }
-
-        // Khi click nút "View"
-        $('.btn-view').on('click', function(e) {
-            e.preventDefault();
-            var userId = $(this).data('id');
-            loadUserData(userId, false); // false: xem
-        });
-
-        // Khi click nút "Update"
-        $('.btn-update').on('click', function(e) {
-            e.preventDefault();
-            var userId = $(this).data('id');
-            loadUserData(userId, true); // true: cập nhật
-        });
     });
-    // document.getElementById('avatar').addEventListener('change', function(event) {
-    //     var file = event.target.files[0];  // Lấy tệp đã chọn
-    //     if (file) {
-    //         var reader = new FileReader();
-    //         reader.onload = function(e) {
-    //             // Hiển thị ảnh đã chọn
-    //             var imgElement = document.getElementById('avatar-img');
-    //             imgElement.src = e.target.result;  // Cập nhật đường dẫn ảnh
-    //             document.getElementById('avatar-preview').style.display = 'block';  // Hiển thị ảnh
-    //         };
-    //         reader.readAsDataURL(file);  // Đọc tệp ảnh dưới dạng URL
-    //     }
-    // });
+
+    $('#staticBackdrop4').on('hidden.bs.modal', function () {
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+    });
+
 </script>
+
 
 </html>

@@ -48,6 +48,23 @@ class UserController
         return 0;
     }
 
+    public function addUser($hoten, $email, $username, $password, $status)
+    {
+        if ($this->userModel->isExistUsername($username)) {
+            return -1; 
+        }
+        if ($this->userModel->isExistEmail($email)) {
+            return -2;
+        }
+
+        $isSuccess = $this->userModel->addUser($hoten, $email, $username, $password, $status);
+        if ($isSuccess) {
+            return 1; 
+        }
+
+        return 0; // Thêm thất bại
+    }
+
     public function updateUser($hoten, $email, $username, $currentPassword, $newPassword)
     {
         // If password null call updateUserInfo else call updateUserInfoAndPassword 
