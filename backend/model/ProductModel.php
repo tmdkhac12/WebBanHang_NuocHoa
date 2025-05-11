@@ -17,10 +17,12 @@ class ProductModel {
 
     public function getAllProducts($limit, $offset) {
         $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, dn.gia_ban, t.ten_thuong_hieu 
-                FROM nuochoa n 
-                LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
-                LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
-                LIMIT ? OFFSET ?";
+        FROM nuochoa n 
+        LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
+        LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
+        WHERE n.tinh_trang = 1
+        LIMIT ? OFFSET ?";
+                
         $stmt = $this->connection->prepare($sql);
         $stmt->bind_param("ii", $limit, $offset);
         $stmt->execute();
@@ -36,7 +38,8 @@ class ProductModel {
     public function getTotalProducts() {
         $sql = "SELECT COUNT(*) as total 
                 FROM nuochoa n 
-                LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu";
+                LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu
+                where n.tinh_trang = 1";
         $stmt = $this->connection->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -85,11 +88,11 @@ class ProductModel {
     public function filterProducts($gender, $minPrice, $maxPrice, $productNameSearch, $limit, $offset) {
         $conditions = $this->buildFilterConditions($gender, $minPrice, $maxPrice, $productNameSearch);
 
-        $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, dn.gia_ban, t.ten_thuong_hieu 
-                FROM nuochoa n 
-                LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
-                LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
-                WHERE 1=1" . $conditions['sql'];
+       $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, dn.gia_ban, t.ten_thuong_hieu 
+        FROM nuochoa n 
+        LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
+        LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
+        WHERE n.tinh_trang = 1" . $conditions['sql'];
         $sql .= " ORDER BY dn.gia_ban ASC LIMIT ? OFFSET ?";
         $conditions['types'] .= "ii";
         $conditions['params'][] = $limit;
@@ -107,11 +110,11 @@ class ProductModel {
         }
         $stmt->close();
 
-        $totalSql = "SELECT COUNT(*) as total 
-                     FROM nuochoa n 
-                     LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
-                     LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
-                     WHERE 1=1" . $conditions['sql'];
+       $totalSql = "SELECT COUNT(*) as total 
+             FROM nuochoa n 
+             LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
+             LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
+             WHERE n.tinh_trang = 1" . $conditions['sql'];
         $totalStmt = $this->connection->prepare($totalSql);
         if (!empty($conditions['params']) && count($conditions['params']) > 2) {
             $totalTypes = substr($conditions['types'], 0, -2);
@@ -131,7 +134,7 @@ class ProductModel {
                 FROM nuochoa n 
                 LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
                 INNER JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa
-                WHERE n.ma_nuoc_hoa = ?";
+                WHERE n.ma_nuoc_hoa = ? and n.tinh_trang = 1";
         $stmt = $this->connection->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -209,7 +212,7 @@ class ProductModel {
                     LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu
                     LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
                     LEFT JOIN chitiethoadon ct ON n.ma_nuoc_hoa = ct.ma_nuoc_hoa AND ct.ma_dung_tich = 6
-                    WHERE n.gioi_tinh = ?
+                    WHERE n.gioi_tinh =  ?  and n.tinh_trang = 1
                     GROUP BY n.ma_nuoc_hoa
                     ORDER BY total_sold DESC
                     LIMIT 6";
@@ -244,7 +247,7 @@ class ProductModel {
                 FROM nuochoa n 
                 INNER JOIN dungtich dt on dt.dung_tich = ?
                 INNER JOIN dungtich_nuochoa dtnh on dt.ma_dung_tich = dtnh.ma_dung_tich and n.ma_nuoc_hoa = dtnh.ma_nuoc_hoa
-                WHERE n.ma_nuoc_hoa = ?";
+                WHERE n.ma_nuoc_hoa = ? and n.tinh_trang = 1";
         $statement = $this->connection->prepare($sql);
 
         $products = [];
@@ -264,7 +267,7 @@ class ProductModel {
     }
    
     public function deleteProduct($productId) {
-            $sql = "DELETE FROM nuochoa WHERE ma_nuoc_hoa = ?";
+            $sql = "UPDATE nuochoa SET tinh_trang = 0 WHERE ma_nuoc_hoa = ?";
             
            
             $stmt = $this->connection->prepare($sql);
