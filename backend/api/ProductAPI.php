@@ -77,10 +77,26 @@ try {
                 $brand = isset($data['brand']) ? $data['brand'] : '';
                 $description = isset($data['description']) ? $data['description'] : '';
                 $price = isset($data['price']) ? (float)$data['price'] : 0;
+                
+               
+                $notes = [];
 
-                if ($productId && $name && $brand && $description && $price) {
-                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand);
+              
+                if (isset($_POST['notes']) && is_array($_POST['notes'])) {
+                    foreach ($_POST['notes'] as $key => $note) {
+                        $ma_not_huong = isset($note['ma_not_huong']) ? $note['ma_not_huong'] : null;
+                        $loai = isset($note['loai']) ? $note['loai'] : null;
 
+                        
+                        if ($ma_not_huong && $loai) {
+                            $notes[] = ['ma_not_huong' => $ma_not_huong, 'loai' => $loai];
+                        }
+                    }
+                }
+
+               
+                if ($productId && $name && $brand && $description && $price && !empty($notes)) {
+                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand, $notes);
 
                     if ($updated) {
                         echo json_encode(['success' => true, 'message' => 'Sản phẩm đã được cập nhật']);

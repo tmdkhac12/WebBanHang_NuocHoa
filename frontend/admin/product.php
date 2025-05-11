@@ -343,15 +343,16 @@ $totalPages = ceil($totalProducts / $limit);
             }
         });
         $('#productForm').on('submit', function(e) {
-            e.preventDefault()
+            e.preventDefault();
 
             var name = $('#name').val();
             var brand = $('#thuonghieu').val();
             var description = $('#description').val();
             var price = $('#price').val();
-            var imageFile = $('#avatar')[0].files[0]
-            var formData = new FormData();
+            var imageFile = $('#avatar')[0].files[0];
             var productId = $('#productId').val();
+
+            var formData = new FormData();
 
             formData.append('productId', productId);
             formData.append('name', name);
@@ -361,9 +362,37 @@ $totalPages = ceil($totalProducts / $limit);
             if (imageFile) {
                 formData.append('image', imageFile);
             }
+
+            
+            var huongDau = $('#huongdau').val() || [];
+            var huongGiua = $('#huonggiua').val() || [];
+            var huongCuoi = $('#huongcuoi').val() || [];
+
+            let index = 0;
+
+            huongDau.forEach(function(ma_not_huong) {
+                formData.append(`notes[${index}][ma_not_huong]`, ma_not_huong);
+                formData.append(`notes[${index}][loai]`, 'Hương đầu');
+                index++;
+            });
+
+            huongGiua.forEach(function(ma_not_huong) {
+                formData.append(`notes[${index}][ma_not_huong]`, ma_not_huong);
+                formData.append(`notes[${index}][loai]`, 'Hương giữa');
+                index++;
+            });
+
+            huongCuoi.forEach(function(ma_not_huong) {
+                formData.append(`notes[${index}][ma_not_huong]`, ma_not_huong);
+                formData.append(`notes[${index}][loai]`, 'Hương cuối');
+                index++;
+            });
+
+           
             for (var pair of formData.entries()) {
                 console.log(pair[0] + ': ' + pair[1]);
             }
+
             $.ajax({
                 url: '../../backend/api/ProductAPI.php?action=updateProduct',
                 type: 'POST',
@@ -382,6 +411,7 @@ $totalPages = ceil($totalProducts / $limit);
                 }
             });
         });
+
 
     });
 

@@ -286,34 +286,64 @@ class ProductModel {
             
             return $success;
     }
-    public function updateProduct($productId, $name, $price, $description, $brand) {
-         if (!is_int($brand) && !ctype_digit($brand)) {
+    public function updateProduct($productId, $name, $price, $description, $brand, $notes = []) {
+        if (!is_int($brand) && !ctype_digit($brand)) {
             return false;
         }
 
         $sql = "UPDATE nuochoa 
                 SET ten_nuoc_hoa = ?, mo_ta = ?, ma_thuong_hieu = ? 
                 WHERE ma_nuoc_hoa = ?";
-    
+
         $stmt = $this->connection->prepare($sql);
         if (!$stmt) {
             error_log("Error preparing update statement: " . $this->connection->error);
             return false;
         }
-    
-        $stmt->bind_param("sssi", $name, $description, $brand, $productId);
-        file_put_contents('C:/xampp/php/logs/debug.txt', "Name: $name\nDescription: $description\nBrand: $brand\nProduct ID: $productId\n", FILE_APPEND);
 
+        $stmt->bind_param("sssi", $name, $description, $brand, $productId);
         $success = $stmt->execute();
-        
+
         if (!$success) {
             error_log("Error executing update statement: " . $stmt->error);
-            error_log("Statement bind parameters: " . $name . ", " . $description . ", " . $brand . ", " . $productId);
+            return false;
         }
-    
+
         $stmt->close();
-    
-        return $success;
+
+        
+        $deleteStmt = $this->connection->prepare("DELETE FROM nothuong_nuochoa WHERE ma_nuoc_hoa = ?");
+        if ($deleteStmt) {
+            $deleteStmt->bind_param("i", $productId);
+            $deleteStmt->execute();
+            $deleteStmt->close();
+        }
+
+        
+        if (!empty($notes)) {
+            $insertStmt = $this->connection->prepare(
+                "INSERT INTO nothuong_nuochoa (ma_nuoc_hoa, ma_not_huong, loai) VALUES (?, ?, ?)"
+            );
+
+            if (!$insertStmt) {
+                error_log("Error preparing insert note statement: " . $this->connection->error);
+                return false;
+            }
+
+            foreach ($notes as $note) {
+                $ma_not_huong = $note['ma_not_huong'] ?? null;
+                $loai = $note['loai'] ?? null;
+
+                if ($ma_not_huong && $loai) {
+                    $insertStmt->bind_param("iis", $productId, $ma_not_huong, $loai);
+                    $insertStmt->execute();
+                }
+            }
+
+            $insertStmt->close();
+        }
+
+        return true;
     }
         
     
