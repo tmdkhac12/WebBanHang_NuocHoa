@@ -57,6 +57,20 @@ public function getTotalUsers()
         return $isExist;
     }
 
+    public function isExistEmail($email)
+    {
+        $connection = getConnection();
+        $sql = "SELECT COUNT(*) as count FROM khachhang WHERE email = ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        $connection->close();
+
+        return $result['count'] > 0; // Trả về true nếu email đã tồn tại
+    }
+
     public function isCurrentPasswordMatched($username, $currentPassword)
     {
         $connection = getConnection();

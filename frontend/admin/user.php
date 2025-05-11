@@ -110,7 +110,7 @@ $totalPages = ceil($totalUsers / $limit);
                     </div>
                 </div>
             </main>
-            <? include "components/footer.php"; ?>
+            <?php include "components/footer.php"; ?>
         </div>
     </div>
     <div class="modal" id="staticBackdrop4" tabindex="-1">
@@ -122,24 +122,25 @@ $totalPages = ceil($totalUsers / $limit);
                 </div>
                 <div class="modal-body">
                     <form id="userForm">
-                        <!-- password input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="password1">Tên Khách hàng</label>
+                            <label class="form-label" for="name">Tên Khách hàng</label>
                             <input type="text" id="name" class="form-control" />
+                            <div class="invalid-feedback" id="nameError"></div>
                         </div>
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="email1">Email address</label>
+                            <label class="form-label" for="email">Email address</label>
                             <input type="email" id="email" class="form-control" />
+                            <div class="invalid-feedback" id="emailError"></div> 
                         </div>
-
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="email1">UserName</label>
+                            <label class="form-label" for="username">UserName</label>
                             <input type="text" id="username" class="form-control" />
+                            <div class="invalid-feedback" id="usernameError"></div>
                         </div>
-                        <!-- password input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <label class="form-label" for="password1">Password</label>
+                            <label class="form-label" for="password">Password</label>
                             <input type="password" id="password" class="form-control" />
+                            <div class="invalid-feedback" id="passwordError"></div> 
                         </div>
 
                         <div class="col-6">
@@ -168,51 +169,109 @@ $totalPages = ceil($totalUsers / $limit);
         let isUpdateMode = false;
         let userIdToUpdate = null;
 
-       
+        // Reset form
         function resetUserForm() {
             $('#userForm')[0].reset();
             $('#name, #email, #username, #password').val('');
-            $('#trangthai').val(''); 
-
             $('#staticBackdrop4 input').prop('disabled', false);
             $('#staticBackdrop4 select').prop('disabled', false);
             $('#username').prop('readonly', false);
             $('#saveUserButton').show();
-            $('#saveUserButton').off('click');
         }
 
+        // Khi nhấn nút "Thêm người dùng"
         $('#btnAddUser').on('click', function() {
             isUpdateMode = false;
             userIdToUpdate = null;
             $('#modalTitle').text('Thêm người dùng');
             resetUserForm();
+            var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
+            modal.show();
+        });
 
-            $('#saveUserButton').on('click', function() {
-                const userData = {
-                    name: $('#name').val(),
-                    email: $('#email').val(),
-                    username: $('#username').val(),
-                    password: $('#password').val(),
-                    trangthai: $('#trangthai').val()
-                };
+        // Xử lý sự kiện submit của form
+        $('#userForm').on('submit', function(e) {
+            e.preventDefault(); // Ngăn hành vi mặc định của form
 
+            const userData = {
+                name: $('#name').val().trim(),
+                email: $('#email').val().trim(),
+                username: $('#username').val().trim(),
+                password: $('#password').val().trim(),
+                trangthai: $('#trangthai').val().trim()
+            };
+
+            $('.invalid-feedback').text('');
+            $('.form-control').removeClass('is-invalid');
+
+            let isValid = true;
+            if (!userData.name) {
+                $('#nameError').text('Tên khách hàng không được bỏ trống.');
+                $('#name').addClass('is-invalid');
+                isValid = false;
+            }
+            if (!userData.email) {
+                $('#emailError').text('Email không được bỏ trống.');
+                $('#email').addClass('is-invalid');
+                isValid = false;
+            }
+            if (!userData.username) {
+                $('#usernameError').text('Username không được bỏ trống.');
+                $('#username').addClass('is-invalid');
+                isValid = false;
+            }
+            if (!userData.password) {
+                $('#passwordError').text('Password không được bỏ trống.');
+                $('#password').addClass('is-invalid');
+                isValid = false;
+            }
+            if (!isValid) {
+                return;
+            }
+            if (isUpdateMode) {
+                $.ajax({
+                    url: '../../backend/api/UserAPI.php?action=updateUser&id=' + userIdToUpdate,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(userData),
+                    success: function(response) {
+                        alert('Người dùng đã được cập nhật thành công!');
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Lỗi khi cập nhật người dùng:', error);
+                        alert('Không thể cập nhật người dùng. Vui lòng thử lại!');
+                    }
+                });
+            } else {
                 $.ajax({
                     url: '../../backend/api/UserAPI.php?action=addUser',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(userData),
-                    success: function(response) {
-                        alert('Người dùng đã được thêm thành công!');
-                        location.reload();
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            location.reload(); // Reload lại trang
+                        } else {
+                            alert(response.message); // Hiển thị thông báo lỗi
+                        }
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.message.includes('Username đã tồn tại')) {
+                            $('#usernameError').text(response.message);
+                            $('#username').addClass('is-invalid');
+                        }
+                        if (response.message.includes('Email đã tồn tại')) {
+                            $('#emailError').text(response.message);
+                            $('#email').addClass('is-invalid');
+                        }
+
                         console.error('Lỗi khi thêm người dùng:', error);
-                        alert('Không thể thêm người dùng. Vui lòng thử lại!');
                     }
                 });
-            });
-            var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
-            modal.show();
+            }
         });
 
         // Khi nhấn nút "Cập nhật"
@@ -238,10 +297,7 @@ $totalPages = ceil($totalUsers / $limit);
                 dataType: 'json',
                 success: function(user) {
                     $('#modalTitle').text(isUpdate ? 'Cập nhật người dùng' : 'Xem thông tin người dùng');
-
-                    // Reset trước khi gán lại dữ liệu
                     resetUserForm();
-
                     $('#name').val(user.ten_khach_hang);
                     $('#email').val(user.email);
                     $('#username').val(user.username);
@@ -249,39 +305,12 @@ $totalPages = ceil($totalUsers / $limit);
                     $('#trangthai').val(user.trang_thai_tai_khoan);
 
                     if (!isUpdate) {
-                        // Chế độ xem: vô hiệu hóa toàn bộ
                         $('#staticBackdrop4 input, #staticBackdrop4 select').prop('disabled', true);
                         $('#saveUserButton').hide();
                     } else {
-                        // Cập nhật: cho phép chỉnh sửa, trừ username
                         $('#staticBackdrop4 input, #staticBackdrop4 select').prop('disabled', false);
                         $('#username').prop('readonly', true);
-
-                        // Gắn sự kiện cập nhật
-                        $('#saveUserButton').on('click', function() {
-                            const updatedUser = {
-                                id: userIdToUpdate,
-                                name: $('#name').val(),
-                                email: $('#email').val(),
-                                password: $('#password').val(),
-                                trangthai: $('#trangthai').val()
-                            };
-
-                            $.ajax({
-                                url: '../../backend/api/UserAPI.php?action=updateUser',
-                                method: 'POST',
-                                contentType: 'application/json',
-                                data: JSON.stringify(updatedUser),
-                                success: function(response) {
-                                    alert('Cập nhật thành công!');
-                                    location.reload();
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error('Lỗi khi cập nhật người dùng:', error);
-                                    alert('Không thể cập nhật người dùng. Vui lòng thử lại!');
-                                }
-                            });
-                        });
+                        $('#saveUserButton').show();
                     }
 
                     var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
@@ -293,13 +322,13 @@ $totalPages = ceil($totalUsers / $limit);
                 }
             });
         }
-
-        // Xử lý khi modal đóng
-        $('#staticBackdrop4').on('hidden.bs.modal', function() {
-            $('body').removeClass('modal-open');
-            $('.modal-backdrop').remove();
-        });
     });
+
+    $('#staticBackdrop4').on('hidden.bs.modal', function () {
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+    });
+
 </script>
 
 

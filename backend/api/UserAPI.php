@@ -50,40 +50,51 @@ switch ($action) {
             break;
         }
     case 'addUser': {
-            // Get Fetch data
-            $data = json_decode(file_get_contents("php://input"), true);
-            $hoten = $data["hoten"];
-            $email = $data["email"];
-            $username = $data["username"];
-            $password = $data["password"];
-            $status = $data["status"];
+            $data = json_decode(file_get_contents('php://input'), true);
 
-            // Call controller 
-            $code = $userController->registerUser($hoten, $email, $username, $password, $status);
-
-            if ($code == -1) {
-                echo json_encode(["success" => false, "message" => "Username đã tồn tại!"]);
+            // Kiểm tra dữ liệu
+            if (!empty($data['name']) && !empty($data['email']) && !empty($data['username']) && !empty($data['password'])) {
+                $result = $userController->addUser($data['name'], $data['email'], $data['username'], $data['password'], $data['trangthai']);
+                
+                switch ($result) {
+                    case 1:
+                        echo json_encode(['success' => true, 'message' => 'Người dùng đã được thêm thành công!']);
+                        break;
+                    case -1:
+                        http_response_code(400);
+                        echo json_encode(['success' => false, 'message' => 'Username đã tồn tại!']);
+                        break;
+                    case -2:
+                        http_response_code(400);
+                        echo json_encode(['success' => false, 'message' => 'Email đã tồn tại!']);
+                        break;
+                    case 0:
+                    default:
+                        http_response_code(500);
+                        echo json_encode(['success' => false, 'message' => 'Không thể thêm người dùng.']);
+                        break;
+                }
             } else {
-                $success = ($code == 1 ? true : false);
-                echo json_encode(["success" => $success, "message" => $success ? "Đăng ký tài khoản thành công!" : "Có lỗi xảy ra, đăng ký tài khoản thất bại vui lòng thử lại sau!"]);
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ.']);
             }
             break;
         }
-        case 'getUserById':
-            if (isset($_GET['id'])) {
-                $userId = $_GET['id'];
-                $user = $userController->getUserById($userId);
-                if ($user) {
-                    echo json_encode($user); 
-                } else {
-                    http_response_code(404); 
-                    echo json_encode(["error" => "User not found"]);
-                }
+    case 'getUserById':
+        if (isset($_GET['id'])) {
+            $userId = $_GET['id'];
+            $user = $userController->getUserById($userId);
+            if ($user) {
+                echo json_encode($user);
             } else {
-                http_response_code(400); 
-                echo json_encode(["error" => "Missing user ID"]);
+                http_response_code(404);
+                echo json_encode(["error" => "User not found"]);
             }
-            break;
+        } else {
+            http_response_code(400);
+            echo json_encode(["error" => "Missing user ID"]);
+        }
+        break;
     case 'updateUser': {
             // Get Fetch data
             $data = json_decode(file_get_contents("php://input"), true);
@@ -101,7 +112,7 @@ switch ($action) {
                     // If success then recreate session
                     $_SESSION["email"] = $email;
                     $_SESSION["ten_khach_hang"] = $hoten;
-                    
+
                     echo json_encode(["success" => true, "message" => "Cập nhật thông tin thành công!"]);
                     break;
                 case -1:
