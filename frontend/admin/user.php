@@ -1,7 +1,14 @@
 <?php
 require_once '../../backend/controller/UserController.php';
-$userController = new UserController();
-$users = $userController->getAllUsers(); // Lấy danh sách người dùng
+$userController = new UserController(); // Lấy danh sách người dùng
+
+$limit = 8; // Số người dùng trên mỗi trang
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+$users = $userController->getAllUsers($limit, $offset);
+$totalUsers = $userController->getTotalUsers();
+$totalPages = ceil($totalUsers / $limit);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,11 +27,27 @@ $users = $userController->getAllUsers(); // Lấy danh sách người dùng
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">User</h1>
+                    <h1 class="mt-4">Người dùng</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                        <li class="breadcrumb-item active">User</li>
+                        <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
+                        <li class="breadcrumb-item active">Người dùng</li>
                     </ol>
+                    <div class="row align-items-center mb-3">
+                        <!-- Tìm kiếm với nút tích hợp -->
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <input type="text" id="searchUser" class="form-control" placeholder="Tìm kiếm người dùng...">
+                                <button class="btn btn-outline-primary" id="btnSearchUser">Tìm</button>
+                            </div>
+                        </div>
+
+                        <!-- Nút thêm người dùng -->
+                        <div class="col-md-8 text-end pe-3 ">
+                            <button class="btn btn-primary me-6" id="btnAddUser" data-bs-toggle="modal" data-bs-target="#staticBackdrop4">
+                                Thêm người dùng
+                            </button>
+                        </div>
+                    </div>
                     <div class="card mb-4">
                         <div class="card-body">
                             <table id="datatablesSimple" class="table table-bordered">
@@ -56,6 +79,33 @@ $users = $userController->getAllUsers(); // Lấy danh sách người dùng
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                    <div class="card-footer">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-end mb-0">
+                                <?php if ($page > 1): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+
+                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                    <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    </li>
+                                <?php endfor; ?>
+
+                                <?php if ($page < $totalPages): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </main>
@@ -90,62 +140,64 @@ $users = $userController->getAllUsers(); // Lấy danh sách người dùng
                             <label class="form-label" for="password1">Password</label>
                             <input type="password" id="password" class="form-control" />
                         </div>
-                    </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
-                        </div>
-                    </form>
                 </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+                </form>
             </div>
         </div>
+    </div>
     </div>
     <?php include "components/common-scripts.php"; ?>
 </body>
 <script>
-$(document).ready(function () {
-    function loadUserData(userId, isUpdate) {
-        $.ajax({
-            url: '../../backend/api/UserAPI.php?action=getUserById&id=' + userId, // Đường dẫn đến API
-            method: 'GET', 
-            data: { id: userId }, 
-            dataType: 'json', 
-            success: function (user) {
-                console.log("User data:", user);
-                console.log("Avatar path:", user.avatar);
-                $('#name').val(user.ten_khach_hang);
-                $('#email').val(user.email);
-                $('#username').val(user.username);
-                $('#password').val(user.password);
+    $(document).ready(function() {
+        function loadUserData(userId, isUpdate) {
+            $.ajax({
+                url: '../../backend/api/UserAPI.php?action=getUserById&id=' + userId, // Đường dẫn đến API
+                method: 'GET',
+                data: {
+                    id: userId
+                },
+                dataType: 'json',
+                success: function(user) {
+                    console.log("User data:", user);
+                    console.log("Avatar path:", user.avatar);
+                    $('#name').val(user.ten_khach_hang);
+                    $('#email').val(user.email);
+                    $('#username').val(user.username);
+                    $('#password').val(user.password);
 
-                $('#staticBackdrop4 input').prop('disabled', !isUpdate);
-                $('#staticBackdrop4 button[type="submit"]').toggle(isUpdate);
+                    $('#staticBackdrop4 input').prop('disabled', !isUpdate);
+                    $('#staticBackdrop4 button[type="submit"]').toggle(isUpdate);
 
-                var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
-                modal.show();
-            },
-            error: function (xhr, status, error) {
-                console.error('Lỗi khi lấy dữ liệu người dùng:', error);
-                alert('Không thể lấy dữ liệu người dùng. Vui lòng thử lại!');
-            }
+                    var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
+                    modal.show();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi khi lấy dữ liệu người dùng:', error);
+                    alert('Không thể lấy dữ liệu người dùng. Vui lòng thử lại!');
+                }
+            });
+        }
+
+        // Khi click nút "View"
+        $('.btn-view').on('click', function(e) {
+            e.preventDefault();
+            var userId = $(this).data('id');
+            loadUserData(userId, false); // false: xem
         });
-    }
 
-    // Khi click nút "View"
-    $('.btn-view').on('click', function (e) {
-        e.preventDefault();
-        var userId = $(this).data('id');
-        loadUserData(userId, false); // false: xem
+        // Khi click nút "Update"
+        $('.btn-update').on('click', function(e) {
+            e.preventDefault();
+            var userId = $(this).data('id');
+            loadUserData(userId, true); // true: cập nhật
+        });
     });
-
-    // Khi click nút "Update"
-    $('.btn-update').on('click', function (e) {
-        e.preventDefault();
-        var userId = $(this).data('id');
-        loadUserData(userId, true); // true: cập nhật
-    });
-});
     // document.getElementById('avatar').addEventListener('change', function(event) {
     //     var file = event.target.files[0];  // Lấy tệp đã chọn
     //     if (file) {
@@ -159,8 +211,6 @@ $(document).ready(function () {
     //         reader.readAsDataURL(file);  // Đọc tệp ảnh dưới dạng URL
     //     }
     // });
-
-    
 </script>
 
 </html>

@@ -4,20 +4,42 @@ require_once __DIR__ . "/../config/connection.php";
 class UserModel
 {
 
-    public function getAllUsers()
-    {
-        $connection = getConnection();
+    public function getAllUsers($limit, $offset)
+{
+    $connection = getConnection();
 
-        $sql = "Select * from khachhang";
-        $queryResult = $connection->query($sql);
-        $users = [];
-        while ($row = $queryResult->fetch_assoc()) {
-            $users[] = $row;
-        }
+    $sql = "SELECT * FROM khachhang LIMIT ? OFFSET ?";
+    $statement = $connection->prepare($sql);
+    $statement->bind_param("ii", $limit, $offset); // `ii` là kiểu dữ liệu integer
+    $statement->execute();
 
-        $connection->close();
-        return (count($users) > 0 ? $users : null);
+    $result = $statement->get_result();
+    $users = [];
+    while ($row = $result->fetch_assoc()) {
+        $users[] = $row;
     }
+
+    $statement->close();
+    $connection->close();
+
+    return $users; // Trả về danh sách người dùng
+}
+
+public function getTotalUsers()
+{
+    $connection = getConnection();
+
+    $sql = "SELECT COUNT(*) as total FROM khachhang";
+    $result = $connection->query($sql);
+
+    if ($result) {
+        $row = $result->fetch_assoc();
+        return $row['total']; // Trả về tổng số người dùng
+    }
+
+    $connection->close();
+    return 0; // Trả về 0 nếu không có người dùng
+}
 
     public function isExistUsername($username)
     {
