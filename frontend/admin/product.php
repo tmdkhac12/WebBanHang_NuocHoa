@@ -351,6 +351,8 @@ $totalPages = ceil($totalProducts / $limit);
             var price = $('#price').val();
             var imageFile = $('#avatar')[0].files[0];
             var productId = $('#productId').val();
+            var gioitinh = $('#gioitinh').val();
+            
 
             var formData = new FormData();
 
@@ -359,6 +361,7 @@ $totalPages = ceil($totalProducts / $limit);
             formData.append('brand', brand);
             formData.append('description', description);
             formData.append('price', price);
+            formData.append('gioitinh' , gioitinh);
             if (imageFile) {
                 formData.append('image', imageFile);
             }

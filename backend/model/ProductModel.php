@@ -289,13 +289,13 @@ class ProductModel {
             
             return $success;
     }
-    public function updateProduct($productId, $name, $price, $description, $brand, $notes = []) {
+    public function updateProduct($productId, $name, $price, $description, $brand,$gender, $notes = [] ) {
         if (!is_int($brand) && !ctype_digit($brand)) {
             return false;
         }
 
         $sql = "UPDATE nuochoa 
-                SET ten_nuoc_hoa = ?, mo_ta = ?, ma_thuong_hieu = ? 
+                SET ten_nuoc_hoa = ?, mo_ta = ?, ma_thuong_hieu = ? , gioi_tinh = ?
                 WHERE ma_nuoc_hoa = ?";
 
         $stmt = $this->connection->prepare($sql);
@@ -304,7 +304,7 @@ class ProductModel {
             return false;
         }
 
-        $stmt->bind_param("sssi", $name, $description, $brand, $productId);
+        $stmt->bind_param("ssssi", $name, $description, $brand,$gender, $productId);
         $success = $stmt->execute();
 
         if (!$success) {
@@ -313,7 +313,21 @@ class ProductModel {
         }
 
         $stmt->close();
-
+        $sql = "UPDATE dungtich_nuochoa 
+                SET gia_ban = ?
+                WHERE ma_nuoc_hoa = ? ";
+        $stmt = $this->connection->prepare($sql);
+        if (!$stmt) {
+            error_log("Error preparing update statement: " . $this->connection->error);
+            return false;
+        }
+        $stmt->bind_param("di", $price, $productId);
+        $success = $stmt->execute();
+        if (!$success) {
+            error_log("Error executing update statement: " . $stmt->error);
+            return false;
+        }
+        $stmt->close();
         
         $deleteStmt = $this->connection->prepare("DELETE FROM nothuong_nuochoa WHERE ma_nuoc_hoa = ?");
         if ($deleteStmt) {

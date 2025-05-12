@@ -77,6 +77,7 @@ try {
                 $brand = isset($data['brand']) ? $data['brand'] : '';
                 $description = isset($data['description']) ? $data['description'] : '';
                 $price = isset($data['price']) ? (float)$data['price'] : 0;
+                $gender = isset($data['gioitinh']) ? $data['gioitinh'] : '';
                 
                
                 $notes = [];
@@ -96,7 +97,7 @@ try {
 
                
                 if ($productId && $name && $brand && $description && $price && !empty($notes)) {
-                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand, $notes);
+                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand,   $gender , $notes);
 
                     if ($updated) {
                         echo json_encode(['success' => true, 'message' => 'Sản phẩm đã được cập nhật']);
