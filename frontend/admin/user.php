@@ -234,13 +234,22 @@ $totalPages = ceil($totalUsers / $limit);
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(userData),
-                    success: function(response) {
-                        alert('Người dùng đã được cập nhật thành công!');
-                        location.reload();
+                    success: function (response) {
+                        if (response.success) {
+                            alert('Người dùng đã được cập nhật thành công!');
+                            location.reload();
+                        } else {
+                            alert(response.message); 
+                        }
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.message.includes('Email đã tồn tại')) {
+                            $('#emailError').text(response.message);
+                            $('#email').addClass('is-invalid');
+                        }
+
                         console.error('Lỗi khi cập nhật người dùng:', error);
-                        alert('Không thể cập nhật người dùng. Vui lòng thử lại!');
                     }
                 });
             } else {
