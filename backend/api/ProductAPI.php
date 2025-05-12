@@ -71,30 +71,55 @@ try {
             break;
         case 'updateProduct':
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $data = $_POST;
-                $productId = isset($data['productId']) ? (int)$data['productId'] : null;
-                $name = isset($data['name']) ? $data['name'] : '';
-                $brand = isset($data['brand']) ? $data['brand'] : '';
-                $description = isset($data['description']) ? $data['description'] : '';
-                $price = isset($data['price']) ? (float)$data['price'] : 0;
-                $gender = isset($data['gioitinh']) ? $data['gioitinh'] : '';
-                $nongdo = isset($data['nongdo']) ? (int)$data['nongdo'] : null;
+                $errors = [];
 
-               
+                $productId = isset($data['productId']) && ctype_digit($data['productId']) ? (int)$data['productId'] : null;
+                if (!$productId) $errors[] = "ID sản phẩm không hợp lệ.";
+
+                $name = isset($data['name']) && trim($data['name']) !== '' ? trim($data['name']) : '';
+                if ($name === '') $errors[] = "Tên sản phẩm là bắt buộc.";
+
+                $brand = isset($data['brand']) && ctype_digit($data['brand']) ? (int)$data['brand'] : null;
+                if (!$brand) $errors[] = "Thương hiệu không hợp lệ.";
+
+                $description = isset($data['description']) && trim($data['description']) !== '' ? trim($data['description']) : '';
+                if ($description === '') $errors[] = "Mô tả là bắt buộc.";
+
+                $price = isset($data['price']) && is_numeric($data['price']) ? (float)$data['price'] : null;
+                if ($price === null || $price < 0) $errors[] = "Giá phải là số dương.";
+
+                $gender = isset($data['gioitinh']) && in_array($data['gioitinh'], ['nam', 'nu', 'unisex']) ? $data['gioitinh'] : null;
+                if ($gender === null) $errors[] = "Giới tính không hợp lệ.";
+
+                $nongdo = isset($data['nongdo']) && ctype_digit($data['nongdo']) ? (int)$data['nongdo'] : null;
+                if (!$nongdo) $errors[] = "Nồng độ không hợp lệ.";
+
+                
                 $notes = [];
-
-              
                 if (isset($_POST['notes']) && is_array($_POST['notes'])) {
-                    foreach ($_POST['notes'] as $key => $note) {
-                        $ma_not_huong = isset($note['ma_not_huong']) ? $note['ma_not_huong'] : null;
-                        $loai = isset($note['loai']) ? $note['loai'] : null;
+                    foreach ($_POST['notes'] as $note) {
+                        $ma_not_huong = $note['ma_not_huong'] ?? null;
+                        $loai = $note['loai'] ?? null;
 
-                        
-                        if ($ma_not_huong && $loai) {
-                            $notes[] = ['ma_not_huong' => $ma_not_huong, 'loai' => $loai];
+                        if (ctype_digit((string)$ma_not_huong) && in_array($loai, ['top', 'middle', 'base'])) {
+                            $notes[] = [
+                                'ma_not_huong' => (int)$ma_not_huong,
+                                'loai' => $loai
+                            ];
                         }
                     }
                 }
+                if (empty($notes)) $errors[] = "Phải có ít nhất một nốt hương hợp lệ.";
+
+                if (!empty($errors)) {
+                    http_response_code(400); 
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'success' => false,
+                        'errors' => $errors
+                    ]);
+                    exit;
+}
 
                
                 if ($productId && $name && $brand && $description && $price && !empty($notes)) {

@@ -352,7 +352,10 @@ $totalPages = ceil($totalProducts / $limit);
             var nongdo = $('#nongdo').val();
 
             var formData = new FormData();
+            let fileInput = document.getElementById('avatar');
+            let fileName = fileInput.files[0]?.name;
 
+            console.log(fileName);
             formData.append('productId', productId);
             formData.append('name', name);
             formData.append('brand', brand);
