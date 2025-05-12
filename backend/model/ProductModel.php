@@ -297,6 +297,9 @@ class ProductModel {
         if (!is_int($brand) && !ctype_digit($brand)) {
             return false;
         }
+        if (!is_int($price) && !ctype_digit($price)) {
+            return false;
+        }
 
         $sql = "UPDATE nuochoa 
                 SET ten_nuoc_hoa = ?, mo_ta = ?, ma_thuong_hieu = ? , gioi_tinh = ?
