@@ -78,7 +78,8 @@ try {
                 $description = isset($data['description']) ? $data['description'] : '';
                 $price = isset($data['price']) ? (float)$data['price'] : 0;
                 $gender = isset($data['gioitinh']) ? $data['gioitinh'] : '';
-                
+                $nongdo = isset($data['nongdo']) ? (int)$data['nongdo'] : null;
+
                
                 $notes = [];
 
@@ -97,7 +98,7 @@ try {
 
                
                 if ($productId && $name && $brand && $description && $price && !empty($notes)) {
-                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand,   $gender , $notes);
+                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand,   $gender , $nongdo, $notes);
 
                     if ($updated) {
                         echo json_encode(['success' => true, 'message' => 'Sản phẩm đã được cập nhật']);
@@ -110,6 +111,7 @@ try {
                     header('Content-Type: application/json');
                     echo json_encode(['error' => 'Dữ liệu không hợp lệ']);
                 }
+
             }
             break;
 

@@ -160,7 +160,7 @@ class ProductModel {
             $stmt->close();
             $product['dung_tich'] = $dungtich;
 
-            $sql = "SELECT n.nong_do 
+            $sql = "SELECT n.nong_do ,n.ma_nong_do
                     FROM nongdo n 
                     JOIN nongdo_nuochoa nn ON n.ma_nong_do = nn.ma_nong_do 
                     WHERE nn.ma_nuoc_hoa = ?";
@@ -170,10 +170,14 @@ class ProductModel {
             $result = $stmt->get_result();
             $nongdo = [];
             while ($row = $result->fetch_assoc()) {
-                $nongdo[] = $row['nong_do'];
+                $nongdo[] = [
+                    'id' => $row['ma_nong_do'],
+                    'name' => $row['nong_do']
+                ];
             }
-            $stmt->close();
             $product['nong_do'] = $nongdo;
+            $stmt->close();
+    
 
             $sql = "SELECT n.not_huong, nn.loai ,n.ma_not_huong
                     FROM nothuong n 
@@ -289,7 +293,7 @@ class ProductModel {
             
             return $success;
     }
-    public function updateProduct($productId, $name, $price, $description, $brand,$gender, $notes = [] ) {
+    public function updateProduct($productId, $name, $price, $description, $brand,$gender, $nongdo, $notes = [] ) {
         if (!is_int($brand) && !ctype_digit($brand)) {
             return false;
         }
@@ -329,6 +333,23 @@ class ProductModel {
         }
         $stmt->close();
         
+        $sql = "Update nongdo_nuochoa 
+                SET ma_nong_do = ?
+                WHERE ma_nuoc_hoa = ?";
+        $stmt = $this->connection->prepare($sql);
+        if (!$stmt) {
+            error_log("Error preparing update statement: " . $this->connection->error);
+            return false;
+        }
+        $stmt->bind_param("ii", $nongdo, $productId);
+        $success = $stmt->execute();
+        if (!$success) {
+            error_log("Error executing update statement: " . $stmt->error);
+            return false;
+        }
+        $stmt->close();
+
+
         $deleteStmt = $this->connection->prepare("DELETE FROM nothuong_nuochoa WHERE ma_nuoc_hoa = ?");
         if ($deleteStmt) {
             $deleteStmt->bind_param("i", $productId);

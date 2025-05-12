@@ -166,13 +166,7 @@ $totalPages = ceil($totalProducts / $limit);
                                 <div data-mdb-input-init class="form-outline mb-4">
                                     <label class="form-label" for="nongdo">Nồng độ</label>
                                     <select id="nongdo" class="form-select">
-                                        <option value="Parfum">Parfum</option>
-                                        <option value="EDP">EDP</option>
-                                        <option value="EDT">EDT</option>
-                                        <option value="EDC">EDC</option>
-                                        <option value="Eau Fraîche">Eau Fraîche</option>
-                                        <option value="Aftershave">Aftershave</option>
-                                        <option value="Perfume Oil">Perfume Oil</option>
+                                       
                                     </select>
 
                                 </div>
@@ -246,8 +240,11 @@ $totalPages = ceil($totalProducts / $limit);
                     console.log("Product data:", product);
                     console.log("Product image path:", product.hinh_anh);
                     console.log("Initializing Select2...");
+                    const nongDoId = product.nong_do?.[0]?.id;
+                    
                     $('.js-example-basic-multiple').select2();
                     populateBrands(product.ten_thuong_hieu);
+                    populateNongDo(nongDoId);
                     $('#name').val(product.ten_nuoc_hoa);
 
                     $('#price').val(product.gia_ban);
@@ -352,7 +349,7 @@ $totalPages = ceil($totalProducts / $limit);
             var imageFile = $('#avatar')[0].files[0];
             var productId = $('#productId').val();
             var gioitinh = $('#gioitinh').val();
-            
+            var nongdo = $('#nongdo').val();
 
             var formData = new FormData();
 
@@ -362,6 +359,7 @@ $totalPages = ceil($totalProducts / $limit);
             formData.append('description', description);
             formData.append('price', price);
             formData.append('gioitinh' , gioitinh);
+            formData.append('nongdo', nongdo);
             if (imageFile) {
                 formData.append('image', imageFile);
             }
@@ -425,7 +423,7 @@ $totalPages = ceil($totalProducts / $limit);
             dataType: 'json',
             success: function(brands) {
                 const $select = $('#thuonghieu');
-                $select.empty().append('<option value="">-- Chọn thương hiệu --</option>');
+
                 brands.forEach(brand => {
                     const selected = selectedBrandName == brand.ten_thuong_hieu ? 'selected' : '';
                     $select.append(`<option value="${brand.ma_thuong_hieu}" ${selected}>${brand.ten_thuong_hieu}</option>`);
@@ -433,6 +431,24 @@ $totalPages = ceil($totalProducts / $limit);
             },
             error: function() {
                 alert('Không thể tải danh sách thương hiệu.');
+            }
+        });
+    }
+    function populateNongDo(selectedNongDoID = null) {
+        $.ajax({
+            url: '../../backend/api/NongDoAPI.php?action=getAllNongDo',
+            method: 'GET',
+            dataType: 'json',
+            success: function(nongdos) {
+                const $select = $('#nongdo');
+
+                nongdos.forEach(nongdo => {
+                    const selected = selectedNongDoID == nongdo.ma_nong_do ? 'selected' : '';
+                    $select.append(`<option value="${nongdo.ma_nong_do}" ${selected}>${nongdo.nong_do}</option>`);
+                });
+            },
+            error: function() {
+                alert('Không thể tải danh sách nong do.');
             }
         });
     }
