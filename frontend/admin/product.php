@@ -451,7 +451,7 @@ $totalPages = ceil($totalProducts / $limit);
                 $('#huongcuoi').append(option3);
             });
 
-            // Pre-select values if provided
+        
             if (selectedHuongIds.huongDau) {
                 $('#huongdau').val(selectedHuongIds.huongDau).trigger('change');
             }
