@@ -7,6 +7,24 @@ $productId = isset($_GET['id']) ? $_GET['id'] : null;
 
 if ($productId) {
     $product = $productModel->getProductById($productId);
+    $huong_dau = [];
+    $huong_giua = [];
+    $huong_cuoi = [];
+
+    foreach ($product['nothuong'] as $nh) {
+        switch ($nh['loai']) {
+            case 'Hương đầu':
+                $huong_dau[] = htmlspecialchars($nh['name']);
+                break;
+            case 'Hương giữa':
+                $huong_giua[] = htmlspecialchars($nh['name']);
+                break;
+            case 'Hương cuối':
+                $huong_cuoi[] = htmlspecialchars($nh['name']);
+                break;
+        }
+    }
+
     if (!$product) {
         die("Sản phẩm không tồn tại.");
     }
@@ -77,7 +95,14 @@ if ($productId) {
 
                     <div class="mb-4">
                         <label class="form-label">Nồng độ:</label>
-                        <p><?php echo implode(', ', array_map('htmlspecialchars', $product['nong_do'])); ?></p>
+                        <p>
+                            <?php
+                            $names = array_map(function($item) {
+                                return htmlspecialchars($item['name']);
+                            }, $product['nong_do']);
+                            echo implode(', ', $names);
+                            ?>
+                        </p>
                     </div>
 
                     <div class="mb-4 quantity-selector">
@@ -107,19 +132,17 @@ if ($productId) {
                 <!-- Product Features -->
                 <div class="product-features">
                     <h2 class="section-title">Đặc điểm</h2>
-                    <div class="features-list">
-                        <div class="feature-item">
-                            <span class="feature-label">Hương đầu</span>
-                            <span class="feature-value"><?php echo implode(', ', array_map('htmlspecialchars', $product['nothuong']['huong_dau'])); ?></span>
-                        </div>
-                        <div class="feature-item">
-                            <span class="feature-label">Hương giữa</span>
-                            <span class="feature-value"><?php echo implode(', ', array_map('htmlspecialchars', $product['nothuong']['huong_giua'])); ?></span>
-                        </div>
-                        <div class="feature-item">
-                            <span class="feature-label">Hương cuối</span>
-                            <span class="feature-value"><?php echo implode(', ', array_map('htmlspecialchars', $product['nothuong']['huong_cuoi'])); ?></span>
-                        </div>
+                    <div class="feature-item">
+                        <span class="feature-label">Hương đầu</span>
+                        <span class="feature-value"><?php echo implode(', ', $huong_dau); ?></span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-label">Hương giữa</span>
+                        <span class="feature-value"><?php echo implode(', ', $huong_giua); ?></span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-label">Hương cuối</span>
+                        <span class="feature-value"><?php echo implode(', ', $huong_cuoi); ?></span>
                     </div>
                 </div>
 
