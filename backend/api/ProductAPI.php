@@ -76,7 +76,7 @@ try {
                 $name = isset($data['name']) ? $data['name'] : '';
                 $brand = isset($data['brand']) ? $data['brand'] : '';
                 $description = isset($data['description']) ? $data['description'] : '';
-                $price = isset($data['price']) ? (float)$data['price'] : 0;
+                $price = isset($data['price']) ? (int)$data['price'] : 0;
                 $gender = isset($data['gioitinh']) ? $data['gioitinh'] : '';
                 $nongdo = isset($data['nongdo']) ? (int)$data['nongdo'] : null;
 
