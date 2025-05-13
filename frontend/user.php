@@ -55,6 +55,14 @@ $hoadons = $hoaDonController->getAllHoaDon($_SESSION["user_id"]);
                     <li class="list-group-item border-0 py-2">
                         <button class="btn btn-link text-muted text-decoration-none shadow-none" data-toggle="tab" data-target="#order-tab">Đơn Hàng</button>
                     </li>
+                    
+                    <!-- Kiểm tra xem mục này có bị thụt lề -->
+                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                        <li class="list-group-item border-0 py-2">
+                            <button onclick="window.location.href='/frontend/admin/index.php'" class="btn btn-link text-muted text-decoration-none shadow-none">Trang Quản Lý</button>
+                        </li>
+                    <?php endif; ?>
+
                     <li class="list-group-item border-0 py-2">
                         <button class="btn btn-link text-muted text-decoration-none shadow-none" id="logout-btn">Đăng Xuất</button>
                     </li>

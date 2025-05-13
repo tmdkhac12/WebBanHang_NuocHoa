@@ -32,6 +32,7 @@ switch ($action) {
                 $_SESSION["username"] = $account["username"];
                 $_SESSION["email"] = $account["email"];
                 $_SESSION["ten_khach_hang"] = $account["ten_khach_hang"];
+                $_SESSION["role"] = $account["quyen_han"];
                 echo json_encode(["success" => true, "message" => "Đăng nhập thành công"]);
             } else {
                 echo json_encode(["success" => false, "message" => "Username hoặc password không chính xác"]);

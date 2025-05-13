@@ -31,8 +31,8 @@ if (isset($_SESSION["username"])) {
     <div class="login-page py-5">
         <div class="form w-50">
             <form id="login-form" class="login-form" action="" method="post">
-                <input id="username" type="text" placeholder="Tên đăng nhập" required>
-                <input id="password" type="password" placeholder="Mật khẩu" required>
+                <input id="username" name='username' type="text" placeholder="Tên đăng nhập" required>
+                <input id="password" name="password" type="password" placeholder="Mật khẩu" required>
                 <button type="submit">Đăng Nhập</button>
                 <p class="message">Bạn chưa có tài khoản? <a id="signup" href="#">Đăng ký</a></p>
                 <p id="error-message" class="p-0" style="color: red;"></p>
