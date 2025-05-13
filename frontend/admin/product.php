@@ -209,6 +209,7 @@ $totalPages = ceil($totalProducts / $limit);
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="avatar">Ảnh sản phẩm</label>
                             <input type="file" id="avatar" class="form-control" accept="image/*" />
+                            <input type="hidden" id="existingImage" name="existingImage" />
                         </div>
 
                         <div id="avatar-preview" class="mb-4" style="display: none;">
@@ -218,6 +219,7 @@ $totalPages = ceil($totalProducts / $limit);
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Save changes</button>
+
                         </div>
                     </form>
                 </div>
@@ -251,7 +253,7 @@ $totalPages = ceil($totalProducts / $limit);
 
                     $('#price').val(product.gia_ban);
                     $('#description').val(product.mo_ta);
-
+                    $('#existingImage').val(product.hinh_anh);
                     $('#productId').val(product.ma_nuoc_hoa);
                     
 
@@ -352,12 +354,16 @@ $totalPages = ceil($totalProducts / $limit);
             var productId = $('#productId').val();
             var gioitinh = $('#gioitinh').val();
             var nongdo = $('#nongdo').val();
-
+            var existingImage = $('#existingImage').val();
             var formData = new FormData();
-            let fileInput = document.getElementById('avatar');
-            let fileName = fileInput.files[0]?.name;
+            if (imageFile) {
+                formData.append('newImage', imageFile);
+                console.log('New image file:', imageFile);
+            } else {
+                formData.append('existingImage', existingImage );
+                console.log('Existing image path:', existingImage);
+            } 
 
-            console.log(fileName);
             formData.append('productId', productId);
             formData.append('name', name);
             formData.append('brand', brand);
@@ -365,9 +371,7 @@ $totalPages = ceil($totalProducts / $limit);
             formData.append('price', price);
             formData.append('gioitinh' , gioitinh);
             formData.append('nongdo', nongdo);
-            if (imageFile) {
-                formData.append('image', imageFile);
-            }
+            
 
             
             var huongDau = $('#huongdau').val() || [];
@@ -413,7 +417,7 @@ $totalPages = ceil($totalProducts / $limit);
                 error: function(error) {
                     console.error('Error updating:', error);
                     alert('Failed to update product.');
-                    location.reload();
+                    console.log('Error details:', error);
                 }
             });
         });

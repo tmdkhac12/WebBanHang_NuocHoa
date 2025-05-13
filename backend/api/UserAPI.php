@@ -19,9 +19,25 @@ switch ($action) {
         // break;
     case 'login': {
             // Get username and password from body fetch when user onclick 
-            $data = json_decode(file_get_contents("php://input"), true);
-            $username = $data["username"];
-            $password = $data["password"];
+                header('Content-Type: application/json');
+
+            // Only for JSON POST data
+            $rawData = file_get_contents("php://input");
+            $data = json_decode($rawData, true);
+
+            // Extract safely
+            $username = $data['username'] ?? null;
+            $password = $data['password'] ?? null;
+
+            if (!$username || !$password) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Thiếu tên đăng nhập hoặc mật khẩu."
+                ]);
+                exit;
+}
+
+            
 
             // Call Controller
             $account = $userController->getAccount($username, $password);

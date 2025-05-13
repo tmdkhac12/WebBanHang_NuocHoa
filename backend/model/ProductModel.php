@@ -293,7 +293,7 @@ class ProductModel {
             
             return $success;
     }
-    public function updateProduct($productId, $name, $price, $description, $brand,$gender, $nongdo, $notes = [] ) {
+    public function updateProduct($productId, $name, $price, $description, $brand,$gender, $nongdo,$image ,$notes = [] ) {
         if (!is_int($brand) && !ctype_digit($brand)) {
             return false;
         }
@@ -302,7 +302,7 @@ class ProductModel {
         }
 
         $sql = "UPDATE nuochoa 
-                SET ten_nuoc_hoa = ?, mo_ta = ?, ma_thuong_hieu = ? , gioi_tinh = ?
+                SET ten_nuoc_hoa = ?, mo_ta = ?, ma_thuong_hieu = ? , gioi_tinh = ? , hinh_anh = ?
                 WHERE ma_nuoc_hoa = ?";
 
         $stmt = $this->connection->prepare($sql);
@@ -311,7 +311,7 @@ class ProductModel {
             return false;
         }
 
-        $stmt->bind_param("ssssi", $name, $description, $brand,$gender, $productId);
+        $stmt->bind_param("sssssi", $name, $description, $brand,$gender ,$image, $productId);
         $success = $stmt->execute();
 
         if (!$success) {

@@ -5,6 +5,27 @@ header('Content-Type: application/json');
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
+function handleImageUpload($fieldName = 'newImage', $uploadDir = null) {
+    if (!$uploadDir) {
+        $uploadDir = __DIR__ . '/frontend/images/';
+    }
+
+    if (!isset($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] !== UPLOAD_ERR_OK) {
+        return null;
+    }
+
+    $fileTmpPath = $_FILES[$fieldName]['tmp_name'];
+    $originalFileName = basename($_FILES[$fieldName]['name']);
+    $safeFileName = preg_replace("/[^a-zA-Z0-9\.\-_]/", "", $originalFileName);
+
+    $destination = $uploadDir . $safeFileName;
+
+    if (move_uploaded_file($fileTmpPath, $destination)) {
+        return $safeFileName; 
+    }
+
+    return false; 
+}
 try {
     $productController = new ProductController();
 
@@ -80,7 +101,29 @@ try {
                 $gender = isset($data['gioitinh']) ? $data['gioitinh'] : '';
                 $nongdo = isset($data['nongdo']) ? (int)$data['nongdo'] : null;
 
-                
+                $uploadDir = dirname(__DIR__, 2) . '/frontend/images/';
+
+                if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] === UPLOAD_ERR_OK) {
+                    $fileTmpPath = $_FILES['newImage']['tmp_name'];
+                    $originalFileName = basename($_FILES['newImage']['name']);
+                    
+                    
+                    $safeFileName = preg_replace("/[^a-zA-Z0-9\.\-_]/", "", $originalFileName);
+
+                    $destination = $uploadDir . $safeFileName;
+
+                    if (move_uploaded_file($fileTmpPath, $destination)) {
+                        $finalImage = $safeFileName;
+                    } else {
+                        echo json_encode(['error' => 'Failed to move uploaded file.']);
+                        exit;
+                    }
+                } elseif (isset($_POST['existingImage'])) {
+                    $finalImage = $_POST['existingImage']; 
+                } else {
+                    $finalImage = null; 
+                }
+
                 $notes = [];
                   if (isset($_POST['notes']) && is_array($_POST['notes'])) {
                     foreach ($_POST['notes'] as $key => $note) {
@@ -94,7 +137,7 @@ try {
 
                
                 if ($productId && $name && $brand && $description && $price && !empty($notes)) {
-                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand,   $gender , $nongdo, $notes);
+                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand,   $gender , $nongdo,$finalImage, $notes);
 
                     if ($updated) {
                         echo json_encode(['success' => true, 'message' => 'Sản phẩm đã được cập nhật']);
