@@ -37,11 +37,13 @@ function addLoginEventHandler() {
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include', // 🔥 thêm dòng này để session hoạt động
             body: JSON.stringify({
                 username: username,
                 password: password
             })
         })
+
             .then((respond) => {
                 return respond.json();
             })

@@ -1,10 +1,8 @@
-<?php session_start();
-// Kiểm tra nếu người dùng chưa đăng nhập
-if (!isset($_SESSION['username'])) {
-    // Chuyển hướng đến trang đăng nhập
-    header('Location: ../../frontend/login.php');
-    exit();
-}; ?>
+<?php 
+require_once 'auth.php';
+requireAdmin();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>

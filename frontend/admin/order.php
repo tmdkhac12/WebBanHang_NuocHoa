@@ -1,4 +1,6 @@
 <?php
+require_once 'auth.php';
+requireAdmin();
 require_once '../../backend/controller/HoaDonController.php';
 
 $orderController = new HoaDonController();
