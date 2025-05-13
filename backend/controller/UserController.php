@@ -35,20 +35,20 @@ class UserController
         return $this->userModel->getAccount($username, $password);
     }
 
-    public function registerUser($hoten, $email, $username, $password, $status)
+    public function registerUser($hoten, $email, $username, $password, $status, $quyenhan)
     {
         // If username existed 
         if ($this->userModel->isExistUsername($username)) {
             return -1; // Username existed
         }
 
-        if ($this->userModel->addUser($hoten, $email, $username, $password, $status)) {
+        if ($this->userModel->addUser($hoten, $email, $username, $password, $status , $quyenhan)) {
             return 1;
         }
         return 0;
     }
 
-    public function addUser($hoten, $email, $username, $password, $status)
+    public function addUser($hoten, $email, $username, $password, $status , $quyenhan)
     {
         if ($this->userModel->isExistUsername($username)) {
             return -1; 
@@ -57,7 +57,7 @@ class UserController
             return -2;
         }
 
-        $isSuccess = $this->userModel->addUser($hoten, $email, $username, $password, $status);
+        $isSuccess = $this->userModel->addUser($hoten, $email, $username, $password, $status , $quyenhan);
         if ($isSuccess) {
             return 1; 
         }

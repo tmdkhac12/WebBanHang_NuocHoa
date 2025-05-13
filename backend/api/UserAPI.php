@@ -36,9 +36,6 @@ switch ($action) {
                 ]);
                 exit;
 }
-
-            
-
             // Call Controller
             $account = $userController->getAccount($username, $password);
 
@@ -67,36 +64,39 @@ switch ($action) {
             break;
         }
     case 'addUser': {
-            $data = json_decode(file_get_contents('php://input'), true);
+        $data = json_decode(file_get_contents('php://input'), true);
 
-            // Kiểm tra dữ liệu
-            if (!empty($data['name']) && !empty($data['email']) && !empty($data['username']) && !empty($data['password'])) {
-                $result = $userController->addUser($data['name'], $data['email'], $data['username'], $data['password'], $data['trangthai']);
-                
-                switch ($result) {
-                    case 1:
-                        echo json_encode(['success' => true, 'message' => 'Người dùng đã được thêm thành công!']);
-                        break;
-                    case -1:
-                        http_response_code(400);
-                        echo json_encode(['success' => false, 'message' => 'Username đã tồn tại!']);
-                        break;
-                    case -2:
-                        http_response_code(400);
-                        echo json_encode(['success' => false, 'message' => 'Email đã tồn tại!']);
-                        break;
-                    case 0:
-                    default:
-                        http_response_code(500);
-                        echo json_encode(['success' => false, 'message' => 'Không thể thêm người dùng.']);
-                        break;
-                }
-            } else {
-                http_response_code(400);
-                echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ.']);
+        if (!empty($data['username']) && !empty($data['password'])) {
+            $name = $data['name'];
+            $email = $data['email'];
+            $username = $data['username'];
+            $password = $data['password'];
+            $status = $data['status'];
+            $quyenhan = $data['quyenhan'];
+
+            $result = $userController->addUser($name, $email, $username, $password, $status, $quyenhan);
+            
+            switch ($result) {
+                case 1:
+                    echo json_encode(['success' => true, 'message' => 'Người dùng đã được thêm thành công!']);
+                    break;
+                case -1:
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Username đã tồn tại!']);
+                    break;
+                case 0:
+                default:
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'message' => 'Không thể thêm người dùng.']);
+                    break;
             }
-            break;
+        } else {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ.']);
         }
+        break;
+    }
+
     case 'getUserById':
         if (isset($_GET['id'])) {
             $userId = $_GET['id'];

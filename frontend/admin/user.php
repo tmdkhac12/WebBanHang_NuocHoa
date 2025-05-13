@@ -56,10 +56,11 @@ $totalPages = ceil($totalUsers / $limit);
                                 <thead>
                                     <tr>
                                         <th>Mã khách hàng</th>
-                                        <th>Tên khách hàng</th>
-                                        <th>Email</th>
                                         <th>Tài khoản</th>
                                         <th>Mật khẩu</th>
+                                        <th>Tên khách hàng</th>
+                                        <th>Email</th>
+                                        <th>Quyền hạn</th>
                                         <th>Trạng thái</th>
                                         <th>Hành động</th>
                                 </thead>
@@ -67,10 +68,11 @@ $totalPages = ceil($totalUsers / $limit);
                                     <?php foreach ($users as $user): ?>
                                         <tr>
                                             <td><?php echo $user['ma_khach_hang']; ?></td>
-                                            <td><?php echo $user['ten_khach_hang']; ?></td>
-                                            <td><?php echo $user['email']; ?></td>
                                             <td><?php echo $user['username']; ?></td>
                                             <td><?php echo $user['password']; ?></td>
+                                            <td><?php echo $user['ten_khach_hang']; ?></td>
+                                            <td><?php echo $user['email']; ?></td>
+                                            <td><?php echo $user['quyen_han'] == 'admin' ? 'Quản trị viên' : 'Người dùng'; ?></td>
                                             <td><?php echo $user['trang_thai_tai_khoan'] == 1 ? 'Hoạt động' : 'Khóa'; ?>
                                             <td>
                                                 <a class="btn btn-success btn-sm btn-view" data-id="<?= $user['ma_khach_hang'] ?>">View</a>
@@ -132,7 +134,7 @@ $totalPages = ceil($totalUsers / $limit);
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="email">Email address</label>
                             <input type="email" id="email" class="form-control" />
-                            <div class="invalid-feedback" id="emailError"></div> 
+                            <div class="invalid-feedback" id="emailError"></div>
                         </div>
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="username">UserName</label>
@@ -142,16 +144,29 @@ $totalPages = ceil($totalUsers / $limit);
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="password">Password</label>
                             <input type="password" id="password" class="form-control" />
-                            <div class="invalid-feedback" id="passwordError"></div> 
+                            <div class="invalid-feedback" id="passwordError"></div>
                         </div>
 
-                        <div class="col-6">
-                            <div data-mdb-input-init class="form-outline mb-4">
-                                <label class="form-label" for="trangthai">Trạng thái</label>
-                                <select id="trangthai" class="form-select">
-                                    <option value="1">Hoạt động</option>
-                                    <option value="0">Khoá</option>
-                                </select>
+                        <div class="row">
+                            <div class="col-6">
+                                <div data-mdb-input-init class="form-outline mb-4">
+                                    <label class="form-label" for="trangthai">Trạng thái</label>
+                                    <select id="trangthai" class="form-select">
+                                        <option value="1">Hoạt động</option>
+                                        <option value="0">Khoá</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div data-mdb-input-init class="form-outline mb-4">
+                                    <label class="form-label" for="role">Quyền hạn</label>
+                                    <select id="quyenhan" class="form-select">
+                                        <option value="user">Người dùng</option>
+                                        <option value="admin">Quản trị viên</option>
+                                    </select>
+                                    <div class="invalid-feedback" id="roleError"></div>
+                                </div>
                             </div>
                         </div>
                 </div>
@@ -200,9 +215,10 @@ $totalPages = ceil($totalUsers / $limit);
                 email: $('#email').val().trim(),
                 username: $('#username').val().trim(),
                 password: $('#password').val().trim(),
-                trangthai: $('#trangthai').val().trim()
+                status: $('#trangthai').val().trim(),
+                quyenhan: $('#quyenhan').val().trim()
             };
-
+            console.log(userData);  
             $('.invalid-feedback').text('');
             $('.form-control').removeClass('is-invalid');
 
@@ -236,15 +252,15 @@ $totalPages = ceil($totalUsers / $limit);
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(userData),
-                    success: function (response) {
+                    success: function(response) {
                         if (response.success) {
                             alert('Người dùng đã được cập nhật thành công!');
                             location.reload();
                         } else {
-                            alert(response.message); 
+                            alert(response.message);
                         }
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         const response = JSON.parse(xhr.responseText);
                         if (response.message.includes('Email đã tồn tại')) {
                             $('#emailError').text(response.message);
@@ -260,7 +276,7 @@ $totalPages = ceil($totalUsers / $limit);
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(userData),
-                    success: function (response) {
+                    success: function(response) {
                         if (response.success) {
                             alert(response.message);
                             location.reload(); // Reload lại trang
@@ -268,7 +284,7 @@ $totalPages = ceil($totalUsers / $limit);
                             alert(response.message); // Hiển thị thông báo lỗi
                         }
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         const response = JSON.parse(xhr.responseText);
                         if (response.message.includes('Username đã tồn tại')) {
                             $('#usernameError').text(response.message);
@@ -335,11 +351,10 @@ $totalPages = ceil($totalUsers / $limit);
         }
     });
 
-    $('#staticBackdrop4').on('hidden.bs.modal', function () {
+    $('#staticBackdrop4').on('hidden.bs.modal', function() {
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
     });
-
 </script>
 
 

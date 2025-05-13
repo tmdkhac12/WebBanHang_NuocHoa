@@ -102,14 +102,14 @@ public function getTotalUsers()
         return $account;
     }
 
-    public function addUser($hoten, $email, $username, $password, $status)
+    public function addUser($hoten, $email, $username, $password, $status , $quyenhan)
     {
         $connection = getConnection();
 
-        $sql = "INSERT INTO khachhang (ten_khach_hang, email, username, khachhang.password, trang_thai_tai_khoan)
-                VALUES (?,?,?,?,?)";
+        $sql = "INSERT INTO khachhang (ten_khach_hang, email, username, khachhang.password, trang_thai_tai_khoan, quyen_han)
+                VALUES (?,?,?,?,?,?)";
         $statement = $connection->prepare($sql);
-        $statement->bind_param("ssssi", $hoten, $email, $username, $password, $status);
+        $statement->bind_param("ssssis", $hoten, $email, $username, $password, $status , $quyenhan);
         $statement->execute();
 
         return ($statement->affected_rows > 0 ? true : false);
