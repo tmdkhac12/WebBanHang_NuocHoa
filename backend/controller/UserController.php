@@ -65,11 +65,11 @@ class UserController
         return 0; // Thêm thất bại
     }
 
-    public function updateUser($hoten, $email, $username, $currentPassword, $newPassword)
+    public function updateUser($hoten, $email, $username, $currentPassword, $newPassword , $quyenhan , $trangthai)
     {
         // If password null call updateUserInfo else call updateUserInfoAndPassword 
         if (!$currentPassword) {
-            $isSuccess = $this->userModel->updateUserInfo($hoten, $email, $username);
+            $isSuccess = $this->userModel->updateUserInfo($hoten, $email, $username , $quyenhan , $trangthai);
             if ($isSuccess) {
                 return 1;
             }

@@ -120,9 +120,12 @@ switch ($action) {
             $username = $data["username"];
             $currentPassword = $data["currentPassword"];
             $newPassword = $data["newPassword"];
+            $quyenhan = $data["quyenhan"];
+            $trangThai = $data["trangThai"];
 
             // Call controller
-            $code = $userController->updateUser($hoten, $email, $username, $currentPassword, $newPassword);
+            $code = $userController->updateUser($hoten, $email, $username, $currentPassword, $newPassword , $quyenhan, $trangThai);
+            // Check code
 
             switch ($code) {
                 case 1:

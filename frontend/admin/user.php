@@ -248,7 +248,7 @@ $totalPages = ceil($totalUsers / $limit);
             }
             if (isUpdateMode) {
                 $.ajax({
-                    url: '../../backend/api/UserAPI.php?action=updateUser&id=' + userIdToUpdate,
+                    url: '../../backend/api/UserAPI.php?action=updateUser',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(userData),
@@ -306,6 +306,7 @@ $totalPages = ceil($totalUsers / $limit);
             e.preventDefault();
             isUpdateMode = true;
             userIdToUpdate = $(this).data('id');
+            console.log(userIdToUpdate);
             loadUserData(userIdToUpdate, true);
         });
 
