@@ -6,8 +6,6 @@
 -- Generation Time: Apr 19, 2025 at 02:10 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
-create DATABASE web_nuochoa;
-USE web_nuochoa;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
