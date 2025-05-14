@@ -136,7 +136,7 @@ try {
                 }
 
                
-                if ($productId && $name && $brand && $description && $price && !empty($notes)) {
+             
                     $updated = $productController->updateProduct($productId, $name, $price, $description, $brand,   $gender , $nongdo,$finalImage, $notes);
 
                     if ($updated) {
@@ -145,17 +145,74 @@ try {
                         http_response_code(500);
                         echo json_encode(['success' => false, 'message' => 'Không thể cập nhật sản phẩm']);
                     }
-                } else {
-                    http_response_code(400);
-                    header('Content-Type: application/json');
-                    echo json_encode(['error' => 'Dữ liệu không hợp lệ']);
-                }
+               
 
             }
             break;
+            case 'createProduct':
+                   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $data = $_POST;
+                    
+                    $name = isset($data['name']) ? $data['name'] : '';
+                    $brand = isset($data['brand']) ? $data['brand'] : '';
+                    $description = isset($data['description']) ? $data['description'] : '';
+                    $price = isset($data['price']) ? (int)$data['price'] : 0;
+                    $gender = isset($data['gioitinh']) ? $data['gioitinh'] : '';
+                    $nongdo = isset($data['nongdo']) ? (int)$data['nongdo'] : null;
+
+                    $uploadDir = dirname(__DIR__, 2) . '/frontend/images/';
+
+                    if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] === UPLOAD_ERR_OK) {
+                        $fileTmpPath = $_FILES['newImage']['tmp_name'];
+                        $originalFileName = basename($_FILES['newImage']['name']);
+                        
+                        
+                        $safeFileName = preg_replace("/[^a-zA-Z0-9\.\-_]/", "", $originalFileName);
+
+                        $destination = $uploadDir . $safeFileName;
+
+                        if (move_uploaded_file($fileTmpPath, $destination)) {
+                            $finalImage = $safeFileName;
+                        } else {
+                            echo json_encode(['error' => 'Failed to move uploaded file.']);
+                            exit;
+                        }
+                    } elseif (isset($_POST['existingImage'])) {
+                        $finalImage = $_POST['existingImage']; 
+                    } else {
+                        $finalImage = null; 
+                    }
+
+                    $notes = [];
+                    if (isset($_POST['notes']) && is_array($_POST['notes'])) {
+                        foreach ($_POST['notes'] as $key => $note) {
+                            $ma_not_huong = isset($note['ma_not_huong']) ? $note['ma_not_huong'] : null;
+                            $loai = isset($note['loai']) ? $note['loai'] : null;
+                            if ($ma_not_huong && $loai) {
+                                $notes[] = ['ma_not_huong' => $ma_not_huong, 'loai' => $loai];
+                                    }
+                        }
+                    }
+
+                
+                   
+                        $updated = $productController->createProduct( $name, $price, $description, $brand,   $gender , $nongdo,$finalImage, $notes);
+
+                        if ($updated) {
+                            echo json_encode(['success' => true, 'message' => 'Sản phẩm đã được tao']);
+                        } else {
+                            http_response_code(500);
+                            echo json_encode(['success' => false, 'message' => 'Không thể tao sản phẩm']);
+                        }
+                    
+
+                   }
+                
+                break;
 
 
         default:
+            http_response_code(400);
             echo json_encode(['error' => 'Hành động không hợp lệ']);
             break;
     }

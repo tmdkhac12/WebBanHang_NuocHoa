@@ -7,7 +7,9 @@ class ProductController {
     function __construct() {
         $this->productModel = new ProductModel();
     }
-
+    public function createProduct($name, $price, $description, $brand, $gender, $nongdo, $image, $notes = []){
+        return $this->productModel->createProduct($name, $price, $description, $brand, $gender, $nongdo, $image, $notes = []);
+    }
     public function getAllProducts($limit = null, $offset = null) {
         return $this->productModel->getAllProducts($limit, $offset);
     }

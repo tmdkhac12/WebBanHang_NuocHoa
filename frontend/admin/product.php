@@ -76,7 +76,13 @@ $totalPages = ceil($totalProducts / $limit);
                                             <tr>
                                                 <td><?php echo $product['ma_nuoc_hoa']; ?></td>
                                                 <td><?php echo $product['ten_nuoc_hoa']; ?></td>
-                                                <td><?php echo number_format($product['gia_ban'], 0, ',', '.'); ?> VND</td>
+                                               <td>
+                                                    <?php 
+                                                        echo isset($product['gia_ban']) 
+                                                            ? number_format($product['gia_ban'], 0, ',', '.') . ' VND' 
+                                                            : '0 VND'; 
+                                                    ?>
+                                                </td>
                                                 <td><?php echo $product['ten_thuong_hieu']; ?></td>
                                                 <td>
                                                     <a class="btn btn-success btn-sm btn-view" data-id="<?= $product['ma_nuoc_hoa'] ?>">View</a>
@@ -134,12 +140,14 @@ $totalPages = ceil($totalProducts / $limit);
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Thông tin sản phẩm</h5>
+                    <h5 id="modal-title">Thông tin sản phẩm</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="productForm" enctype="multipart/form-data">
                         <input type="hidden" id="productId" name="productId" />
+                        <input type="hidden" id="formMode" value="add">
+
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="password1">Tên sản phẩm</label>
                             <input type="text" id="name" class="form-control" />
@@ -218,7 +226,7 @@ $totalPages = ceil($totalProducts / $limit);
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">Save changes</button>
 
                         </div>
                     </form>
@@ -232,7 +240,7 @@ $totalPages = ceil($totalProducts / $limit);
     $('.dataTables_info').remove();
 
     $(document).ready(function() {
-        $('.js-example-basic-multiple').select2();
+        
         function loadProductData(productId, isUpdate) {
             
             $.ajax({
@@ -245,7 +253,7 @@ $totalPages = ceil($totalProducts / $limit);
                     console.log("Product image path:", product.hinh_anh);
                     console.log("Initializing Select2...");
                     const nongDoId = product.nong_do?.[0]?.id;
-                    
+                    $('#formMode').val('update'); 
                     $('.js-example-basic-multiple').select2();
                     populateBrands(product.ten_thuong_hieu);
                     populateNongDo(nongDoId);
@@ -345,6 +353,8 @@ $totalPages = ceil($totalProducts / $limit);
         });
         $('#productForm').on('submit', function(e) {
             e.preventDefault();
+            const mode = $('#formMode').val(); 
+            const isUpdate = mode === 'update';
 
             var name = $('#name').val();
             var brand = $('#thuonghieu').val();
@@ -404,7 +414,8 @@ $totalPages = ceil($totalProducts / $limit);
             }
 
             $.ajax({
-                url: '../../backend/api/ProductAPI.php?action=updateProduct',
+                 url: isUpdate ? '../../backend/api/ProductAPI.php?action=updateProduct' 
+                                : '../../backend/api/ProductAPI.php?action=createProduct',
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
@@ -423,6 +434,45 @@ $totalPages = ceil($totalProducts / $limit);
         });
 
 
+
+        $('#btnAddUser').on('click', function () {
+            $('#productForm input, #productForm select, #productForm textarea').prop('disabled', false);
+
+            $('#formMode').val('add'); 
+            $('#productId').val(''); // clear productId
+            $('#name').val('');
+            $('#price').val('');
+            $('#description').val('');
+            $('#avatar').val('');
+            $('#existingImage').val('');
+            $('#avatar-img').hide();
+            $('#thuonghieu').empty();
+            $('#gioitinh').val('');
+            $('#nongdo').val('');
+            $('#huongdau, #huonggiua, #huongcuoi').select2();
+
+
+            
+            $('#huongdau').val(null).trigger('change');
+            $('#huonggiua').val(null).trigger('change');
+            $('#huongcuoi').val(null).trigger('change');
+
+          
+            populateBrands();
+            populateNongDo();
+            populateNotHuongOptions();
+
+             $('#avatar').closest('.form-outline').toggle(true);
+
+            $('#staticBackdrop4 button[type="submit"]').toggle(true);
+
+            $('.js-example-basic-multiple').select2();
+
+             $('#modal-title').text('Thêm sản phẩm');
+            $('#submitBtn').text('Thêm');
+            
+
+        });
     });
 
     function populateBrands(selectedBrandName = null) {
@@ -432,6 +482,7 @@ $totalPages = ceil($totalProducts / $limit);
             dataType: 'json',
             success: function(brands) {
                 const $select = $('#thuonghieu');
+                  $select.empty();
 
                 brands.forEach(brand => {
                     const selected = selectedBrandName == brand.ten_thuong_hieu ? 'selected' : '';
@@ -450,6 +501,7 @@ $totalPages = ceil($totalProducts / $limit);
             dataType: 'json',
             success: function(nongdos) {
                 const $select = $('#nongdo');
+                  $select.empty();
 
                 nongdos.forEach(nongdo => {
                     const selected = selectedNongDoID == nongdo.ma_nong_do ? 'selected' : '';

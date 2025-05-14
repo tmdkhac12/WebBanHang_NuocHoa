@@ -133,7 +133,8 @@ class ProductModel {
         $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, n.gioi_tinh, n.mo_ta, t.ten_thuong_hieu , dn.gia_ban
                 FROM nuochoa n 
                 LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
-                INNER JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa
+                LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa
+
                 WHERE n.ma_nuoc_hoa = ? and n.tinh_trang = 1";
         $stmt = $this->connection->prepare($sql);
         $stmt->bind_param("i", $id);
@@ -386,7 +387,88 @@ class ProductModel {
 
         return true;
     }
-        
-    
+    public function createProduct($name, $price, $description, $brand, $gender, $nongdo, $image, $notes = [])
+        {
+            if (!is_int($brand) && !ctype_digit($brand)) {
+                return false;
+            }
+            if (!is_int($price) && !ctype_digit($price)) {
+                return false;
+            }
+
+            $sql = "INSERT INTO nuochoa (ten_nuoc_hoa, mo_ta, ma_thuong_hieu, gioi_tinh, hinh_anh , tinh_trang) 
+                    VALUES (?, ?, ?, ?, ? , 1)";
+            $stmt = $this->connection->prepare($sql);
+            if (!$stmt) {
+                error_log("Error preparing insert nuochoa: " . $this->connection->error);
+                return false;
+            }
+
+            $stmt->bind_param("ssiss", $name, $description, $brand, $gender, $image);
+            $success = $stmt->execute();
+            if (!$success) {
+                error_log("Error executing insert nuochoa: " . $stmt->error);
+                return false;
+            }
+
+            $productId = $stmt->insert_id; // Get the inserted product ID
+            $stmt->close();
+
+            $sql = "INSERT INTO dungtich_nuochoa (ma_nuoc_hoa, gia_ban ,ma_dung_tich) VALUES (?, ? , 6)";
+            $stmt = $this->connection->prepare($sql);
+            if (!$stmt) {
+                error_log("Error preparing insert dungtich_nuochoa: " . $this->connection->error);
+                return false;
+            }
+
+            $stmt->bind_param("id", $productId, $price);
+            $success = $stmt->execute();
+            if (!$success) {
+                error_log("Error executing insert dungtich_nuochoa: " . $stmt->error);
+                return false;
+            }
+            $stmt->close();
+
+            $sql = "INSERT INTO nongdo_nuochoa (ma_nuoc_hoa, ma_nong_do) VALUES (?, ?)";
+            $stmt = $this->connection->prepare($sql);
+            if (!$stmt) {
+                error_log("Error preparing insert nongdo_nuochoa: " . $this->connection->error);
+                return false;
+            }
+
+            $stmt->bind_param("ii", $productId, $nongdo);
+            $success = $stmt->execute();
+            if (!$success) {
+                error_log("Error executing insert nongdo_nuochoa: " . $stmt->error);
+                return false;
+            }
+            $stmt->close();
+
+            // Step 4: Insert notes if provided
+            if (!empty($notes)) {
+                $insertStmt = $this->connection->prepare(
+                    "INSERT INTO nothuong_nuochoa (ma_nuoc_hoa, ma_not_huong, loai) VALUES (?, ?, ?)"
+                );
+
+                if (!$insertStmt) {
+                    error_log("Error preparing insert note statement: " . $this->connection->error);
+                    return false;
+                }
+
+                foreach ($notes as $note) {
+                    $ma_not_huong = $note['ma_not_huong'] ?? null;
+                    $loai = $note['loai'] ?? null;
+
+                    if ($ma_not_huong && $loai) {
+                        $insertStmt->bind_param("iis", $productId, $ma_not_huong, $loai);
+                        $insertStmt->execute();
+                    }
+                }
+
+                $insertStmt->close();
+            }
+
+            return true;
+        }
 }
 ?>
