@@ -35,20 +35,20 @@ class UserController
         return $this->userModel->getAccount($username, $password);
     }
 
-    public function registerUser($hoten, $email, $username, $password, $status)
+    public function registerUser($hoten, $email, $username, $password, $status, $quyenhan)
     {
         // If username existed 
         if ($this->userModel->isExistUsername($username)) {
             return -1; // Username existed
         }
 
-        if ($this->userModel->addUser($hoten, $email, $username, $password, $status)) {
+        if ($this->userModel->addUser($hoten, $email, $username, $password, $status , $quyenhan)) {
             return 1;
         }
         return 0;
     }
 
-    public function addUser($hoten, $email, $username, $password, $status)
+    public function addUser($hoten, $email, $username, $password, $status , $quyenhan)
     {
         if ($this->userModel->isExistUsername($username)) {
             return -1; 
@@ -57,19 +57,27 @@ class UserController
             return -2;
         }
 
-        $isSuccess = $this->userModel->addUser($hoten, $email, $username, $password, $status);
+        $isSuccess = $this->userModel->addUser($hoten, $email, $username, $password, $status , $quyenhan);
         if ($isSuccess) {
             return 1; 
         }
 
         return 0; // Thêm thất bại
     }
+    
+    public function getAdminCount() {
+        return $this->userModel->countAdmins();
+    }
 
-    public function updateUser($hoten, $email, $username, $currentPassword, $newPassword)
+    public function getUserRoleByUsername($username) {
+        return $this->userModel->getUserRoleByUsername($username);
+    }
+
+    public function updateUser($hoten, $email, $username, $currentPassword, $newPassword , $quyenhan , $trangthai)
     {
         // If password null call updateUserInfo else call updateUserInfoAndPassword 
         if (!$currentPassword) {
-            $isSuccess = $this->userModel->updateUserInfo($hoten, $email, $username);
+            $isSuccess = $this->userModel->updateUserInfo($hoten, $email, $username , $quyenhan , $trangthai);
             if ($isSuccess) {
                 return 1;
             }
@@ -84,4 +92,12 @@ class UserController
             return 1;
         }
     }
+    public function updateUserInfoFromAdmin($hoten, $email, $username, $password, $quyenhan, $trangthai)
+    {
+        $isSuccess = $this->userModel->updateUserInfoAndPasswordFromAdmin(
+            $hoten, $email, $username, $password, $quyenhan, $trangthai
+        );
+        return $isSuccess ? 1 : -1;
+    }
+
 }

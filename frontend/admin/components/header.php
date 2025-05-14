@@ -6,7 +6,7 @@ require_once realpath(__DIR__ . '/../../../backend/config/config.php');
 
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
-    <a class="navbar-brand ps-3" href="home.php">Admin</a>
+    <a class="navbar-brand ps-3" href="index.php">Admin</a>
     <!-- Sidebar Toggle-->
     <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
     <!-- Navbar Search-->
@@ -18,20 +18,29 @@ require_once realpath(__DIR__ . '/../../../backend/config/config.php');
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <a href=<?php
-                        if (isset($_SESSION["username"])) {
-                            echo "user.php";
-                        } else {
-                            echo "login.php";
-                        }
-                        ?> class="text-dark"><i class="fas fa-user"></i></a>
-                <li><a class="dropdown-item" href="#!">Settings</a></li>
-                <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+                <li><a class="dropdown-item" href="/frontend/index.php">Trang người dùng</a></li>
                 <li>
                     <hr class="dropdown-divider" />
                 </li>
-                <li><a class="dropdown-item" href="/WebBanHang_NuocHoa/frontend/admin/logout.php">Logout</a></li>
+                <li><a id="logoutButton" class="dropdown-item" href="/WebBanHang_NuocHoa/frontend/admin/logout.php">Logout</a></li>
             </ul>
         </li>
     </ul>
 </nav>
+<script>
+    document.getElementById("logoutButton").addEventListener("click", function (e) {
+        e.preventDefault(); // Ngăn hành vi mặc định của thẻ <a>
+        fetch("/backend/api/UserAPI.php?action=logout")
+            .then((respond) => {
+            return respond.json();
+            })
+            .then((data) => {
+            alert(data.message);
+            localStorage.removeItem("nuochoas");
+            window.location.href = "/frontend/index.php";
+            })
+            .catch((error) => {
+            console.log(error);
+            });
+        });
+</script>

@@ -102,25 +102,25 @@ public function getTotalUsers()
         return $account;
     }
 
-    public function addUser($hoten, $email, $username, $password, $status)
+    public function addUser($hoten, $email, $username, $password, $status , $quyenhan)
     {
         $connection = getConnection();
 
-        $sql = "INSERT INTO khachhang (ten_khach_hang, email, username, khachhang.password, trang_thai_tai_khoan)
-                VALUES (?,?,?,?,?)";
+        $sql = "INSERT INTO khachhang (ten_khach_hang, email, username, khachhang.password, trang_thai_tai_khoan, quyen_han)
+                VALUES (?,?,?,?,?,?)";
         $statement = $connection->prepare($sql);
-        $statement->bind_param("ssssi", $hoten, $email, $username, $password, $status);
+        $statement->bind_param("ssssis", $hoten, $email, $username, $password, $status , $quyenhan);
         $statement->execute();
 
         return ($statement->affected_rows > 0 ? true : false);
     }
 
-    public function updateUserInfo($hoten, $email, $username) {
+    public function updateUserInfo($hoten, $email, $username , $quyenhan , $trangthai) {
         $connection = getConnection();
 
-        $sql = "UPDATE khachhang SET ten_khach_hang = ?, email = ? WHERE username = ?";
+        $sql = "UPDATE khachhang SET ten_khach_hang = ?, email = ? , quyen_han = ? , trang_thai_tai_khoan = ? WHERE username = ?";
         $statement = $connection->prepare($sql);
-        $statement->bind_param("sss", $hoten, $email, $username);
+        $statement->bind_param("ssssi", $hoten, $email, $username);
         $statement->execute();
 
         return ($statement->affected_rows > 0 ? true : false);
@@ -139,21 +139,57 @@ public function getTotalUsers()
     }
 
     public function getUserById($id)
-{
-    $connection = getConnection(); // Kết nối cơ sở dữ liệu
+    {
+        $connection = getConnection(); // Kết nối cơ sở dữ liệu
 
-    $sql = "SELECT * FROM khachhang WHERE ma_khach_hang = ?";
-    $statement = $connection->prepare($sql);
-    $statement->bind_param("i", $id); // `i` là kiểu dữ liệu integer
-    $statement->execute();
+        $sql = "SELECT * FROM khachhang WHERE ma_khach_hang = ?";
+        $statement = $connection->prepare($sql);
+        $statement->bind_param("i", $id); // `i` là kiểu dữ liệu integer
+        $statement->execute();
 
-    $result = $statement->get_result();
-    $user = $result->fetch_assoc(); // Lấy bản ghi đầu tiên dưới dạng mảng kết hợp
+        $result = $statement->get_result();
+        $user = $result->fetch_assoc(); // Lấy bản ghi đầu tiên dưới dạng mảng kết hợp
 
-    $statement->close();
-    $connection->close();
+        $statement->close();
+        $connection->close();
 
-    return $user; // Trả về thông tin người dùng
-}
-    
+        return $user; // Trả về thông tin người dùng
+    }
+    public function updateUserInfoAndPasswordFromAdmin($hoten, $email, $username, $password, $quyenhan, $trangthai) {
+        $connection = getConnection();
+
+        $sql = "UPDATE khachhang 
+                SET ten_khach_hang = ?, 
+                    email = ?, 
+                    password = ?, 
+                    quyen_han = ?, 
+                    trang_thai_tai_khoan = ? 
+                WHERE username = ?";
+        
+        $statement = $connection->prepare($sql);
+        $statement->bind_param("ssssis", $hoten, $email, $password, $quyenhan, $trangthai, $username);
+        $statement->execute();
+
+        return ($statement->affected_rows > 0);
+    }
+
+    public function countAdmins() {
+        $connection = getConnection();
+        $stmt = $connection->prepare("SELECT COUNT(*) as admin_count FROM khachhang WHERE quyen_han = 'admin'");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row['admin_count'];
+    }
+
+    public function getUserRoleByUsername($username) {
+        $connection = getConnection();
+        $stmt = $connection->prepare("SELECT quyen_han FROM khachhang WHERE username = ?");
+        $stmt->bind_param("s", $username);  // 's' là kiểu dữ liệu string
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row['quyen_han'] ?? null;  // Trả về quyền hạn hoặc null nếu không tìm thấy
+    }
+
 }

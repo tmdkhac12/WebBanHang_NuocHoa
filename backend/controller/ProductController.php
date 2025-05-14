@@ -33,8 +33,8 @@ class ProductController {
     public function deleteProduct($id) {
         return $this->productModel->deleteProduct($id);
     }
-    public function updateProduct($id , $name, $price, $description, $brand, $notes = [] ){
-        return $this->productModel->updateProduct($id ,$name, $price, $description,  $brand, $notes);
+    public function updateProduct($id , $name, $price, $description, $brand, $gender, $nongdo, $image,$notes = [] ,  ){
+        return $this->productModel->updateProduct($id ,$name, $price, $description,  $brand , $gender , $nongdo  , $image ,$notes );
     }
 
 }

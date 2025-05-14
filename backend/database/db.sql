@@ -6,7 +6,8 @@
 -- Generation Time: Apr 19, 2025 at 02:10 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
-
+create DATABASE web_nuochoa;
+USE web_nuochoa;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -185,25 +186,26 @@ CREATE TABLE `khachhang` (
   `email` varchar(255) DEFAULT NULL,
   `username` varchar(50) DEFAULT NULL,
   `password` varchar(50) DEFAULT NULL,
-  `trang_thai_tai_khoan` tinyint(1) DEFAULT NULL
+  `trang_thai_tai_khoan` tinyint(1) DEFAULT NULL,
+  `quyen_han` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `khachhang`
 --
 
-INSERT INTO `khachhang` (`ma_khach_hang`, `ten_khach_hang`, `email`, `username`, `password`, `trang_thai_tai_khoan`) VALUES
-(1, 'Nguyen Van A', 'a@gmail.com', 'nguyenvana', 'pass123', 1),
-(2, 'Tran Thi B', 'b@gmail.com', 'tranthib', 'pass123', 1),
-(3, 'Le Van C', 'c@gmail.com', 'levanc', 'pass123', 1),
-(4, 'Pham Minh D', 'd@gmail.com', 'phamminhd', 'pass123', 1),
-(5, 'Hoang Hoa E', 'e@gmail.com', 'hoanghoae', 'pass123', 1),
-(6, 'Dang Thi F', 'f@gmail.com', 'dangthif', 'pass123', 1),
-(7, 'Vu Huu G', 'g@gmail.com', 'vuhuug', 'pass123', 1),
-(8, 'Bui Van H', 'h@gmail.com', 'buivanh', 'pass123', 1),
-(9, 'Ly Kieu I', 'i@gmail.com', 'lykieui', 'pass123', 1),
-(10, 'Do Anh J', 'j@gmail.com', 'doanhj', 'pass123', 1),
-(11, 'Nguyễn Khắc Khổ', 'khoquet12@gmail.com', 'choco', 'bi', 1);
+INSERT INTO `khachhang` (`ma_khach_hang`, `ten_khach_hang`, `email`, `username`, `password`, `trang_thai_tai_khoan`,`quyen_han`) VALUES
+(1, 'Nguyen Van A', 'a@gmail.com', 'nguyenvana', 'pass123', 1,'admin'),
+(2, 'Tran Thi B', 'b@gmail.com', 'tranthib', 'pass123', 1 , 'user'),
+(3, 'Le Van C', 'c@gmail.com', 'levanc', 'pass123', 1 ,'user'),
+(4, 'Pham Minh D', 'd@gmail.com', 'phamminhd', 'pass123', 1 , 'user'),
+(5, 'Hoang Hoa E', 'e@gmail.com', 'hoanghoae', 'pass123', 1 ,'user'),
+(6, 'Dang Thi F', 'f@gmail.com', 'dangthif', 'pass123', 1 , 'user'),
+(7, 'Vu Huu G', 'g@gmail.com', 'vuhuug', 'pass123', 1 , 'user'),
+(8, 'Bui Van H', 'h@gmail.com', 'buivanh', 'pass123', 1, 'user'),
+(9, 'Ly Kieu I', 'i@gmail.com', 'lykieui', 'pass123', 1 , 'user'),
+(10, 'Do Anh J', 'j@gmail.com', 'doanhj', 'pass123', 1 , 'user'),
+(11, 'Nguyễn Khắc Khổ', 'khoquet12@gmail.com', 'choco', 'bi', 1, 'user');
 
 -- --------------------------------------------------------
 

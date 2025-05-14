@@ -1,4 +1,6 @@
 <?php
+require_once 'auth.php';
+requireAdmin();
 require_once '../../backend/controller/ProductController.php';
 
 $productController = new ProductController();
@@ -166,13 +168,7 @@ $totalPages = ceil($totalProducts / $limit);
                                 <div data-mdb-input-init class="form-outline mb-4">
                                     <label class="form-label" for="nongdo">Nồng độ</label>
                                     <select id="nongdo" class="form-select">
-                                        <option value="Parfum">Parfum</option>
-                                        <option value="EDP">EDP</option>
-                                        <option value="EDT">EDT</option>
-                                        <option value="EDC">EDC</option>
-                                        <option value="Eau Fraîche">Eau Fraîche</option>
-                                        <option value="Aftershave">Aftershave</option>
-                                        <option value="Perfume Oil">Perfume Oil</option>
+                                       
                                     </select>
 
                                 </div>
@@ -213,6 +209,7 @@ $totalPages = ceil($totalProducts / $limit);
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="avatar">Ảnh sản phẩm</label>
                             <input type="file" id="avatar" class="form-control" accept="image/*" />
+                            <input type="hidden" id="existingImage" name="existingImage" />
                         </div>
 
                         <div id="avatar-preview" class="mb-4" style="display: none;">
@@ -222,6 +219,7 @@ $totalPages = ceil($totalProducts / $limit);
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Save changes</button>
+
                         </div>
                     </form>
                 </div>
@@ -246,13 +244,16 @@ $totalPages = ceil($totalProducts / $limit);
                     console.log("Product data:", product);
                     console.log("Product image path:", product.hinh_anh);
                     console.log("Initializing Select2...");
+                    const nongDoId = product.nong_do?.[0]?.id;
+                    
                     $('.js-example-basic-multiple').select2();
                     populateBrands(product.ten_thuong_hieu);
+                    populateNongDo(nongDoId);
                     $('#name').val(product.ten_nuoc_hoa);
 
                     $('#price').val(product.gia_ban);
                     $('#description').val(product.mo_ta);
-
+                    $('#existingImage').val(product.hinh_anh);
                     $('#productId').val(product.ma_nuoc_hoa);
                     
 
@@ -351,17 +352,26 @@ $totalPages = ceil($totalProducts / $limit);
             var price = $('#price').val();
             var imageFile = $('#avatar')[0].files[0];
             var productId = $('#productId').val();
-
+            var gioitinh = $('#gioitinh').val();
+            var nongdo = $('#nongdo').val();
+            var existingImage = $('#existingImage').val();
             var formData = new FormData();
+            if (imageFile) {
+                formData.append('newImage', imageFile);
+                console.log('New image file:', imageFile);
+            } else {
+                formData.append('existingImage', existingImage );
+                console.log('Existing image path:', existingImage);
+            } 
 
             formData.append('productId', productId);
             formData.append('name', name);
             formData.append('brand', brand);
             formData.append('description', description);
             formData.append('price', price);
-            if (imageFile) {
-                formData.append('image', imageFile);
-            }
+            formData.append('gioitinh' , gioitinh);
+            formData.append('nongdo', nongdo);
+            
 
             
             var huongDau = $('#huongdau').val() || [];
@@ -407,7 +417,7 @@ $totalPages = ceil($totalProducts / $limit);
                 error: function(error) {
                     console.error('Error updating:', error);
                     alert('Failed to update product.');
-                    location.reload();
+                    console.log('Error details:', error);
                 }
             });
         });
@@ -422,7 +432,7 @@ $totalPages = ceil($totalProducts / $limit);
             dataType: 'json',
             success: function(brands) {
                 const $select = $('#thuonghieu');
-                $select.empty().append('<option value="">-- Chọn thương hiệu --</option>');
+
                 brands.forEach(brand => {
                     const selected = selectedBrandName == brand.ten_thuong_hieu ? 'selected' : '';
                     $select.append(`<option value="${brand.ma_thuong_hieu}" ${selected}>${brand.ten_thuong_hieu}</option>`);
@@ -430,6 +440,24 @@ $totalPages = ceil($totalProducts / $limit);
             },
             error: function() {
                 alert('Không thể tải danh sách thương hiệu.');
+            }
+        });
+    }
+    function populateNongDo(selectedNongDoID = null) {
+        $.ajax({
+            url: '../../backend/api/NongDoAPI.php?action=getAllNongDo',
+            method: 'GET',
+            dataType: 'json',
+            success: function(nongdos) {
+                const $select = $('#nongdo');
+
+                nongdos.forEach(nongdo => {
+                    const selected = selectedNongDoID == nongdo.ma_nong_do ? 'selected' : '';
+                    $select.append(`<option value="${nongdo.ma_nong_do}" ${selected}>${nongdo.nong_do}</option>`);
+                });
+            },
+            error: function() {
+                alert('Không thể tải danh sách nong do.');
             }
         });
     }
@@ -451,7 +479,7 @@ $totalPages = ceil($totalProducts / $limit);
                 $('#huongcuoi').append(option3);
             });
 
-            // Pre-select values if provided
+        
             if (selectedHuongIds.huongDau) {
                 $('#huongdau').val(selectedHuongIds.huongDau).trigger('change');
             }

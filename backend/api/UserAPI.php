@@ -19,10 +19,23 @@ switch ($action) {
         // break;
     case 'login': {
             // Get username and password from body fetch when user onclick 
-            $data = json_decode(file_get_contents("php://input"), true);
-            $username = $data["username"];
-            $password = $data["password"];
+                header('Content-Type: application/json');
 
+            // Only for JSON POST data
+            $rawData = file_get_contents("php://input");
+            $data = json_decode($rawData, true);
+
+            // Extract safely
+            $username = $data['username'] ?? null;
+            $password = $data['password'] ?? null;
+
+            if (!$username || !$password) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Thiếu tên đăng nhập hoặc mật khẩu."
+                ]);
+                exit;
+}
             // Call Controller
             $account = $userController->getAccount($username, $password);
 
@@ -32,6 +45,7 @@ switch ($action) {
                 $_SESSION["username"] = $account["username"];
                 $_SESSION["email"] = $account["email"];
                 $_SESSION["ten_khach_hang"] = $account["ten_khach_hang"];
+                $_SESSION["role"] = $account["quyen_han"];
                 echo json_encode(["success" => true, "message" => "Đăng nhập thành công"]);
             } else {
                 echo json_encode(["success" => false, "message" => "Username hoặc password không chính xác"]);
@@ -50,36 +64,39 @@ switch ($action) {
             break;
         }
     case 'addUser': {
-            $data = json_decode(file_get_contents('php://input'), true);
+        $data = json_decode(file_get_contents('php://input'), true);
 
-            // Kiểm tra dữ liệu
-            if (!empty($data['name']) && !empty($data['email']) && !empty($data['username']) && !empty($data['password'])) {
-                $result = $userController->addUser($data['name'], $data['email'], $data['username'], $data['password'], $data['trangthai']);
-                
-                switch ($result) {
-                    case 1:
-                        echo json_encode(['success' => true, 'message' => 'Người dùng đã được thêm thành công!']);
-                        break;
-                    case -1:
-                        http_response_code(400);
-                        echo json_encode(['success' => false, 'message' => 'Username đã tồn tại!']);
-                        break;
-                    case -2:
-                        http_response_code(400);
-                        echo json_encode(['success' => false, 'message' => 'Email đã tồn tại!']);
-                        break;
-                    case 0:
-                    default:
-                        http_response_code(500);
-                        echo json_encode(['success' => false, 'message' => 'Không thể thêm người dùng.']);
-                        break;
-                }
-            } else {
-                http_response_code(400);
-                echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ.']);
+        if (!empty($data['username']) && !empty($data['password'])) {
+            $name = $data['name'];
+            $email = $data['email'];
+            $username = $data['username'];
+            $password = $data['password'];
+            $status = $data['status'];
+            $quyenhan = $data['quyenhan'];
+
+            $result = $userController->addUser($name, $email, $username, $password, $status, $quyenhan);
+            
+            switch ($result) {
+                case 1:
+                    echo json_encode(['success' => true, 'message' => 'Người dùng đã được thêm thành công!']);
+                    break;
+                case -1:
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Username đã tồn tại!']);
+                    break;
+                case 0:
+                default:
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'message' => 'Không thể thêm người dùng.']);
+                    break;
             }
-            break;
+        } else {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ.']);
         }
+        break;
+    }
+
     case 'getUserById':
         if (isset($_GET['id'])) {
             $userId = $_GET['id'];
@@ -98,14 +115,43 @@ switch ($action) {
     case 'updateUser': {
             // Get Fetch data
             $data = json_decode(file_get_contents("php://input"), true);
-            $hoten = $data["hoten"];
-            $email = $data["email"];
-            $username = $data["username"];
-            $currentPassword = $data["currentPassword"];
-            $newPassword = $data["newPassword"];
+            $hoten = $data["name"] ?? null;
+            $email = $data["email"] ?? null;
+            $username = $data["username"] ?? null;
+            $currentPassword = $data["password"] ?? null;
+            $newPassword = $data["newPassword"] ?? null;
+            $quyenhan = $data["quyenhan"] ?? null;
+            $trangThai = $data["status"] ?? null;
+
+            $currentRole = $userController->getUserRoleByUsername($username); // truy vấn role hiện tại trong DB
+
+            // Nếu người dùng đang là admin và bị hạ xuống làm user
+            if ($currentRole === "admin" && $quyenhan === "user") {
+                $adminCount = $userController->getAdminCount();
+                if ($adminCount <= 1) {
+                    echo json_encode([
+                        "success" => false,
+                        "message" => "Không thể thay đổi quyền hạn. Hệ thống cần ít nhất một quản trị viên."
+                    ]);
+                    exit();
+                }
+            }
+
+
 
             // Call controller
-            $code = $userController->updateUser($hoten, $email, $username, $currentPassword, $newPassword);
+            if (!empty($newPassword)) {
+        // Có newPassword ⇒ kiểm tra mật khẩu cũ và đổi mật khẩu
+                $code = $userController->updateUser(
+                    $hoten, $email, $username, $currentPassword, $newPassword, $quyenhan, $trangThai
+                );
+            } else {
+                // Không có newPassword ⇒ chỉ cập nhật thông tin
+                $code = $userController->updateUserInfoFromAdmin(
+                    $hoten, $email, $username,$currentPassword, $quyenhan, $trangThai
+                );
+            }
+            // Check code
 
             switch ($code) {
                 case 1:
