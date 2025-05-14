@@ -13,8 +13,11 @@ if (!isset($_SESSION["username"])) {
 }
 
 $hoaDonController = new HoaDonController();
-$hoadons = $hoaDonController->getAllHoaDon($_SESSION["user_id"]);
+$hoadons = $hoaDonController->getAllHoaDonOf($_SESSION["user_id"]);
 
+// echo "<pre>";
+// echo var_dump($hoadons);
+// echo "</pre>";
 ?>
 
 <!DOCTYPE html>
