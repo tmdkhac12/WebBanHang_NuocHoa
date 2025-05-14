@@ -40,6 +40,17 @@ class HoaDonController
         return $this->hoaDonModel->huyDonHang($maDonHang);
     }
 
+    public function getHoaDonByID($maHoaDon)
+    {
+        $hoaDon = $this->hoaDonModel->getHoaDonByID($maHoaDon);
+
+        if (!$hoaDon) {
+            return null; 
+        }
+
+        return $hoaDon;
+    }
+
     public function addFullHoaDon($maKhachHang, $diachi, $hoadon, $chitiets)
     {
         $connection = getConnection();

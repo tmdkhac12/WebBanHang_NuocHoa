@@ -50,7 +50,11 @@ function addLoginEventHandler() {
         // If login success
         if (data.success) {
           alert(data.message);
-          window.location.href = "index.php";
+          if (data.quyen_han === "admin") {
+            window.location.href = "/frontend/admin/index.php";
+          } else {
+            window.location.href = "index.php";
+          }
         } else {
           flashErrorMessage(
             document.querySelector("#login-form #error-message"),

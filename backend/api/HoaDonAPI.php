@@ -22,6 +22,26 @@ switch ($action) {
             echo json_encode(["success" => false, "message" => "Có lỗi, vui lòng thử lại sau!"]);
         }
         break;
+    case 'getHoaDonByID': {
+        try {
+            if (!isset($_GET['id'])) {
+                echo json_encode(["success" => false, "message" => "Thiếu mã hóa đơn"]);
+                exit();
+            }
+            $maHoaDon = intval($_GET['id']);
+            $hoaDon = $hoaDonController->getHoaDonByID($maHoaDon);
+
+            if (!$hoaDon) {
+                echo json_encode(["success" => false, "message" => "Không tìm thấy hóa đơn"]);
+            } else {
+                echo json_encode(["success" => true, "data" => $hoaDon]);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Lỗi server: " . $e->getMessage()]);
+        }
+        exit();
+    }
     case 'taoHoaDon': 
         try {
             // Get checkoutInfo from body fetch when user onclick 

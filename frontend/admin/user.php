@@ -121,7 +121,7 @@ $totalPages = ceil($totalUsers / $limit);
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Thông tin người dùng</h5>
+                    <h5 class="modal-title" id="modalTitle">Thông tin người dùng</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -173,7 +173,7 @@ $totalPages = ceil($totalUsers / $limit);
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="submit" class="btn btn-primary" id="buttonSaveChange">Save changes</button>
                 </div>
                 </form>
             </div>
@@ -324,7 +324,7 @@ $totalPages = ceil($totalUsers / $limit);
                 method: 'GET',
                 dataType: 'json',
                 success: function(user) {
-                    $('#modalTitle').text(isUpdate ? 'Cập nhật người dùng' : 'Xem thông tin người dùng');
+                    $('#modalTitle').text(isUpdate ? 'Cập nhật người dùng' : 'Thông tin người dùng');
                     resetUserForm();
                     $('#name').val(user.ten_khach_hang);
                     $('#email').val(user.email);
@@ -335,11 +335,11 @@ $totalPages = ceil($totalUsers / $limit);
 
                     if (!isUpdate) {
                         $('#staticBackdrop4 input, #staticBackdrop4 select').prop('disabled', true);
-                        $('#saveUserButton').hide();
+                        $('#buttonSaveChange').hide();
                     } else {
                         $('#staticBackdrop4 input, #staticBackdrop4 select').prop('disabled', false);
                         $('#username').prop('readonly', true);
-                        $('#saveUserButton').show();
+                        $('#buttonSaveChange').show();
                     }
 
                     var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));

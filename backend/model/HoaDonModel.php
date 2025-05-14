@@ -27,6 +27,29 @@ class HoaDonModel
         $connection->close();
         return (count($hoadons) > 0 ? $hoadons : null);
     }
+
+    public function getHoaDonByID($maHoaDon)
+    {
+        $connection = getConnection();
+
+        $sql = "SELECT hd.ma_hoa_don, hd.thoi_gian, hd.tong_tien, hd.trang_thai_don_hang, 
+                    c.ten_khach_hang, dc.ten_nguoi_nhan, dc.so_dien_thoai_nguoi_nhan, dc.dia_chi_giao_hang
+                FROM hoadon hd
+                LEFT JOIN khachhang c ON hd.ma_khach_hang = c.ma_khach_hang
+                LEFT JOIN diachi dc ON hd.ma_dia_chi = dc.ma_dia_chi
+                WHERE hd.ma_hoa_don = ?";
+        $statement = $connection->prepare($sql);
+        $statement->bind_param("i", $maHoaDon);
+        $statement->execute();
+
+        $result = $statement->get_result();
+        $hoaDon = $result->fetch_assoc();
+
+        $statement->close();
+        $connection->close();
+
+        return $hoaDon ? $hoaDon : null;
+    }
     
     public function getTotalOrders()
     {
