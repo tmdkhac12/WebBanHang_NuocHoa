@@ -115,16 +115,42 @@ switch ($action) {
     case 'updateUser': {
             // Get Fetch data
             $data = json_decode(file_get_contents("php://input"), true);
-            $hoten = $data["hoten"];
-            $email = $data["email"];
-            $username = $data["username"];
-            $currentPassword = $data["currentPassword"];
-            $newPassword = $data["newPassword"];
-            $quyenhan = $data["quyenhan"];
-            $trangThai = $data["trangThai"];
+            $hoten = $data["name"] ?? null;
+            $email = $data["email"] ?? null;
+            $username = $data["username"] ?? null;
+            $currentPassword = $data["password"] ?? null;
+            $newPassword = $data["newPassword"] ?? null;
+            $quyenhan = $data["quyenhan"] ?? null;
+            $trangThai = $data["status"] ?? null;
+
+            $currentRole = $userController->getUserRoleByUsername($username); // truy vấn role hiện tại trong DB
+
+            // Nếu người dùng đang là admin và bị hạ xuống làm user
+            if ($currentRole === "admin" && $quyenhan === "user") {
+                $adminCount = $userController->getAdminCount();
+                if ($adminCount <= 1) {
+                    echo json_encode([
+                        "success" => false,
+                        "message" => "Không thể thay đổi quyền hạn. Hệ thống cần ít nhất một quản trị viên."
+                    ]);
+                    exit();
+                }
+            }
+
+
 
             // Call controller
-            $code = $userController->updateUser($hoten, $email, $username, $currentPassword, $newPassword , $quyenhan, $trangThai);
+            if (!empty($newPassword)) {
+        // Có newPassword ⇒ kiểm tra mật khẩu cũ và đổi mật khẩu
+                $code = $userController->updateUser(
+                    $hoten, $email, $username, $currentPassword, $newPassword, $quyenhan, $trangThai
+                );
+            } else {
+                // Không có newPassword ⇒ chỉ cập nhật thông tin
+                $code = $userController->updateUserInfoFromAdmin(
+                    $hoten, $email, $username,$currentPassword, $quyenhan, $trangThai
+                );
+            }
             // Check code
 
             switch ($code) {

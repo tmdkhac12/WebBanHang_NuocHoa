@@ -143,7 +143,7 @@ $totalPages = ceil($totalUsers / $limit);
                         </div>
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="password">Password</label>
-                            <input type="password" id="password" class="form-control" />
+                            <input type="text" id="password" class="form-control" />
                             <div class="invalid-feedback" id="passwordError"></div>
                         </div>
 
@@ -331,6 +331,7 @@ $totalPages = ceil($totalUsers / $limit);
                     $('#username').val(user.username);
                     $('#password').val(user.password);
                     $('#trangthai').val(user.trang_thai_tai_khoan);
+                    $('#quyenhan').val(user.quyen_han);
 
                     if (!isUpdate) {
                         $('#staticBackdrop4 input, #staticBackdrop4 select').prop('disabled', true);

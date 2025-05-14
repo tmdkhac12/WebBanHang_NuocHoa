@@ -64,6 +64,14 @@ class UserController
 
         return 0; // Thêm thất bại
     }
+    
+    public function getAdminCount() {
+        return $this->userModel->countAdmins();
+    }
+
+    public function getUserRoleByUsername($username) {
+        return $this->userModel->getUserRoleByUsername($username);
+    }
 
     public function updateUser($hoten, $email, $username, $currentPassword, $newPassword , $quyenhan , $trangthai)
     {
@@ -84,4 +92,12 @@ class UserController
             return 1;
         }
     }
+    public function updateUserInfoFromAdmin($hoten, $email, $username, $password, $quyenhan, $trangthai)
+    {
+        $isSuccess = $this->userModel->updateUserInfoAndPasswordFromAdmin(
+            $hoten, $email, $username, $password, $quyenhan, $trangthai
+        );
+        return $isSuccess ? 1 : -1;
+    }
+
 }
