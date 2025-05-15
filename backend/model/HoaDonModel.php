@@ -186,4 +186,49 @@ class HoaDonModel
         $connection->close();
         return $result;
     }
+
+    public function searchHoaDon($keyword, $limit, $offset) {
+        $connection = getConnection();
+        $keyword = "%$keyword%";
+        $sql = "SELECT hd.*, kh.ten_khach_hang, dc.so_dien_thoai_nguoi_nhan, dc.dia_chi_giao_hang
+                FROM hoadon hd
+                LEFT JOIN khachhang kh ON hd.ma_khach_hang = kh.ma_khach_hang
+                LEFT JOIN diachi dc ON hd.ma_dia_chi = dc.ma_dia_chi
+                WHERE kh.ten_khach_hang LIKE ? 
+                OR dc.so_dien_thoai_nguoi_nhan LIKE ? 
+                OR dc.dia_chi_giao_hang LIKE ?
+                ORDER BY hd.thoi_gian DESC
+                LIMIT ? OFFSET ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("sssii", $keyword, $keyword, $keyword, $limit, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $orders = [];
+        while ($row = $result->fetch_assoc()) {
+            $orders[] = $row;
+        }
+        $stmt->close();
+        $connection->close();
+        return $orders;
+    }
+
+    public function getTotalSearchHoaDon($keyword) {
+        $connection = getConnection();
+        $keyword = "%$keyword%";
+        $sql = "SELECT COUNT(*) as total
+                FROM hoadon hd
+                LEFT JOIN khachhang kh ON hd.ma_khach_hang = kh.ma_khach_hang
+                LEFT JOIN diachi dc ON hd.ma_dia_chi = dc.ma_dia_chi
+                WHERE kh.ten_khach_hang LIKE ? 
+                OR dc.so_dien_thoai_nguoi_nhan LIKE ? 
+                OR dc.dia_chi_giao_hang LIKE ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("sss", $keyword, $keyword, $keyword);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        $connection->close();
+        return $row['total'];
+    }
 }

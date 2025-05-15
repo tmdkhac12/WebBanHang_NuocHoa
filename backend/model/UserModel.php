@@ -192,4 +192,35 @@ public function getTotalUsers()
         return $row['quyen_han'] ?? null;  // Trả về quyền hạn hoặc null nếu không tìm thấy
     }
 
+    public function searchUsers($keyword, $limit, $offset) {
+        $connection = getConnection();
+        $keyword = "%$keyword%";
+        $sql = "SELECT * FROM khachhang WHERE username LIKE ? OR ten_khach_hang LIKE ? LIMIT ? OFFSET ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("ssii", $keyword, $keyword, $limit, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $stmt->close();
+        $connection->close();
+        return $users;
+    }
+
+    public function getTotalSearchUsers($keyword) {
+        $connection = getConnection();
+        $keyword = "%$keyword%";
+        $sql = "SELECT COUNT(*) as total FROM khachhang WHERE username LIKE ? OR ten_khach_hang LIKE ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("ss", $keyword, $keyword);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        $connection->close();
+        return $row['total'];
+    }
+
 }

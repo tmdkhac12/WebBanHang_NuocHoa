@@ -39,5 +39,12 @@ class ProductController {
         return $this->productModel->updateProduct($id ,$name, $price, $description,  $brand , $gender , $nongdo  , $image ,$notes );
     }
 
+    public function searchProducts($keyword, $limit, $offset) {
+        return $this->productModel->searchProducts($keyword, $limit, $offset);
+    }
+    public function getTotalSearchProducts($keyword) {
+        return $this->productModel->getTotalSearchProducts($keyword);
+    }
+
 }
 ?>

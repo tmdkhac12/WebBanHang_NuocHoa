@@ -100,4 +100,11 @@ class UserController
         return $isSuccess ? 1 : -1;
     }
 
+    public function searchUsers($keyword, $limit, $offset) {
+        return $this->userModel->searchUsers($keyword, $limit, $offset);
+    }
+    public function getTotalSearchUsers($keyword) {
+        return $this->userModel->getTotalSearchUsers($keyword);
+    }
+
 }

@@ -101,7 +101,20 @@ switch ($action) {
         }
         break;
     }
-
+    case 'searchUsers': {
+        $keyword = $_GET['keyword'] ?? '';
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 8;
+        $offset = ($page - 1) * $limit;
+        $users = $userController->searchUsers($keyword, $limit, $offset);
+        $total = $userController->getTotalSearchUsers($keyword);
+        echo json_encode([
+            "success" => true,
+            "users" => $users,
+            "total" => $total
+        ]);
+        exit();
+    }
     case 'getUserById':
         if (isset($_GET['id'])) {
             $userId = $_GET['id'];

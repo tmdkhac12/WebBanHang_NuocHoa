@@ -321,21 +321,21 @@ $totalPages = ceil($totalProducts / $limit);
             });
         }
 
-        $('.btn-view').on('click', function(e) {
+        $(document).on('click', '.btn-view', function(e) {
             e.preventDefault();
             var productId = $(this).data('id');
             loadProductData(productId, false); // false: chỉ xem
         });
 
-        $('.btn-update').on('click', function(e) {
+        $(document).on('click', '.btn-update', function(e) {
             e.preventDefault();
             var productId = $(this).data('id');
             loadProductData(productId, true); // true: cập nhật
         });
-        $('.btn-delete').on('click', function(e) {
+
+        $(document).on('click', '.btn-delete', function(e) {
             e.preventDefault();
             var productId = $(this).data('id');
-
             if (confirm('Are you sure you want to delete this product?')) {
                 $.ajax({
                     url: '../../backend/api/ProductAPI.php?action=deleteProduct&id=' + productId,
@@ -547,6 +547,72 @@ $totalPages = ceil($totalProducts / $limit);
         }
     });
 }
+
+
+    //tim kiem phan trang
+    function loadProducts(keyword = '', page = 1) {
+        $.ajax({
+            url: '../../backend/api/ProductAPI.php?action=searchProducts',
+            method: 'GET',
+            data: {
+                keyword: keyword,
+                page: page,
+                limit: 8
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    renderProductTable(response.products);
+                    renderPagination(response.total, page, keyword);
+                }
+            }
+        });
+    }
+
+    $('#btnSearchUser').on('click', function() {
+        const keyword = $('#searchUser').val().trim();
+        loadProducts(keyword, 1);
+    });
+
+    $(document).on('click', '.page-link', function(e) {
+        e.preventDefault();
+        const page = $(this).data('page');
+        const keyword = $('#searchUser').val().trim();
+        loadProducts(keyword, page);
+    });
+
+    function renderProductTable(products) {
+        let html = '';
+        if (products.length === 0) {
+            html = '<tr><td colspan="5">Không có sản phẩm nào.</td></tr>';
+        } else {
+            products.forEach(product => {
+                html += `<tr>
+                    <td>${product.ma_nuoc_hoa}</td>
+                    <td>${product.ten_nuoc_hoa}</td>
+                    <td>${product.gia_ban ? Number(product.gia_ban).toLocaleString('vi-VN') + ' VND' : '0 VND'}</td>
+                    <td>${product.ten_thuong_hieu || ''}</td>
+                    <td>
+                        <a class="btn btn-success btn-sm btn-view" data-id="${product.ma_nuoc_hoa}">View</a>
+                        <a class="btn btn-warning btn-sm btn-update" data-id="${product.ma_nuoc_hoa}">Update</a>
+                        <a class="btn btn-danger btn-sm btn-delete" data-id="${product.ma_nuoc_hoa}">Delete</a>
+                    </td>
+                </tr>`;
+            });
+        }
+        $('#datatablesSimple tbody').html(html);
+    }
+
+    function renderPagination(total, currentPage, keyword) {
+        const totalPages = Math.ceil(total / 8);
+        let html = '';
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>`;
+        }
+        $('.pagination').html(html);
+    }
 
 
 

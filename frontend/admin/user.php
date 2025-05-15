@@ -302,7 +302,7 @@ $totalPages = ceil($totalUsers / $limit);
         });
 
         // Khi nhấn nút "Cập nhật"
-        $('.btn-update').on('click', function(e) {
+        $(document).on('click', '.btn-update', function(e) {
             e.preventDefault();
             isUpdateMode = true;
             userIdToUpdate = $(this).data('id');
@@ -311,7 +311,7 @@ $totalPages = ceil($totalUsers / $limit);
         });
 
         // Khi nhấn nút "Xem"
-        $('.btn-view').on('click', function(e) {
+        $(document).on('click', '.btn-view', function(e) {
             e.preventDefault();
             const userId = $(this).data('id');
             loadUserData(userId, false);
@@ -357,6 +357,76 @@ $totalPages = ceil($totalUsers / $limit);
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
     });
+
+
+
+    // tim kiem
+
+    function loadUsers(keyword = '', page = 1) {
+        $.ajax({
+            url: '../../backend/api/UserAPI.php?action=searchUsers',
+            method: 'GET',
+            data: {
+                keyword: keyword,
+                page: page,
+                limit: 8
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    renderUserTable(response.users);
+                    renderPagination(response.total, page, keyword);
+                }
+            }
+        });
+    }
+
+    $('#btnSearchUser').on('click', function() {
+        const keyword = $('#searchUser').val().trim();
+        loadUsers(keyword, 1);
+    });
+
+    $(document).on('click', '.page-link', function(e) {
+        e.preventDefault();
+        const page = $(this).data('page');
+        const keyword = $('#searchUser').val().trim();
+        loadUsers(keyword, page);
+    });
+
+    function renderUserTable(users) {
+        let html = '';
+        if (users.length === 0) {
+            html = '<tr><td colspan="8">Không có người dùng nào.</td></tr>';
+        } else {
+            users.forEach(user => {
+                html += `<tr>
+                    <td>${user.ma_khach_hang}</td>
+                    <td>${user.username}</td>
+                    <td>${user.password}</td>
+                    <td>${user.ten_khach_hang}</td>
+                    <td>${user.email}</td>
+                    <td>${user.quyen_han == 'admin' ? 'Quản trị viên' : 'Người dùng'}</td>
+                    <td>${user.trang_thai_tai_khoan == 1 ? 'Hoạt động' : 'Khóa'}</td>
+                    <td>
+                        <a class="btn btn-success btn-sm btn-view" data-id="${user.ma_khach_hang}">View</a>
+                        <a class="btn btn-warning btn-sm btn-update" data-id="${user.ma_khach_hang}">Update</a>
+                    </td>
+                </tr>`;
+            });
+        }
+        $('#datatablesSimple tbody').html(html);
+    }
+
+    function renderPagination(total, currentPage, keyword) {
+        const totalPages = Math.ceil(total / 8);
+        let html = '';
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>`;
+        }
+        $('.pagination').html(html);
+    }
 </script>
 
 

@@ -293,16 +293,14 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
         });
 
         // Khi nhấn nút "Cập nhật"
-        $('.btn-update').on('click', function(e) {
+        $(document).on('click', '.btn-update', function(e) {
             e.preventDefault();
             isUpdateMode = true;
             userIdToUpdate = $(this).data('id');
-            console.log(userIdToUpdate);
             loadOrderData(userIdToUpdate, true);
         });
 
-        // Khi nhấn nút "Xem"
-        $('.btn-view').on('click', function(e) {
+        $(document).on('click', '.btn-view', function(e) {
             e.preventDefault();
             const hoaDonId = $(this).data('id');
             loadOrderData(hoaDonId, false);
@@ -366,11 +364,77 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
         }
     });
 
+    //tim kiem phan trang
+
+    function loadOrders(keyword = '', page = 1) {
+        $.ajax({
+            url: '../../backend/api/HoaDonAPI.php?action=searchHoaDon',
+            method: 'GET',
+            data: {
+                keyword: keyword,
+                page: page,
+                limit: 8
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    renderOrderTable(response.orders);
+                    renderPagination(response.total, page, keyword);
+                }
+            }
+        });
+    }
+
+    $('#btnSearchUser').on('click', function() {
+        const keyword = $('#searchUser').val().trim();
+        loadOrders(keyword, 1);
+    });
+
+    $(document).on('click', '.page-link', function(e) {
+        e.preventDefault();
+        const page = $(this).data('page');
+        const keyword = $('#searchUser').val().trim();
+        loadOrders(keyword, page);
+    });
+
     $('#staticBackdrop4').on('hidden.bs.modal', function() {
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
     });
 
+    function renderOrderTable(orders) {
+        let html = '';
+        if (!orders || orders.length === 0) {
+            html = '<tr><td colspan="8">Không có đơn hàng nào.</td></tr>';
+        } else {
+            orders.forEach(order => {
+                html += `<tr>
+                    <td>${order.ma_hoa_don}</td>
+                    <td>${numberFormat(order.tong_tien)}</td>
+                    <td>${order.thoi_gian}</td>
+                    <td>${order.ten_khach_hang}</td>
+                    <td>${order.so_dien_thoai_nguoi_nhan}</td>
+                    <td>${order.dia_chi_giao_hang}</td>
+                    <td>${order.trang_thai_don_hang}</td>
+                    <td>
+                        <a class="btn btn-success btn-sm btn-view" data-id="${order.ma_hoa_don}">View</a>
+                        <a class="btn btn-warning btn-sm btn-update" data-id="${order.ma_hoa_don}">Update</a>
+                    </td>
+                </tr>`;
+            });
+        }
+        $('#datatablesSimple tbody').html(html);
+    }
+    function renderPagination(total, currentPage, keyword) {
+        const totalPages = Math.ceil(total / 8);
+        let html = '';
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>`;
+        }
+        $('.pagination').html(html);
+    }
     function numberFormat(number) {
         return number.toLocaleString('vi-VN');
     }

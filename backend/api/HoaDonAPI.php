@@ -125,6 +125,20 @@ switch ($action) {
         }
         exit();
     }
+    case 'searchHoaDon': {
+        $keyword = $_GET['keyword'] ?? '';
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 8;
+        $offset = ($page - 1) * $limit;
+        $orders = $hoaDonController->searchHoaDon($keyword, $limit, $offset);
+        $total = $hoaDonController->getTotalSearchHoaDon($keyword);
+        echo json_encode([
+            "success" => true,
+            "orders" => $orders,
+            "total" => $total
+        ]);
+        exit();
+    }
     default:
         http_response_code(400);
         echo json_encode(["error" => "Invalid Action"]);

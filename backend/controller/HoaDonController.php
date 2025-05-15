@@ -140,4 +140,11 @@ class HoaDonController
 
         return $updateDiaChi && $updateTrangThai;
     }
+
+    public function searchHoaDon($keyword, $limit, $offset) {
+        return $this->hoaDonModel->searchHoaDon($keyword, $limit, $offset);
+    }
+    public function getTotalSearchHoaDon($keyword) {
+        return $this->hoaDonModel->getTotalSearchHoaDon($keyword);
+    }
 }

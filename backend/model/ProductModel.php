@@ -470,5 +470,40 @@ class ProductModel {
 
             return true;
         }
+    public function searchProducts($keyword, $limit, $offset) {
+        $connection = getConnection();
+        $keyword = "%$keyword%";
+        $sql = "SELECT p.*, th.ten_thuong_hieu
+                FROM nuochoa p
+                LEFT JOIN thuonghieu th ON p.ma_thuong_hieu = th.ma_thuong_hieu
+                WHERE p.ten_nuoc_hoa LIKE ?
+                ORDER BY p.ma_nuoc_hoa DESC
+                LIMIT ? OFFSET ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("sii", $keyword, $limit, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $products = [];
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $row;
+        }
+        $stmt->close();
+        $connection->close();
+        return $products;
+    }
+
+    public function getTotalSearchProducts($keyword) {
+        $connection = getConnection();
+        $keyword = "%$keyword%";
+        $sql = "SELECT COUNT(*) as total FROM nuochoa WHERE ten_nuoc_hoa LIKE ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("s", $keyword);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        $connection->close();
+        return $row['total'];
+    }
 }
 ?>
