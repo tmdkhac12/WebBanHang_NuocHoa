@@ -133,7 +133,7 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                         </div>
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="email">Số điện thoại</label>
-                            <input type="text" id="soDienThoai" class="form-control" readonly/>
+                            <input type="text" id="soDienThoai" class="form-control" readonly />
                             <div class="invalid-feedback" id="emailError"></div>
                         </div>
                         <div data-mdb-input-init class="form-outline mb-4">
@@ -149,25 +149,41 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="username">Địa chỉ</label>
                             <input type="text" id="diaChi" class="form-control" />
-                            <div class="invalid-feedback" id="usernameError"></div>
+                            <div class="invalid-feedback" id="diaChiError"></div>
                         </div>
                         <div class="row">
                             <div class="col-6">
                                 <div data-mdb-input-init class="form-outline mb-4">
                                     <label class="form-label" for="trangthai">Trạng thái đơn hàng</label>
                                     <select id="trangthai" class="form-select">
-                                        <option value="1">Đang sử lý</option>
-                                        <option value="0">Đã giao</option>
-                                        <option value="-1">Đã huỷ</option>
+                                        <option value="Đang sử lý">Đang sử lý</option>
+                                        <option value="Đã giao">Đã giao</option>
+                                        <option value="Đã Huỷ">Đã huỷ</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="saveChangesButton">Save changes</button>
-                </div>
+                        <h5 id="orderDetailTitle">Chi tiết đơn hàng</h5>
+                        <div class="table-responsive" id="orderDetailSection">
+                            <table class="table table-bordered" id="orderDetailTable">
+                                <thead>
+                                    <tr>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Đơn giá</th>
+                                        <th>Số lượng</th>
+                                        <th>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dữ liệu sẽ được thêm bằng JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="saveChangesButton">Save changes</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -203,37 +219,19 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
         $('#userForm').on('submit', function(e) {
             e.preventDefault(); // Ngăn hành vi mặc định của form
 
-            const userData = {
-                name: $('#name').val().trim(),
-                email: $('#email').val().trim(),
-                username: $('#username').val().trim(),
-                password: $('#password').val().trim(),
-                status: $('#trangthai').val().trim(),
-                quyenhan: $('#quyenhan').val().trim()
+            const orderData = {
+                maHoaDon: userIdToUpdate,
+                diaChi: $('#diaChi').val().trim(),
+                trangThai: $('#trangthai').val().trim()
             };
-            console.log(userData);  
+            console.log(orderData);
             $('.invalid-feedback').text('');
             $('.form-control').removeClass('is-invalid');
 
             let isValid = true;
-            if (!userData.name) {
-                $('#nameError').text('Tên khách hàng không được bỏ trống.');
-                $('#name').addClass('is-invalid');
-                isValid = false;
-            }
-            if (!userData.email) {
-                $('#emailError').text('Email không được bỏ trống.');
-                $('#email').addClass('is-invalid');
-                isValid = false;
-            }
-            if (!userData.username) {
-                $('#usernameError').text('Username không được bỏ trống.');
-                $('#username').addClass('is-invalid');
-                isValid = false;
-            }
-            if (!userData.password) {
-                $('#passwordError').text('Password không được bỏ trống.');
-                $('#password').addClass('is-invalid');
+            if (orderData.diaChi.length === 0) {
+                $('#diaChiError').text('Địa chỉ không được để trống .');
+                $('#diaChi').addClass('is-invalid');
                 isValid = false;
             }
             if (!isValid) {
@@ -241,13 +239,13 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
             }
             if (isUpdateMode) {
                 $.ajax({
-                    url: '../../backend/api/UserAPI.php?action=updateOrder',
+                    url: '../../backend/api/HoaDonAPI.php?action=updateHoaDon',
                     method: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify(userData),
+                    data: JSON.stringify(orderData),
                     success: function(response) {
                         if (response.success) {
-                            alert('Người dùng đã được cập nhật thành công!');
+                            alert('Đơn hàng đã được cập nhật thành công!');
                             location.reload();
                         } else {
                             alert(response.message);
@@ -312,11 +310,15 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
 
         // Hàm load dữ liệu người dùng
         function loadOrderData(hoaDonId, isUpdate) {
+            if (isUpdate) {
+                userIdToUpdate = hoaDonId;
+            }
             $.ajax({
-                url: '../../backend/api/HoaDonAPI.php?action=getHoaDonByID&id=' + hoaDonId,
+                url: '../../backend/api/HoaDonAPI.php?action=getDetailHoaDonByID&id=' + hoaDonId,
                 method: 'GET',
                 dataType: 'json',
                 success: function(response) {
+                    console.log(response);
                     const hoadon = response.data;
                     $('#modalTitle').text(isUpdate ? 'Cập nhật đơn hàng' : 'Thông tin đơn hàng');
                     resetUserForm();
@@ -328,14 +330,31 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                     $('#tongTien').val(numberFormat(hoadon.tong_tien));
 
                     if (!isUpdate) {
+                        $('#orderDetailSection').show();
+                        $('#orderDetailTitle').show();
                         $('#staticBackdrop4 input, #staticBackdrop4 select').prop('disabled', true);
                         $('#saveChangesButton').hide();
+                        let html = '';
+                        if (hoadon.chi_tiet && hoadon.chi_tiet.length > 0) {
+                            hoadon.chi_tiet.forEach(function(item) {
+                                html += `<tr>
+                                    <td>${item.ten_nuoc_hoa}</td>
+                                    <td>${numberFormat(item.gia_ban)}</td>
+                                    <td>${item.so_luong_mua}</td>
+                                    <td>${numberFormat(hoadon.tong_tien)}</td>
+                                </tr>`;
+                            });
+                        } else {
+                            html = '<tr><td colspan="4" class="text-center">Không có dữ liệu</td></tr>';
+                        }
+                        $('#orderDetailTable tbody').html(html);
                     } else {
+                        $('#orderDetailSection').hide();
+                        $('#orderDetailTitle').hide();
                         $('#staticBackdrop4 input, #staticBackdrop4 select').prop('disabled', false);
                         $('#username').prop('readonly', true);
                         $('#saveChangesButton').show();
                     }
-
                     var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
                     modal.show();
                 },
@@ -355,7 +374,6 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
     function numberFormat(number) {
         return number.toLocaleString('vi-VN');
     }
-
 </script>
 
 </html>
