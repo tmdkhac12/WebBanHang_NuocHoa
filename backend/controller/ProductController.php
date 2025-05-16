@@ -7,8 +7,8 @@ class ProductController {
     function __construct() {
         $this->productModel = new ProductModel();
     }
-    public function createProduct($name, $price, $description, $brand, $gender, $nongdo, $image, $notes = []){
-        return $this->productModel->createProduct($name, $price, $description, $brand, $gender, $nongdo, $image, $notes = []);
+    public function createProduct($name, $price, $description, $brand, $gender, $nongdo, $image,$dungtich, $notes = []){
+        return $this->productModel->createProduct($name, $price, $description, $brand, $gender, $nongdo, $image,$dungtich, $notes = []);
     }
     public function getAllProducts($limit = null, $offset = null) {
         return $this->productModel->getAllProducts($limit, $offset);
@@ -35,8 +35,8 @@ class ProductController {
     public function deleteProduct($id) {
         return $this->productModel->deleteProduct($id);
     }
-    public function updateProduct($id , $name, $price, $description, $brand, $gender, $nongdo, $image,$notes = [] ,  ){
-        return $this->productModel->updateProduct($id ,$name, $price, $description,  $brand , $gender , $nongdo  , $image ,$notes );
+    public function updateProduct($id , $name, $price, $description, $brand, $gender, $nongdo, $image,$dungtich,$notes = [] ,  ){
+        return $this->productModel->updateProduct($id ,$name, $price, $description,  $brand , $gender , $nongdo  , $image ,$dungtich ,$notes );
     }
 
     public function searchProducts($keyword, $limit, $offset) {

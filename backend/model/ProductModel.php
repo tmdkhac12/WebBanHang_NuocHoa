@@ -143,7 +143,7 @@ class ProductModel {
         $stmt->close();
 
         if ($product) {
-            $sql = "SELECT d.dung_tich, dn.gia_ban 
+            $sql = "SELECT *
                     FROM dungtich d 
                     JOIN dungtich_nuochoa dn ON d.ma_dung_tich = dn.ma_dung_tich 
                     WHERE dn.ma_nuoc_hoa = ?";
@@ -155,7 +155,8 @@ class ProductModel {
             while ($row = $result->fetch_assoc()) {
                 $dungtich[] = [
                     'dung_tich' => $row['dung_tich'],
-                    'gia_ban' => $row['gia_ban']
+                    'gia_ban' => $row['gia_ban'],
+                    'ma_dung_tich' =>$row['ma_dung_tich']
                 ];
             }
             $stmt->close();
@@ -294,7 +295,7 @@ class ProductModel {
             
             return $success;
     }
-    public function updateProduct($productId, $name, $price, $description, $brand,$gender, $nongdo,$image ,$notes = [] ) {
+    public function updateProduct($productId, $name, $price, $description, $brand,$gender, $nongdo,$image , $dungtich ,$notes = [] ) {
         if (!is_int($brand) && !ctype_digit($brand)) {
             return false;
         }
@@ -322,14 +323,14 @@ class ProductModel {
 
         $stmt->close();
         $sql = "UPDATE dungtich_nuochoa 
-                SET gia_ban = ?
+                SET gia_ban = ? , ma_dung_tich= ?
                 WHERE ma_nuoc_hoa = ? ";
         $stmt = $this->connection->prepare($sql);
         if (!$stmt) {
             error_log("Error preparing update statement: " . $this->connection->error);
             return false;
         }
-        $stmt->bind_param("di", $price, $productId);
+        $stmt->bind_param("dii", $price, $dungtich,$productId);
         $success = $stmt->execute();
         if (!$success) {
             error_log("Error executing update statement: " . $stmt->error);
@@ -387,7 +388,7 @@ class ProductModel {
 
         return true;
     }
-    public function createProduct($name, $price, $description, $brand, $gender, $nongdo, $image, $notes = [])
+    public function createProduct($name, $price, $description, $brand, $gender, $nongdo, $image, $dungtich,$notes = [])
         {
             if (!is_int($brand) && !ctype_digit($brand)) {
                 return false;
@@ -414,14 +415,14 @@ class ProductModel {
             $productId = $stmt->insert_id; // Get the inserted product ID
             $stmt->close();
 
-            $sql = "INSERT INTO dungtich_nuochoa (ma_nuoc_hoa, gia_ban ,ma_dung_tich) VALUES (?, ? , 6)";
+            $sql = "INSERT INTO dungtich_nuochoa (ma_nuoc_hoa, gia_ban ,ma_dung_tich) VALUES (?, ? , ?)";
             $stmt = $this->connection->prepare($sql);
             if (!$stmt) {
                 error_log("Error preparing insert dungtich_nuochoa: " . $this->connection->error);
                 return false;
             }
 
-            $stmt->bind_param("id", $productId, $price);
+            $stmt->bind_param("idi", $productId, $price , $dungtich);
             $success = $stmt->execute();
             if (!$success) {
                 error_log("Error executing insert dungtich_nuochoa: " . $stmt->error);
@@ -444,7 +445,7 @@ class ProductModel {
             }
             $stmt->close();
 
-            // Step 4: Insert notes if provided
+            
             if (!empty($notes)) {
                 $insertStmt = $this->connection->prepare(
                     "INSERT INTO nothuong_nuochoa (ma_nuoc_hoa, ma_not_huong, loai) VALUES (?, ?, ?)"

@@ -139,6 +139,12 @@ $totalPages = ceil($totalProducts / $limit);
                                 <option value="">-- Chọn thương hiệu --</option>
                             </select>
                         </div>
+                        <div data-mdb-input-init class="form-outline mb-4">
+                            <label class="form-label" for="dungtich">Dung tích (ml)</label>
+                            <select id="dungtich" class="form-select">
+                                       
+                            </select>
+                        </div>
 
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="description">Mô tả</label>
@@ -232,12 +238,13 @@ $totalPages = ceil($totalProducts / $limit);
 
                     console.log("Product data:", product);
                     console.log("Product image path:", product.hinh_anh);
-                    console.log("Initializing Select2...");
+                    console.log("Product" , product);
                     const nongDoId = product.nong_do?.[0]?.id;
                     $('#formMode').val('update'); 
                     $('.js-example-basic-multiple').select2();
                     populateBrands(product.ten_thuong_hieu);
                     populateNongDo(nongDoId);
+                    populateDungTich(product.dung_tich[0].ma_dung_tich);
                     $('#name').val(product.ten_nuoc_hoa);
 
                     $('#price').val(product.gia_ban);
@@ -336,7 +343,7 @@ $totalPages = ceil($totalProducts / $limit);
             e.preventDefault();
             const mode = $('#formMode').val(); 
             const isUpdate = mode === 'update';
-
+            var dungtich =  $('#dungtich').val();
             var name = $('#name').val();
             var brand = $('#thuonghieu').val();
             var description = $('#description').val();
@@ -362,6 +369,7 @@ $totalPages = ceil($totalProducts / $limit);
             formData.append('price', price);
             formData.append('gioitinh' , gioitinh);
             formData.append('nongdo', nongdo);
+            formData.append('dungtich' , dungtich);
             
 
             
@@ -406,10 +414,26 @@ $totalPages = ceil($totalProducts / $limit);
                     alert('Product updated!');
                     location.reload();
                 },
-                error: function(error) {
-                    console.error('Error updating:', error);
-                    alert("Failed to update product");
-                    console.log('Error details:', error);
+                error: function(xhr) {
+                   let errorMessage = 'Đã xảy ra lỗi không xác định.';
+                    
+                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                        errorMessage = xhr.responseJSON.error; 
+                    } else if (xhr.responseText) {
+                        try {
+                            const parsed = JSON.parse(xhr.responseText);
+                            if (parsed.error) {
+                                errorMessage = parsed.error;
+                            } else {
+                                errorMessage = xhr.responseText;
+                            }
+                        } catch (e) {
+                            errorMessage = xhr.responseText;
+                        }
+                    }
+
+                    console.error('Error response:', xhr);
+                    alert("Lỗi: " + errorMessage);
                 }
             });
         });
@@ -418,9 +442,12 @@ $totalPages = ceil($totalProducts / $limit);
 
         $('#btnAddUser').on('click', function () {
             $('#productForm input, #productForm select, #productForm textarea').prop('disabled', false);
-
+            
+            $('#productForm select').val(null).trigger('change');
+            $('#gioitinh').val('Nam').trigger('change');
+           
             $('#formMode').val('add'); 
-            $('#productId').val(''); // clear productId
+            $('#productId').val(''); 
             $('#name').val('');
             $('#price').val('');
             $('#description').val('');
@@ -428,7 +455,7 @@ $totalPages = ceil($totalProducts / $limit);
             $('#existingImage').val('');
             $('#avatar-img').hide();
             $('#thuonghieu').empty();
-            $('#gioitinh').val('');
+            $('#dungtich').val('1');
             $('#nongdo').val('');
             $('#huongdau, #huonggiua, #huongcuoi').select2();
 
@@ -442,6 +469,7 @@ $totalPages = ceil($totalProducts / $limit);
             populateBrands();
             populateNongDo();
             populateNotHuongOptions();
+            populateDungTich();
 
              $('#avatar').closest('.form-outline').toggle(true);
 
@@ -494,13 +522,51 @@ $totalPages = ceil($totalProducts / $limit);
             }
         });
     }
+    function populateNongDo(selectedNongDoID = null) {
+        $.ajax({
+            url: '../../backend/api/NongDoAPI.php?action=getAllNongDo',
+            method: 'GET',
+            dataType: 'json',
+            success: function(nongdos) {
+                const $select = $('#nongdo');
+                  $select.empty();
+
+                nongdos.forEach(nongdo => {
+                    const selected = selectedNongDoID == nongdo.ma_nong_do ? 'selected' : '';
+                    $select.append(`<option value="${nongdo.ma_nong_do}" ${selected}>${nongdo.nong_do}</option>`);
+                });
+            },
+            error: function() {
+                alert('Không thể tải danh sách nong do.');
+            }
+        });
+    }
+    function populateDungTich(selectedDungTichID = null) {
+        $.ajax({
+            url: '../../backend/api/DungTichAPI.php?action=getAllDungTich',
+            method: 'GET',
+            dataType: 'json',
+            success: function(dungtichs) {
+                const $select = $('#dungtich');
+                  $select.empty();
+
+                dungtichs.forEach(dungtich => {
+                    const selected = selectedDungTichID == dungtich.ma_dung_tich ? 'selected' : '';
+                    $select.append(`<option value="${dungtich.ma_dung_tich}" ${selected}>${dungtich.dung_tich}</option>`);
+                });
+            },
+            error: function() {
+                alert('Không thể tải danh sách dung tich.');
+            }
+        });
+    }
     function populateNotHuongOptions(selectedHuongIds = {}) {
     $.ajax({
         url: '../../backend/api/NotHuongAPI.php?action=getAllNotHuong',
         method: 'GET',
         dataType: 'json',
         success: function(nothuongs) {
-            console.log("NotHuong data:", nothuongs);
+           
 
             nothuongs.forEach(note => {
                 const option1 = new Option(note.not_huong, note.ma_not_huong, false, false);

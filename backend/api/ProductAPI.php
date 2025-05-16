@@ -93,9 +93,24 @@ try {
         case 'updateProduct':
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $data = $_POST;
+                $requiredFields = [
+                    'name' => 'Tên sản phẩm',
+    
+                    'price' => 'Giá',
+                    
+                    'dungtich' => 'Dung tích'
+                ];
+
+                foreach ($requiredFields as $field => $label) {
+                    if (!isset($data[$field]) || trim($data[$field]) === '') {
+                        http_response_code(400);
+                        echo json_encode(['error' => "$label không được để trống"]);
+                        exit;
+                    }
+                }
                 if (!is_int($data['price']) && !ctype_digit($data['price'])) {
                     http_response_code(400);
-                    echo json_encode(['error' => 'Price must be an vaild int']);
+                    echo json_encode(['error' => 'Giá phải là 1 số nguyên']);
                     exit;        
                 }
                 $productId = isset($data['productId']) ? (int)$data['productId'] : null;
@@ -105,6 +120,7 @@ try {
                 $price = isset($data['price']) ? (int)$data['price'] : 0;
                 $gender = isset($data['gioitinh']) ? $data['gioitinh'] : '';
                 $nongdo = isset($data['nongdo']) ? (int)$data['nongdo'] : null;
+                $dungtich = isset($data['dungtich']) ? (int)$data['dungtich'] : 0;
 
                 $uploadDir = dirname(__DIR__, 2) . '/frontend/images/';
 
@@ -150,7 +166,7 @@ try {
 
                
              
-                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand,   $gender , $nongdo,$finalImage, $notes);
+                    $updated = $productController->updateProduct($productId, $name, $price, $description, $brand,   $gender , $nongdo,$finalImage,$dungtich, $notes);
 
                     if ($updated) {
                         echo json_encode(['success' => true, 'message' => 'Sản phẩm đã được cập nhật']);
@@ -165,9 +181,29 @@ try {
             case 'createProduct':
                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $data = $_POST;
+                    $requiredFields = [
+                    'name' => 'Tên sản phẩm',
+    
+                    'price' => 'Giá',
+                    
+                    'dungtich' => 'Dung tích'
+                    ];
+
+                    foreach ($requiredFields as $field => $label) {
+                        if (!isset($data[$field]) || trim($data[$field]) === '') {
+                            http_response_code(400);
+                            echo json_encode(['error' => "$label không được để trống"]);
+                            exit;
+                        }
+                    }
                     if (!is_int($data['price']) && !ctype_digit($data['price'])) {
                         http_response_code(400);
-                        echo json_encode(['error' => 'Price must be an vaild int']);
+                        echo json_encode(['error' => 'Giá phải là 1 số nguyên']);
+                        exit;        
+                    }
+                    if (!is_int($data['dungtich']) && !ctype_digit($data['dungtich'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Dung tích phải là 1 số nguyên']);
                         exit;        
                     }
 
@@ -177,7 +213,7 @@ try {
                     $price = isset($data['price']) ? (int)$data['price'] : 0;
                     $gender = isset($data['gioitinh']) ? $data['gioitinh'] : '';
                     $nongdo = isset($data['nongdo']) ? (int)$data['nongdo'] : null;
-
+                    $dungtich = isset($data['dungtich']) ? (int)$data['dungtich'] : 0;
                     $uploadDir = dirname(__DIR__, 2) . '/frontend/images/';
 
                     if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] === UPLOAD_ERR_OK) {
@@ -221,7 +257,7 @@ try {
 
                 
                    
-                        $updated = $productController->createProduct( $name, $price, $description, $brand,   $gender , $nongdo,$finalImage, $notes);
+                        $updated = $productController->createProduct( $name, $price, $description, $brand,   $gender , $nongdo,$finalImage,$dungtich, $notes);
 
                         if ($updated) {
                             echo json_encode(['success' => true, 'message' => 'Sản phẩm đã được tao']);
