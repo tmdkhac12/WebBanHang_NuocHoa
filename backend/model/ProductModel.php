@@ -473,9 +473,10 @@ class ProductModel {
     public function searchProducts($keyword, $limit, $offset) {
         $connection = getConnection();
         $keyword = "%$keyword%";
-        $sql = "SELECT p.*, th.ten_thuong_hieu
+        $sql = "SELECT p.*, th.ten_thuong_hieu , dtnh.gia_ban
                 FROM nuochoa p
                 LEFT JOIN thuonghieu th ON p.ma_thuong_hieu = th.ma_thuong_hieu
+                INNER JOIN dungtich_nuochoa dtnh ON p.ma_nuoc_hoa = dtnh.ma_nuoc_hoa
                 WHERE p.ten_nuoc_hoa LIKE ?
                 ORDER BY p.ma_nuoc_hoa
                 LIMIT ? OFFSET ?";
