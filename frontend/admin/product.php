@@ -629,6 +629,11 @@ $totalPages = ceil($totalProducts / $limit);
             reader.readAsDataURL(file); // Đọc tệp ảnh dưới dạng URL
         }
     });
+    $(document).ready(function() {
+
+        // Gọi hàm này để khi vừa load trang sẽ hiển thị danh sách đơn hàng và phân trang mặc định
+        loadProducts('', 1);
+    });
     $('.dataTables_info').remove();
 </script>
 

@@ -197,7 +197,7 @@ class HoaDonModel
                 WHERE kh.ten_khach_hang LIKE ? 
                 OR dc.so_dien_thoai_nguoi_nhan LIKE ? 
                 OR dc.dia_chi_giao_hang LIKE ?
-                ORDER BY hd.thoi_gian DESC
+                ORDER BY hd.thoi_gian
                 LIMIT ? OFFSET ?";
         $stmt = $connection->prepare($sql);
         $stmt->bind_param("sssii", $keyword, $keyword, $keyword, $limit, $offset);

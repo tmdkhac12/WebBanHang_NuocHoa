@@ -88,27 +88,7 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                     <div class="card-footer">
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-end mb-0">
-                                <?php if ($page > 1): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
-
-                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                    <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                                    </li>
-                                <?php endfor; ?>
-
-                                <?php if ($page < $totalPages): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
+                            
                             </ul>
                         </nav>
                     </div>
@@ -158,7 +138,7 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                                     <select id="trangthai" class="form-select">
                                         <option value="Đang sử lý">Đang sử lý</option>
                                         <option value="Đã giao">Đã giao</option>
-                                        <option value="Đã Huỷ">Đã huỷ</option>
+                                        <option value="Đã huỷ">Đã huỷ</option>
                                     </select>
                                 </div>
                             </div>
@@ -326,6 +306,7 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                     $('#diaChi').val(hoadon.dia_chi_giao_hang);
                     $('#thoiGian').val(hoadon.thoi_gian);
                     $('#tongTien').val(numberFormat(hoadon.tong_tien));
+                    $('#trangthai').val(hoadon.trang_thai_don_hang);
 
                     if (!isUpdate) {
                         $('#orderDetailSection').show();
@@ -438,6 +419,11 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
     function numberFormat(number) {
         return number.toLocaleString('vi-VN');
     }
+
+    $(document).ready(function() {
+        // Gọi hàm này để khi vừa load trang sẽ hiển thị danh sách đơn hàng và phân trang mặc định
+        loadOrders('', 1);
+    });
 </script>
 
 </html>

@@ -477,7 +477,7 @@ class ProductModel {
                 FROM nuochoa p
                 LEFT JOIN thuonghieu th ON p.ma_thuong_hieu = th.ma_thuong_hieu
                 WHERE p.ten_nuoc_hoa LIKE ?
-                ORDER BY p.ma_nuoc_hoa DESC
+                ORDER BY p.ma_nuoc_hoa
                 LIMIT ? OFFSET ?";
         $stmt = $connection->prepare($sql);
         $stmt->bind_param("sii", $keyword, $limit, $offset);
