@@ -496,7 +496,7 @@ class ProductModel {
     public function getTotalSearchProducts($keyword) {
         $connection = getConnection();
         $keyword = "%$keyword%";
-        $sql = "SELECT COUNT(*) as total FROM nuochoa WHERE tinh_trang = 1 AND ten_nuoc_hoa LIKE ?";
+        $sql = "SELECT COUNT(*) as total FROM nuochoa WHERE tinh_trang = 1 ten_nuoc_hoa LIKE ?";
         $stmt = $connection->prepare($sql);
         $stmt->bind_param("s", $keyword);
         $stmt->execute();

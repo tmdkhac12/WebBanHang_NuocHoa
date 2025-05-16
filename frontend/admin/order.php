@@ -136,9 +136,9 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                                 <div data-mdb-input-init class="form-outline mb-4">
                                     <label class="form-label" for="trangthai">Trạng thái đơn hàng</label>
                                     <select id="trangthai" class="form-select">
-                                        <option value="Đang sử lý">Đang sử lý</option>
+                                        <option value="Đang xử lý">Đang xử lý</option>
                                         <option value="Đã giao">Đã giao</option>
-                                        <option value="Đã huỷ">Đã huỷ</option>
+                                        <option value="Đã hủy">Đã hủy</option>
                                     </select>
                                 </div>
                             </div>
@@ -318,9 +318,9 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                             hoadon.chi_tiet.forEach(function(item) {
                                 html += `<tr>
                                     <td>${item.ten_nuoc_hoa}</td>
-                                    <td>${numberFormat(item.gia_ban)}</td>
+                                    <td>${numberFormat(item.gia_ban) + " VND"}</td>
                                     <td>${item.so_luong_mua}</td>
-                                    <td>${numberFormat(hoadon.tong_tien)}</td>
+                                    <td>${numberFormat(item.thanh_tien) + " VND"}</td>
                                 </tr>`;
                             });
                         } else {
@@ -417,7 +417,7 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
         $('.pagination').html(html);
     }
     function numberFormat(number) {
-        return number.toLocaleString('vi-VN');
+        return Number(number).toLocaleString('vi-VN');
     }
 
     $(document).ready(function() {

@@ -56,17 +56,17 @@ class HoaDonModel
         $connection = getConnection();
 
         $sql = "SELECT hd.ma_hoa_don, hd.thoi_gian, hd.tong_tien, hd.trang_thai_don_hang,
-                    ct.so_luong_mua, dc.ten_nguoi_nhan, dc.so_dien_thoai_nguoi_nhan, dc.dia_chi_giao_hang,
-                    nh.ten_nuoc_hoa, dt_nh.gia_ban, dt.dung_tich , kh.ten_khach_hang, dc.ma_dia_chi
-                FROM hoadon hd
-                INNER JOIN chitiethoadon ct ON hd.ma_hoa_don = ct.ma_hoa_don
-                INNER JOIN nuochoa nh ON ct.ma_nuoc_hoa = nh.ma_nuoc_hoa
-                INNER JOIN dungtich_nuochoa dt_nh ON ct.ma_nuoc_hoa = dt_nh.ma_nuoc_hoa AND ct.ma_dung_tich = dt_nh.ma_dung_tich
-                INNER JOIN diachi dc ON hd.ma_dia_chi = dc.ma_dia_chi
-                INNER JOIN dungtich dt ON dt_nh.ma_dung_tich = dt.ma_dung_tich
-                INNER JOIN khachhang kh ON kh.ma_khach_hang = hd.ma_khach_hang
-                WHERE hd.ma_hoa_don = ?
-                ORDER BY hd.thoi_gian DESC";
+                ct.so_luong_mua, ct.gia_ban, dc.ten_nguoi_nhan, dc.so_dien_thoai_nguoi_nhan, dc.dia_chi_giao_hang,
+                nh.ten_nuoc_hoa, dt.dung_tich , kh.ten_khach_hang, dc.ma_dia_chi , (ct.gia_ban * ct.so_luong_mua) AS thanh_tien
+            FROM hoadon hd
+            INNER JOIN chitiethoadon ct ON hd.ma_hoa_don = ct.ma_hoa_don
+            INNER JOIN nuochoa nh ON ct.ma_nuoc_hoa = nh.ma_nuoc_hoa
+            INNER JOIN dungtich dt ON ct.ma_dung_tich = dt.ma_dung_tich
+            INNER JOIN diachi dc ON hd.ma_dia_chi = dc.ma_dia_chi
+            INNER JOIN khachhang kh ON kh.ma_khach_hang = hd.ma_khach_hang
+            WHERE hd.ma_hoa_don = ?
+            ORDER BY hd.thoi_gian DESC";
+
 
         $statement = $connection->prepare($sql);
         $statement->bind_param("i", $maHoaDon);
@@ -96,6 +96,7 @@ class HoaDonModel
                 'dung_tich' => $row['dung_tich'],
                 'gia_ban' => $row['gia_ban'],
                 'so_luong_mua' => $row['so_luong_mua'],
+                'thanh_tien' => $row['thanh_tien'],
             ];
         }
         $statement->close();
