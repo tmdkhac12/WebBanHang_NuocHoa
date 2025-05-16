@@ -11,7 +11,7 @@ try {
             echo json_encode($nongDoController->getAllNongDo());
             break;
         default:
-            echo json_encode(['error' => 'Lỗi server: ' . $e->getMessage()]);
+            echo json_encode(['error' => 'Lỗi server: ' ]);
  
     }
 }
