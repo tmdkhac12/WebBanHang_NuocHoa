@@ -104,25 +104,33 @@ try {
                 $uploadDir = dirname(__DIR__, 2) . '/frontend/images/';
 
                 if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] === UPLOAD_ERR_OK) {
-                    $fileTmpPath = $_FILES['newImage']['tmp_name'];
-                    $originalFileName = basename($_FILES['newImage']['name']);
-                    
-                    
-                    $safeFileName = preg_replace("/[^a-zA-Z0-9\.\-_]/", "", $originalFileName);
+                $fileTmpPath = $_FILES['newImage']['tmp_name'];
+                $originalFileName = basename($_FILES['newImage']['name']);
 
-                    $destination = $uploadDir . $safeFileName;
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                $fileMimeType = mime_content_type($fileTmpPath);
 
-                    if (move_uploaded_file($fileTmpPath, $destination)) {
-                        $finalImage = $safeFileName;
-                    } else {
-                        echo json_encode(['error' => 'Failed to move uploaded file.']);
-                        exit;
-                    }
-                } elseif (isset($_POST['existingImage'])) {
-                    $finalImage = $_POST['existingImage']; 
-                } else {
-                    $finalImage = null; 
+                if (!in_array($fileMimeType, $allowedTypes)) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Invalid file type. Only JPEG, PNG, GIF, and WEBP images are allowed.']);
+                    exit;
                 }
+
+                $safeFileName = preg_replace("/[^a-zA-Z0-9\.\-_]/", "", $originalFileName);
+                $destination = $uploadDir . $safeFileName;
+
+                if (move_uploaded_file($fileTmpPath, $destination)) {
+                    $finalImage = $safeFileName;
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Failed to move uploaded file.']);
+                    exit;
+                }
+            } elseif (isset($_POST['existingImage'])) {
+                $finalImage = $_POST['existingImage']; 
+            } else {
+                $finalImage = null; 
+            }
 
                 $notes = [];
                   if (isset($_POST['notes']) && is_array($_POST['notes'])) {
@@ -165,15 +173,23 @@ try {
                     if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] === UPLOAD_ERR_OK) {
                         $fileTmpPath = $_FILES['newImage']['tmp_name'];
                         $originalFileName = basename($_FILES['newImage']['name']);
-                        
-                        
-                        $safeFileName = preg_replace("/[^a-zA-Z0-9\.\-_]/", "", $originalFileName);
 
+                        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                        $fileMimeType = mime_content_type($fileTmpPath);
+
+                        if (!in_array($fileMimeType, $allowedTypes)) {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'Invalid file type. Only JPEG, PNG, GIF, and WEBP images are allowed.']);
+                            exit;
+                        }
+
+                        $safeFileName = preg_replace("/[^a-zA-Z0-9\.\-_]/", "", $originalFileName);
                         $destination = $uploadDir . $safeFileName;
 
                         if (move_uploaded_file($fileTmpPath, $destination)) {
                             $finalImage = $safeFileName;
                         } else {
+                            http_response_code(400);
                             echo json_encode(['error' => 'Failed to move uploaded file.']);
                             exit;
                         }
@@ -182,7 +198,6 @@ try {
                     } else {
                         $finalImage = null; 
                     }
-
                     $notes = [];
                     if (isset($_POST['notes']) && is_array($_POST['notes'])) {
                         foreach ($_POST['notes'] as $key => $note) {
