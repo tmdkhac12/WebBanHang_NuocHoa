@@ -128,7 +128,7 @@ class HoaDonModel
     {
         $connection = getConnection();
 
-        $sql = "SELECT hd.ma_hoa_don, hd.thoi_gian, hd.tong_tien, hd.trang_thai_don_hang, ct.so_luong_mua, dc.ten_nguoi_nhan, dc.so_dien_thoai_nguoi_nhan, dc.dia_chi_giao_hang, nh.ten_nuoc_hoa, dt_nh.gia_ban, dt.dung_tich
+        $sql = "SELECT hd.ma_hoa_don, hd.thoi_gian, hd.tong_tien, hd.trang_thai_don_hang, ct.so_luong_mua, dc.ten_nguoi_nhan, dc.so_dien_thoai_nguoi_nhan, dc.dia_chi_giao_hang, nh.ten_nuoc_hoa, ct.gia_ban, dt.dung_tich
                 FROM hoadon hd
                 INNER JOIN chitiethoadon ct on hd.ma_hoa_don = ct.ma_hoa_don
                 INNER JOIN nuochoa nh on ct.ma_nuoc_hoa = nh.ma_nuoc_hoa
@@ -188,20 +188,43 @@ class HoaDonModel
         return $result;
     }
 
-    public function searchHoaDon($keyword, $limit, $offset) {
+    public function searchHoaDon($keyword, $limit, $offset, $fromDate = '', $toDate = '',  $status = '') {
         $connection = getConnection();
         $keyword = "%$keyword%";
         $sql = "SELECT hd.*, kh.ten_khach_hang, dc.so_dien_thoai_nguoi_nhan, dc.dia_chi_giao_hang
                 FROM hoadon hd
                 LEFT JOIN khachhang kh ON hd.ma_khach_hang = kh.ma_khach_hang
                 LEFT JOIN diachi dc ON hd.ma_dia_chi = dc.ma_dia_chi
-                WHERE kh.ten_khach_hang LIKE ? 
-                OR dc.so_dien_thoai_nguoi_nhan LIKE ? 
-                OR dc.dia_chi_giao_hang LIKE ?
-                ORDER BY hd.thoi_gian
-                LIMIT ? OFFSET ?";
+                WHERE (kh.ten_khach_hang LIKE ? 
+                    OR dc.so_dien_thoai_nguoi_nhan LIKE ? 
+                    OR dc.dia_chi_giao_hang LIKE ?)";
+        $params = [$keyword, $keyword, $keyword];
+        $types = "sss";
+
+        if ($fromDate) {
+            $sql .= " AND hd.thoi_gian >= ?";
+            $params[] = $fromDate . " 00:00:00";
+            $types .= "s";
+        }
+        if ($toDate) {
+            $sql .= " AND hd.thoi_gian <= ?";
+            $params[] = $toDate . " 23:59:59";
+            $types .= "s";
+        }
+
+        if ($status) {
+            $sql .= " AND hd.trang_thai_don_hang = ?";
+            $params[] = $status;
+            $types .= "s";
+        }
+
+        $sql .= " LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+        $types .= "ii";
+
         $stmt = $connection->prepare($sql);
-        $stmt->bind_param("sssii", $keyword, $keyword, $keyword, $limit, $offset);
+        $stmt->bind_param($types, ...$params);
         $stmt->execute();
         $result = $stmt->get_result();
         $orders = [];
@@ -213,23 +236,69 @@ class HoaDonModel
         return $orders;
     }
 
-    public function getTotalSearchHoaDon($keyword) {
+    public function getTotalSearchHoaDon($keyword, $fromDate = '', $toDate = '' , $status = '') {
         $connection = getConnection();
         $keyword = "%$keyword%";
         $sql = "SELECT COUNT(*) as total
                 FROM hoadon hd
                 LEFT JOIN khachhang kh ON hd.ma_khach_hang = kh.ma_khach_hang
                 LEFT JOIN diachi dc ON hd.ma_dia_chi = dc.ma_dia_chi
-                WHERE kh.ten_khach_hang LIKE ? 
-                OR dc.so_dien_thoai_nguoi_nhan LIKE ? 
-                OR dc.dia_chi_giao_hang LIKE ?";
+                WHERE (kh.ten_khach_hang LIKE ? 
+                    OR dc.so_dien_thoai_nguoi_nhan LIKE ? 
+                    OR dc.dia_chi_giao_hang LIKE ?)";
+        $params = [$keyword, $keyword, $keyword];
+        $types = "sss";
+
+        if ($fromDate) {
+            $sql .= " AND hd.thoi_gian >= ?";
+            $params[] = $fromDate . " 00:00:00";
+            $types .= "s";
+        }
+        if ($toDate) {
+            $sql .= " AND hd.thoi_gian <= ?";
+            $params[] = $toDate . " 23:59:59";
+            $types .= "s";
+        }
+        if ($status) {
+            $sql .= " AND hd.trang_thai_don_hang = ?";
+            $params[] = $status;
+            $types .= "s";
+        }
+
         $stmt = $connection->prepare($sql);
-        $stmt->bind_param("sss", $keyword, $keyword, $keyword);
+        $stmt->bind_param($types, ...$params);
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         $stmt->close();
         $connection->close();
         return $row['total'];
+    }
+    public function getHoaDonByCustomer($customerId, $from = '', $to = '') {
+        $conn = getConnection();
+        $sql = "SELECT ma_hoa_don, thoi_gian, tong_tien, trang_thai_don_hang
+                FROM hoadon
+                WHERE ma_khach_hang = ? AND trang_thai_don_hang != 'Đã hủy'";
+        $params = [$customerId];
+        $types = "s";
+        if (!empty($from) && !empty($to)) {
+            $sql .= " AND thoi_gian BETWEEN ? AND ?";
+            $from .= " 00:00:00";
+            $to .= " 23:59:59";
+            $params[] = $from;
+            $params[] = $to;
+            $types .= "ss";
+        }
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+        $stmt->close();
+        $conn->close();
+        return $data;
     }
 }

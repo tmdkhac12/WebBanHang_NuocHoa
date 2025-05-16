@@ -8,10 +8,10 @@ $model = new ThongKeModel();
 
 switch ($action) {
     case 'statistic': {
-        $fromDate = $_GET['fromDate'] ?? '';
-        $toDate = $_GET['toDate'] ?? '';
-        $products = $model->getProductStats($fromDate, $toDate);
-        $customers = $model->getTopCustomers($fromDate, $toDate);
+        $from = $_GET['from'] ?? '';
+        $to = $_GET['to'] ?? '';
+        $products = $model->getProductStats($from, $to);
+        $customers = $model->getTopCustomers($from, $to);
         echo json_encode([
             'success' => true,
             'products' => $products,
@@ -19,4 +19,14 @@ switch ($action) {
         ]);
         break;
     }
+    case 'topCustomers':
+        $from = $_GET['from'] ?? '';
+        $to = $_GET['to'] ?? '';
+        $data = $model->getTopCustomers($from, $to);
+        echo json_encode($data);
+        break;
+    case 'dashboard':
+        $data = $model->getDashboardStats();
+        echo json_encode($data);
+        break;
 }

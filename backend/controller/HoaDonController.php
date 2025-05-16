@@ -141,10 +141,14 @@ class HoaDonController
         return $updateDiaChi && $updateTrangThai;
     }
 
-    public function searchHoaDon($keyword, $limit, $offset) {
-        return $this->hoaDonModel->searchHoaDon($keyword, $limit, $offset);
+    public function searchHoaDon($keyword, $limit, $offset, $fromDate = '', $toDate = '', $status = '') {
+        return $this->hoaDonModel->searchHoaDon($keyword, $limit, $offset, $fromDate, $toDate, $status);
     }
-    public function getTotalSearchHoaDon($keyword) {
-        return $this->hoaDonModel->getTotalSearchHoaDon($keyword);
+
+    public function getTotalSearchHoaDon($keyword, $fromDate = '', $toDate = '', $status = '') {
+        return $this->hoaDonModel->getTotalSearchHoaDon($keyword, $fromDate, $toDate, $status);
+    }
+    public function getHoaDonByCustomer($customerId) {
+        return $this->hoaDonModel->getHoaDonByCustomer($customerId);
     }
 }

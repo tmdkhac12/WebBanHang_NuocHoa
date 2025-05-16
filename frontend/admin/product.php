@@ -619,6 +619,7 @@ $totalPages = ceil($totalProducts / $limit);
 
     $('#btnSearchUser').on('click', function() {
         const keyword = $('#searchUser').val().trim();
+        console.log("Keyword:", keyword);
         loadProducts(keyword, 1);
     });
 

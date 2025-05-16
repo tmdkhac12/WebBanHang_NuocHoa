@@ -37,10 +37,33 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                     </ol>
                     <div class="row align-items-center mb-3">
                         <!-- Tìm kiếm với nút tích hợp -->
-                        <div class="col-md-3">
-                            <div class="input-group">
-                                <input type="text" id="searchUser" class="form-control" placeholder="Tìm kiếm đơn hàng...">
-                                <button class="btn btn-outline-primary" id="btnSearchUser">Tìm</button>
+                        <div class="row align-items-end mb-3">
+                            <div class="col-md-3">
+                                <label for="searchUser" class="form-label">Tìm kiếm</label>
+                                <div class="input-group">
+                                    <input type="text" id="searchUser" class="form-control" placeholder="Tìm kiếm đơn hàng...">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="fromDate" class="form-label">Từ ngày</label>
+                                <input type="date" id="fromDate" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="toDate" class="form-label">Đến ngày</label>
+                                <input type="date" id="toDate" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="statusFilter" class="form-label">Trạng thái</label>
+                                <select id="statusFilter" class="form-select">
+                                    <option value="">Tất cả</option>
+                                    <option value="Chờ xác nhận">Chờ xác nhận</option>
+                                    <option value="Đang xử lý">Đang xử lý</option>
+                                    <option value="Đã giao">Đã giao</option>
+                                    <option value="Đã hủy">Đã hủy</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button class="btn btn-primary w-100" id="btnFilterOrder">Lọc</button>
                             </div>
                         </div>
                     </div>
@@ -136,6 +159,7 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
                                 <div data-mdb-input-init class="form-outline mb-4">
                                     <label class="form-label" for="trangthai">Trạng thái đơn hàng</label>
                                     <select id="trangthai" class="form-select">
+                                        <option value="Chờ xác nhận">Chờ xác nhận</option>
                                         <option value="Đang xử lý">Đang xử lý</option>
                                         <option value="Đã giao">Đã giao</option>
                                         <option value="Đã hủy">Đã hủy</option>
@@ -347,35 +371,44 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
 
     //tim kiem phan trang
 
-    function loadOrders(keyword = '', page = 1) {
+    function loadOrders(keyword = '', page = 1, fromDate = '', toDate = '', status = '') {
         $.ajax({
             url: '../../backend/api/HoaDonAPI.php?action=searchHoaDon',
             method: 'GET',
             data: {
                 keyword: keyword,
                 page: page,
-                limit: 8
+                limit: 8,
+                fromDate: fromDate,
+                toDate: toDate,
+                status: status
             },
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
                     renderOrderTable(response.orders);
-                    renderPagination(response.total, page, keyword);
+                    renderPagination(response.total, page, keyword, fromDate, toDate, status);
                 }
             }
         });
     }
 
-    $('#btnSearchUser').on('click', function() {
+    $('#btnFilterOrder').on('click', function() {
         const keyword = $('#searchUser').val().trim();
-        loadOrders(keyword, 1);
+        const fromDate = $('#fromDate').val();
+        const toDate = $('#toDate').val();
+        const status = $('#statusFilter').val();
+        loadOrders(keyword, 1, fromDate, toDate, status);
     });
 
     $(document).on('click', '.page-link', function(e) {
         e.preventDefault();
         const page = $(this).data('page');
         const keyword = $('#searchUser').val().trim();
-        loadOrders(keyword, page);
+        const fromDate = $('#fromDate').val();
+        const toDate = $('#toDate').val();
+        const status = $('#statusFilter').val();
+        loadOrders(keyword, page, fromDate, toDate, status);
     });
 
     $('#staticBackdrop4').on('hidden.bs.modal', function() {
@@ -406,16 +439,23 @@ $totalPages = ceil($totalOrders / $limit); // Tổng số trang
         }
         $('#datatablesSimple tbody').html(html);
     }
-    function renderPagination(total, currentPage, keyword) {
+    function renderPagination(total, currentPage, keyword, fromDate, toDate) {
         const totalPages = Math.ceil(total / 8);
         let html = '';
         for (let i = 1; i <= totalPages; i++) {
             html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                <a class="page-link" href="#" data-page="${i}">${i}</a>
+                <a class="page-link" href="#" 
+                    data-page="${i}" 
+                    data-keyword="${keyword}" 
+                    data-from="${fromDate}" 
+                    data-to="${toDate}">
+                    ${i}
+                </a>
             </li>`;
         }
         $('.pagination').html(html);
     }
+
     function numberFormat(number) {
         return Number(number).toLocaleString('vi-VN');
     }

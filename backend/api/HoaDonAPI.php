@@ -129,9 +129,12 @@ switch ($action) {
         $keyword = $_GET['keyword'] ?? '';
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 8;
+        $fromDate = $_GET['fromDate'] ?? '';
+        $toDate = $_GET['toDate'] ?? '';
+        $status = $_GET['status'] ?? '';
         $offset = ($page - 1) * $limit;
-        $orders = $hoaDonController->searchHoaDon($keyword, $limit, $offset);
-        $total = $hoaDonController->getTotalSearchHoaDon($keyword);
+        $orders = $hoaDonController->searchHoaDon($keyword, $limit, $offset, $fromDate, $toDate, $status);
+        $total = $hoaDonController->getTotalSearchHoaDon($keyword, $fromDate, $toDate, $status);
         echo json_encode([
             "success" => true,
             "orders" => $orders,
@@ -139,6 +142,15 @@ switch ($action) {
         ]);
         exit();
     }
+    case 'getByCustomer':
+        $customerId = $_GET['customerId'] ?? '';
+        $from = $_GET['from'] ?? '';
+        $to = $_GET['to'] ?? '';
+        require_once '../model/HoaDonModel.php';
+        $model = new HoaDonModel();
+        $orders = $model->getHoaDonByCustomer($customerId, $from, $to);
+        echo json_encode($orders);
+        break;
     default:
         http_response_code(400);
         echo json_encode(["error" => "Invalid Action"]);

@@ -474,7 +474,7 @@ class ProductModel {
     public function searchProducts($keyword, $limit, $offset) {
         $connection = getConnection();
         $keyword = "%$keyword%";
-        $sql = "SELECT p.*, th.ten_thuong_hieu , dtnh.gia_ban
+        $sql = "SELECT DISTINCT p.*, th.ten_thuong_hieu , dtnh.gia_ban
                 FROM nuochoa p
                 LEFT JOIN thuonghieu th ON p.ma_thuong_hieu = th.ma_thuong_hieu
                 INNER JOIN dungtich_nuochoa dtnh ON p.ma_nuoc_hoa = dtnh.ma_nuoc_hoa
@@ -497,7 +497,7 @@ class ProductModel {
     public function getTotalSearchProducts($keyword) {
         $connection = getConnection();
         $keyword = "%$keyword%";
-        $sql = "SELECT COUNT(*) as total FROM nuochoa WHERE tinh_trang = 1 ten_nuoc_hoa LIKE ?";
+        $sql = "SELECT COUNT(*) as total FROM nuochoa WHERE tinh_trang = 1 AND ten_nuoc_hoa LIKE ?";
         $stmt = $connection->prepare($sql);
         $stmt->bind_param("s", $keyword);
         $stmt->execute();
