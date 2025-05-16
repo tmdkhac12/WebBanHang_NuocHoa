@@ -11,11 +11,9 @@ switch ($action) {
         $from = $_GET['from'] ?? '';
         $to = $_GET['to'] ?? '';
         $products = $model->getProductStats($from, $to);
-        $customers = $model->getTopCustomers($from, $to);
         echo json_encode([
             'success' => true,
-            'products' => $products,
-            'customers' => $customers
+            'products' => $products
         ]);
         break;
     }

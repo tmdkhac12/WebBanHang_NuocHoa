@@ -69,6 +69,11 @@ requireAdmin();
                             <div class="card-header">
                                 <b><h5>Thống kê tình hình kinh doanh</h5></b>
                             </div>
+                            <div class="mb-4" style="max-width: 400px; margin: 0 auto;">
+                                <canvas id="productPieChart" height="200"></canvas>
+                                <div id="bestWorstProduct" class="mt-2 mb-2 text-primary"></div>
+                            </div>
+                            
                             <div class="card-body">
                                 <form id="statForm1" class="row g-3 mb-3">
                                     <div class="col-md-3">
@@ -87,16 +92,16 @@ requireAdmin();
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="statProductTable">
                                         <thead>
-                                            <tr>
+                                            <tr class="text-center">
                                                 <th>Tên sản phẩm</th>
                                                 <th>Số lượng bán</th>
-                                                <th>Tổng tiền</th>
+                                                <th>Tổng tiền sản phẩm bán được </th>
                                                 <th>Xem hóa đơn</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
                                         <tfoot>
-                                            <tr>
+                                            <tr class="text-center">
                                                 <th colspan="2">Tổng thu</th>
                                                 <th id="totalRevenue"></th>
                                                 <th></th>
@@ -160,10 +165,10 @@ requireAdmin();
       <div class="modal-body">
         <table class="table table-bordered">
           <thead>
-            <tr>
+            <tr class="text-center">
               <th>Mã hóa đơn</th>
               <th>Ngày đặt</th>
-              <th>Tổng tiền</th>
+              <th>Tổng tiền hoá đơn</th>
               <th>Trạng thái</th>
             </tr>
           </thead>
@@ -324,6 +329,185 @@ requireAdmin();
             }
         });
     }
+    // Thống kê sản phẩm bán ra
+    $(document).ready(function() {
+        const year = new Date().getFullYear();
+        const from = `${year}-01-01`;
+        const to = `${year}-12-31`;
+        $.ajax({
+            url: '../../backend/api/ThongKeAPI.php?action=statistic',
+            method: 'GET',
+            data: { from, to },
+            dataType: 'json',
+            success: function(res) {
+                let html = '';
+                let total = 0;
+                let max = -Infinity, min = Infinity;
+                let best = '', worst = '';
+                res.products.forEach(p => {
+                    html += `<tr>
+                        <td>${p.ten_nuoc_hoa}</td>
+                        <td>${p.so_luong_ban}</td>
+                        <td>${Number(p.tong_tien).toLocaleString('vi-VN')}</td>
+                        <td>
+                            <a href="#" class="btn btn-info btn-sm btn-view-orders-product"
+                            data-product="${p.ten_nuoc_hoa}"
+                            data-from="${from}"
+                            data-to="${to}">
+                                Xem hóa đơn
+                            </a>
+                        </td>
+                    </tr>`;
+                    total += Number(p.tong_tien);
+                    if (Number(p.so_luong_ban) > max) {
+                        max = Number(p.so_luong_ban);
+                        best = p.ten_nuoc_hoa;
+                    }
+                    if (Number(p.so_luong_ban) < min) {
+                        min = Number(p.so_luong_ban);
+                        worst = p.ten_nuoc_hoa;
+                    }
+                });
+                $('#statProductTable tbody').html(html);
+                $('#totalRevenue').text(total.toLocaleString('vi-VN'));
+                $('#bestWorstProduct').html(
+                    `<b>Bán chạy nhất:</b> ${best} (${max}) &nbsp; | &nbsp; <b>Bán ế nhất:</b> ${worst} (${min})`
+                );
+                renderProductPieChart(res.products);
+                if (res.products.length > 0) {
+                    let max = -Infinity, min = Infinity;
+                    let best = '', worst = '';
+                    res.products.forEach(p => {
+                        if (Number(p.so_luong_ban) > max) {
+                            max = Number(p.so_luong_ban);
+                            best = p.ten_nuoc_hoa;
+                        }
+                        if (Number(p.so_luong_ban) < min) {
+                            min = Number(p.so_luong_ban);
+                            worst = p.ten_nuoc_hoa;
+                        }
+                    });
+                    $('#bestWorstProduct').html(
+                        `<b>Bán chạy nhất:</b> ${best} (${max}) &nbsp; | &nbsp; <b>Bán ế nhất:</b> ${worst} (${min})`
+                    );
+                } else {
+                    $('#bestWorstProduct').html('');
+                }
+            }
+        });
+    });
+
+    $(document).on('click', '.btn-view-orders-product', function(e) {
+        e.preventDefault();
+        $('#customerOrdersModalLabel').text('Danh sách hóa đơn chứa sản phẩm');
+        const productName = $(this).data('product');
+        const fromDate = $(this).data('from') || '';
+        const toDate = $(this).data('to') || '';
+        $.ajax({
+            url: '../../backend/api/HoaDonAPI.php?action=getByProduct',
+            method: 'GET',
+            data: { productName, from: fromDate, to: toDate },
+            dataType: 'json',
+            success: function(res) {
+                let html = '';
+                if (res && res.length > 0) {
+                    res.forEach(order => {
+                        html += `<tr>
+                            <td>${order.ma_hoa_don}</td>
+                            <td>${order.thoi_gian}</td>
+                            <td>${Number(order.tong_tien).toLocaleString('vi-VN')}₫</td>
+                            <td>${order.trang_thai_don_hang}</td>
+                        </tr>`;
+                    });
+                } else {
+                    html = '<tr><td colspan="4" class="text-center">Không có hóa đơn nào</td></tr>';
+                }
+                $('#customerOrdersTableBody').html(html);
+                $('#customerOrdersModal').modal('show');
+            }
+        });
+    });
+
+    function renderProductPieChart(products) {
+        const labels = products.map(p => p.ten_nuoc_hoa);
+        const data = products.map(p => Number(p.so_luong_ban));
+
+        // Hủy chart cũ nếu có
+        if (window.productPieChart && typeof window.productPieChart.destroy === 'function') {
+            window.productPieChart.destroy();
+        }
+
+        const ctx = document.getElementById('productPieChart').getContext('2d');
+        window.productPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Số lượng bán',
+                    data: data,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                        '#9966FF', '#FF9F40', '#C9CBCF', '#FF6384',
+                        '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+
+    $('#statForm1').on('submit', function(e) {
+        e.preventDefault();
+        const fromDate = $('#statForm1 #fromDate').val();
+        const toDate = $('#statForm1 #toDate').val();
+        $.ajax({
+            url: '../../backend/api/ThongKeAPI.php?action=statistic',
+            method: 'GET',
+            data: { from: fromDate, to: toDate },
+            dataType: 'json',
+            success: function(res) {
+                let html = '';
+                let total = 0;
+                let max = -Infinity, min = Infinity;
+                let best = '', worst = '';
+                res.products.forEach(p => {
+                    html += `<tr>
+                        <td>${p.ten_nuoc_hoa}</td>
+                        <td>${p.so_luong_ban}</td>
+                        <td>${Number(p.tong_tien).toLocaleString('vi-VN')}</td>
+                        <td>
+                            <a href="#" class="btn btn-info btn-sm btn-view-orders-product"
+                            data-product="${p.ten_nuoc_hoa}"
+                            data-from="${fromDate}"
+                            data-to="${toDate}">
+                                Xem hóa đơn
+                            </a>
+                        </td>
+                    </tr>`;
+                    total += Number(p.tong_tien);
+                    if (Number(p.so_luong_ban) > max) {
+                        max = Number(p.so_luong_ban);
+                        best = p.ten_nuoc_hoa;
+                    }
+                    if (Number(p.so_luong_ban) < min) {
+                        min = Number(p.so_luong_ban);
+                        worst = p.ten_nuoc_hoa;
+                    }
+                });
+                $('#statProductTable tbody').html(html);
+                $('#totalRevenue').text(total.toLocaleString('vi-VN'));
+                $('#bestWorstProduct').html(
+                    `<b>Bán chạy nhất:</b> ${best} (${max}) &nbsp; | &nbsp; <b>Bán ế nhất:</b> ${worst} (${min})`
+                );
+                renderProductPieChart(res.products);
+            }
+        });
+    });
 </script>
 
 </html>

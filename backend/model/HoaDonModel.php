@@ -301,4 +301,32 @@ class HoaDonModel
         $conn->close();
         return $data;
     }
+    public function getHoaDonByProduct($productName, $from = '', $to = '') {
+        $conn = getConnection();
+        $sql = "SELECT hd.ma_hoa_don, hd.thoi_gian, hd.tong_tien, hd.trang_thai_don_hang
+                FROM hoadon hd
+                JOIN chitiethoadon ct ON hd.ma_hoa_don = ct.ma_hoa_don
+                JOIN nuochoa nh ON ct.ma_nuoc_hoa = nh.ma_nuoc_hoa
+                WHERE nh.ten_nuoc_hoa = ?";
+        $params = [$productName];
+        $types = "s";
+        if (!empty($from) && !empty($to)) {
+            $sql .= " AND hd.thoi_gian BETWEEN ? AND ?";
+            $from .= " 00:00:00";
+            $to .= " 23:59:59";
+            $params[] = $from;
+            $params[] = $to;
+            $types .= "ss";
+        }
+        $sql .= " GROUP BY hd.ma_hoa_don";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = [];
+        while ($row = $result->fetch_assoc()) $data[] = $row;
+        $stmt->close();
+        $conn->close();
+        return $data;
+    }
 }

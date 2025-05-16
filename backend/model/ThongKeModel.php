@@ -8,7 +8,7 @@ class ThongKeModel {
                     nh.ten_nuoc_hoa, 
                     dt.dung_tich,
                     SUM(ct.so_luong_mua) AS so_luong_ban,
-                    SUM(dt_nh.gia_ban * ct.so_luong_mua) AS tong_tien
+                    SUM(ct.gia_ban * ct.so_luong_mua) AS tong_tien
                 FROM hoadon hd
                 INNER JOIN chitiethoadon ct ON hd.ma_hoa_don = ct.ma_hoa_don
                 INNER JOIN nuochoa nh ON ct.ma_nuoc_hoa = nh.ma_nuoc_hoa

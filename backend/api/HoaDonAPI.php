@@ -151,6 +151,15 @@ switch ($action) {
         $orders = $model->getHoaDonByCustomer($customerId, $from, $to);
         echo json_encode($orders);
         break;
+    case 'getByProduct':
+        $productName = $_GET['productName'] ?? '';
+        $from = $_GET['from'] ?? '';
+        $to = $_GET['to'] ?? '';
+        require_once '../model/HoaDonModel.php';
+        $model = new HoaDonModel();
+        $orders = $model->getHoaDonByProduct($productName, $from, $to);
+        echo json_encode($orders);
+        break;
     default:
         http_response_code(400);
         echo json_encode(["error" => "Invalid Action"]);
