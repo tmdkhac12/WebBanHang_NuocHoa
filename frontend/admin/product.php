@@ -427,7 +427,7 @@ $totalPages = ceil($totalProducts / $limit);
                 },
                 error: function(error) {
                     console.error('Error updating:', error);
-                    alert('Failed to update product.');
+                    alert("Failed to update product");
                     console.log('Error details:', error);
                 }
             });

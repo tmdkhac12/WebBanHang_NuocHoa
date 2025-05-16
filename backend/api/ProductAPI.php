@@ -93,6 +93,11 @@ try {
         case 'updateProduct':
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $data = $_POST;
+                if (!is_int($data['price']) && !ctype_digit($data['price'])) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Price must be an vaild int']);
+                    exit;        
+                }
                 $productId = isset($data['productId']) ? (int)$data['productId'] : null;
                 $name = isset($data['name']) ? $data['name'] : '';
                 $brand = isset($data['brand']) ? $data['brand'] : '';
@@ -160,7 +165,12 @@ try {
             case 'createProduct':
                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $data = $_POST;
-                    
+                    if (!is_int($data['price']) && !ctype_digit($data['price'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Price must be an vaild int']);
+                        exit;        
+                    }
+
                     $name = isset($data['name']) ? $data['name'] : '';
                     $brand = isset($data['brand']) ? $data['brand'] : '';
                     $description = isset($data['description']) ? $data['description'] : '';
