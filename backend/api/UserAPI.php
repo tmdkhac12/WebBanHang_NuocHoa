@@ -36,7 +36,6 @@ switch ($action) {
 
         // Gọi controller để lấy tài khoản
         $account = $userController->getAccount($username, $password);
-
         if (isset($account)) {
             $_SESSION["user_id"] = $account["ma_khach_hang"];
             $_SESSION["username"] = $account["username"];

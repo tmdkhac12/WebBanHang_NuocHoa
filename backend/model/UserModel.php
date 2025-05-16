@@ -90,7 +90,7 @@ public function getTotalUsers()
     public function getAccount($username, $password) {
         $connection = getConnection();
 
-        $statement = $connection->prepare("SELECT * FROM khachhang WHERE username = ? AND password = ?");
+        $statement = $connection->prepare("SELECT * FROM khachhang WHERE username = ? AND password = ? AND trang_thai_tai_khoan = 1");
         $statement->bind_param("ss", $username, $password);
         $statement->execute();
 

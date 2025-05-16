@@ -103,27 +103,8 @@ $totalPages = ceil($totalProducts / $limit);
                     <div class="card-footer">
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-end mb-0">
-                                <?php if ($page > 1): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
 
-                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                    <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                                    </li>
-                                <?php endfor; ?>
-
-                                <?php if ($page < $totalPages): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
+                                
                             </ul>
                         </nav>
                     </div>
@@ -562,6 +543,7 @@ $totalPages = ceil($totalProducts / $limit);
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
+                    console.log("Products:", response.products);
                     renderProductTable(response.products);
                     renderPagination(response.total, page, keyword);
                 }
@@ -590,7 +572,7 @@ $totalPages = ceil($totalProducts / $limit);
                 html += `<tr>
                     <td>${product.ma_nuoc_hoa}</td>
                     <td>${product.ten_nuoc_hoa}</td>
-                    <td>${product.gia_ban ? Number(product.gia_ban).toLocaleString('vi-VN') + ' VND' : '0 VND'}</td>
+                    <td>${numberFormat(product.gia_ban)}</td>
                     <td>${product.ten_thuong_hieu || ''}</td>
                     <td>
                         <a class="btn btn-success btn-sm btn-view" data-id="${product.ma_nuoc_hoa}">View</a>
@@ -614,7 +596,11 @@ $totalPages = ceil($totalProducts / $limit);
         $('.pagination').html(html);
     }
 
-
+    function numberFormat(number) {
+        number = Number(number);
+        if (isNaN(number)) return '0';
+        return number.toLocaleString('vi-VN');
+    }
 
     document.getElementById('avatar').addEventListener('change', function(event) {
         var file = event.target.files[0]; // Lấy tệp đã chọn
