@@ -225,7 +225,20 @@ try {
                 
                 break;
 
-
+        case 'searchProducts': {
+            $keyword = $_GET['keyword'] ?? '';
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 8;
+            $offset = ($page - 1) * $limit;
+            $products = $productController->searchProducts($keyword, $limit, $offset);
+            $total = $productController->getTotalSearchProducts($keyword);
+            echo json_encode([
+                "success" => true,
+                "products" => $products,
+                "total" => $total
+            ]);
+            exit();
+        }
         default:
             http_response_code(400);
             echo json_encode(['error' => 'Hành động không hợp lệ']);

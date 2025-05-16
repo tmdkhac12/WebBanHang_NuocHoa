@@ -18,40 +18,45 @@ switch ($action) {
         // echo json_encode($userController->getAllUsers());
         // break;
     case 'login': {
-            // Get username and password from body fetch when user onclick 
-                header('Content-Type: application/json');
+        header('Content-Type: application/json');
 
-            // Only for JSON POST data
-            $rawData = file_get_contents("php://input");
-            $data = json_decode($rawData, true);
+        $rawData = file_get_contents("php://input");
+        $data = json_decode($rawData, true);
 
-            // Extract safely
-            $username = $data['username'] ?? null;
-            $password = $data['password'] ?? null;
+        $username = $data['username'] ?? null;
+        $password = $data['password'] ?? null;
 
-            if (!$username || !$password) {
-                echo json_encode([
-                    "success" => false,
-                    "message" => "Thiếu tên đăng nhập hoặc mật khẩu."
-                ]);
-                exit;
-}
-            // Call Controller
-            $account = $userController->getAccount($username, $password);
-
-            // If account exist then create Session 
-            if (isset($account)) {
-                $_SESSION["user_id"] = $account["ma_khach_hang"];
-                $_SESSION["username"] = $account["username"];
-                $_SESSION["email"] = $account["email"];
-                $_SESSION["ten_khach_hang"] = $account["ten_khach_hang"];
-                $_SESSION["role"] = $account["quyen_han"];
-                echo json_encode(["success" => true, "message" => "Đăng nhập thành công"]);
-            } else {
-                echo json_encode(["success" => false, "message" => "Username hoặc password không chính xác"]);
-            }
-            break;
+        if (!$username || !$password) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Thiếu tên đăng nhập hoặc mật khẩu."
+            ]);
+            exit;
         }
+
+        // Gọi controller để lấy tài khoản
+        $account = $userController->getAccount($username, $password);
+
+        if (isset($account)) {
+            $_SESSION["user_id"] = $account["ma_khach_hang"];
+            $_SESSION["username"] = $account["username"];
+            $_SESSION["email"] = $account["email"];
+            $_SESSION["ten_khach_hang"] = $account["ten_khach_hang"];
+            $_SESSION["role"] = $account["quyen_han"];
+
+            echo json_encode([
+                "success" => true,
+                "message" => "Đăng nhập thành công",
+                "quyen_han" => $account["quyen_han"] // ✅ CHỈ đặt ở đây!
+            ]);
+        } else {
+            echo json_encode([
+                "success" => false,
+                "message" => "Username hoặc password không chính xác"
+            ]);
+        }
+        break;
+    }
     case 'logout': {
             if (isset($_SESSION["username"])) {
                 session_unset();
@@ -96,7 +101,20 @@ switch ($action) {
         }
         break;
     }
-
+    case 'searchUsers': {
+        $keyword = $_GET['keyword'] ?? '';
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 8;
+        $offset = ($page - 1) * $limit;
+        $users = $userController->searchUsers($keyword, $limit, $offset);
+        $total = $userController->getTotalSearchUsers($keyword);
+        echo json_encode([
+            "success" => true,
+            "users" => $users,
+            "total" => $total
+        ]);
+        exit();
+    }
     case 'getUserById':
         if (isset($_GET['id'])) {
             $userId = $_GET['id'];

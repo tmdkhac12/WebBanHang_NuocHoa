@@ -40,6 +40,28 @@ class HoaDonController
         return $this->hoaDonModel->huyDonHang($maDonHang);
     }
 
+    public function getHoaDonByID($maHoaDon)
+    {
+        $hoaDon = $this->hoaDonModel->getHoaDonByID($maHoaDon);
+
+        if (!$hoaDon) {
+            return null; 
+        }
+
+        return $hoaDon;
+    }
+
+    public function getDetailHoaDonByID($maHoaDon)
+    {
+        $hoaDon = $this->hoaDonModel->getDetailHoaDonByID($maHoaDon);
+
+        if (!$hoaDon) {
+            return null; 
+        }
+
+        return $hoaDon;
+    }
+
     public function addFullHoaDon($maKhachHang, $diachi, $hoadon, $chitiets)
     {
         $connection = getConnection();
@@ -105,5 +127,24 @@ class HoaDonController
         }
 
         return $hoadons_grouped;
+    }
+
+    public function updateHoaDonAndDiaChi($maHoaDon, $diaChi, $trangThai)
+    {
+        $hoaDon = $this->hoaDonModel->getHoaDonByID($maHoaDon);
+        if (!$hoaDon) return false;
+        $maDiaChi = $hoaDon['ma_dia_chi'];
+        $diaChiModel = new DiaChiModel();
+        $updateDiaChi = $diaChiModel->updateDiaChi($maDiaChi, $diaChi);
+        $updateTrangThai = $this->hoaDonModel->updateTrangThai($maHoaDon, $trangThai);
+
+        return $updateDiaChi && $updateTrangThai;
+    }
+
+    public function searchHoaDon($keyword, $limit, $offset) {
+        return $this->hoaDonModel->searchHoaDon($keyword, $limit, $offset);
+    }
+    public function getTotalSearchHoaDon($keyword) {
+        return $this->hoaDonModel->getTotalSearchHoaDon($keyword);
     }
 }

@@ -88,27 +88,7 @@ $totalPages = ceil($totalUsers / $limit);
                     <div class="card-footer">
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-end mb-0">
-                                <?php if ($page > 1): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
-
-                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                    <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                                    </li>
-                                <?php endfor; ?>
-
-                                <?php if ($page < $totalPages): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
+                                
                             </ul>
                         </nav>
                     </div>
@@ -121,7 +101,7 @@ $totalPages = ceil($totalUsers / $limit);
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Thông tin người dùng</h5>
+                    <h5 class="modal-title" id="modalTitle">Thông tin người dùng</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -173,7 +153,7 @@ $totalPages = ceil($totalUsers / $limit);
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="submit" class="btn btn-primary" id="buttonSaveChange">Save changes</button>
                 </div>
                 </form>
             </div>
@@ -302,7 +282,7 @@ $totalPages = ceil($totalUsers / $limit);
         });
 
         // Khi nhấn nút "Cập nhật"
-        $('.btn-update').on('click', function(e) {
+        $(document).on('click', '.btn-update', function(e) {
             e.preventDefault();
             isUpdateMode = true;
             userIdToUpdate = $(this).data('id');
@@ -311,7 +291,7 @@ $totalPages = ceil($totalUsers / $limit);
         });
 
         // Khi nhấn nút "Xem"
-        $('.btn-view').on('click', function(e) {
+        $(document).on('click', '.btn-view', function(e) {
             e.preventDefault();
             const userId = $(this).data('id');
             loadUserData(userId, false);
@@ -324,7 +304,7 @@ $totalPages = ceil($totalUsers / $limit);
                 method: 'GET',
                 dataType: 'json',
                 success: function(user) {
-                    $('#modalTitle').text(isUpdate ? 'Cập nhật người dùng' : 'Xem thông tin người dùng');
+                    $('#modalTitle').text(isUpdate ? 'Cập nhật người dùng' : 'Thông tin người dùng');
                     resetUserForm();
                     $('#name').val(user.ten_khach_hang);
                     $('#email').val(user.email);
@@ -335,11 +315,11 @@ $totalPages = ceil($totalUsers / $limit);
 
                     if (!isUpdate) {
                         $('#staticBackdrop4 input, #staticBackdrop4 select').prop('disabled', true);
-                        $('#saveUserButton').hide();
+                        $('#buttonSaveChange').hide();
                     } else {
                         $('#staticBackdrop4 input, #staticBackdrop4 select').prop('disabled', false);
                         $('#username').prop('readonly', true);
-                        $('#saveUserButton').show();
+                        $('#buttonSaveChange').show();
                     }
 
                     var modal = new bootstrap.Modal(document.getElementById('staticBackdrop4'));
@@ -356,6 +336,81 @@ $totalPages = ceil($totalUsers / $limit);
     $('#staticBackdrop4').on('hidden.bs.modal', function() {
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
+    });
+
+
+
+    // tim kiem
+
+    function loadUsers(keyword = '', page = 1) {
+        $.ajax({
+            url: '../../backend/api/UserAPI.php?action=searchUsers',
+            method: 'GET',
+            data: {
+                keyword: keyword,
+                page: page,
+                limit: 8
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    renderUserTable(response.users);
+                    renderPagination(response.total, page, keyword);
+                }
+            }
+        });
+    }
+
+    $('#btnSearchUser').on('click', function() {
+        const keyword = $('#searchUser').val().trim();
+        loadUsers(keyword, 1);
+    });
+
+    $(document).on('click', '.page-link', function(e) {
+        e.preventDefault();
+        const page = $(this).data('page');
+        const keyword = $('#searchUser').val().trim();
+        loadUsers(keyword, page);
+    });
+
+    function renderUserTable(users) {
+        let html = '';
+        if (users.length === 0) {
+            html = '<tr><td colspan="8">Không có người dùng nào.</td></tr>';
+        } else {
+            users.forEach(user => {
+                html += `<tr>
+                    <td>${user.ma_khach_hang}</td>
+                    <td>${user.username}</td>
+                    <td>${user.password}</td>
+                    <td>${user.ten_khach_hang}</td>
+                    <td>${user.email}</td>
+                    <td>${user.quyen_han == 'admin' ? 'Quản trị viên' : 'Người dùng'}</td>
+                    <td>${user.trang_thai_tai_khoan == 1 ? 'Hoạt động' : 'Khóa'}</td>
+                    <td>
+                        <a class="btn btn-success btn-sm btn-view" data-id="${user.ma_khach_hang}">View</a>
+                        <a class="btn btn-warning btn-sm btn-update" data-id="${user.ma_khach_hang}">Update</a>
+                    </td>
+                </tr>`;
+            });
+        }
+        $('#datatablesSimple tbody').html(html);
+    }
+
+    function renderPagination(total, currentPage, keyword) {
+        const totalPages = Math.ceil(total / 8);
+        let html = '';
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>`;
+        }
+        $('.pagination').html(html);
+    }
+    $(document).ready(function() {
+
+        // Gọi hàm này để khi vừa load trang sẽ hiển thị danh sách đơn hàng và phân trang mặc định
+        loadUsers('', 1);
     });
 </script>
 
