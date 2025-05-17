@@ -115,12 +115,12 @@ public function getTotalUsers()
         return ($statement->affected_rows > 0 ? true : false);
     }
 
-    public function updateUserInfo($hoten, $email, $username , $quyenhan , $trangthai) {
+    public function updateUserInfo($hoten, $email, $username) {
         $connection = getConnection();
 
-        $sql = "UPDATE khachhang SET ten_khach_hang = ?, email = ? , quyen_han = ? , trang_thai_tai_khoan = ? WHERE username = ?";
+        $sql = "UPDATE khachhang SET ten_khach_hang = ?, email = ? WHERE username = ?";
         $statement = $connection->prepare($sql);
-        $statement->bind_param("ssssi", $hoten, $email, $username);
+        $statement->bind_param("sss", $hoten, $email, $username);
         $statement->execute();
 
         return ($statement->affected_rows > 0 ? true : false);

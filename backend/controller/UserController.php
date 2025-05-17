@@ -92,6 +92,28 @@ class UserController
             return 1;
         }
     }
+
+    public function updateUserFromClient($hoten, $email, $username, $currentPassword, $newPassword)
+    {
+        // If password null call updateUserInfo else call updateUserInfoAndPassword 
+        if (!$currentPassword) {
+            $isSuccess = $this->userModel->updateUserInfo($hoten, $email, $username);
+            if ($isSuccess) {
+                return 1;
+            }
+            return -1; // Update user info failed, db error 
+        } else {
+            if (!$this->userModel->isCurrentPasswordMatched($username, $currentPassword)) {
+                return -2; // Current password not correct 
+            }
+            if (!$this->userModel->updateUserInfoAndPassword($hoten, $email, $username, $newPassword)) {
+                return -1; // Update user info and password failed, db error 
+            }
+            return 1;
+        }
+    }
+
+
     public function updateUserInfoFromAdmin($hoten, $email, $username, $password, $quyenhan, $trangthai)
     {
         $isSuccess = $this->userModel->updateUserInfoAndPasswordFromAdmin(
