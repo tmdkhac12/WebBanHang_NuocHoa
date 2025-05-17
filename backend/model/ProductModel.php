@@ -157,7 +157,82 @@ class ProductModel {
         return ['products' => $products, 'total' => $total];
     }
 
-    public function getProductById($id  ,$ma_dung_tich) {
+    public function getProductById($id) {
+        $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, n.gioi_tinh, n.mo_ta, t.ten_thuong_hieu , dn.gia_ban
+                FROM nuochoa n 
+                LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
+                LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa
+
+                WHERE n.ma_nuoc_hoa = ? and n.tinh_trang = 1";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $product = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        if ($product) {
+            $sql = "SELECT *
+                    FROM dungtich d 
+                    JOIN dungtich_nuochoa dn ON d.ma_dung_tich = dn.ma_dung_tich 
+                    WHERE dn.ma_nuoc_hoa = ?";
+            $stmt = $this->connection->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $dungtich = [];
+            while ($row = $result->fetch_assoc()) {
+                $dungtich[] = [
+                    'dung_tich' => $row['dung_tich'],
+                    'gia_ban' => $row['gia_ban'],
+                    'ma_dung_tich' =>$row['ma_dung_tich']
+                ];
+            }
+            $stmt->close();
+            $product['dung_tich'] = $dungtich;
+
+            $sql = "SELECT n.nong_do ,n.ma_nong_do
+                    FROM nongdo n 
+                    JOIN nongdo_nuochoa nn ON n.ma_nong_do = nn.ma_nong_do 
+                    WHERE nn.ma_nuoc_hoa = ?";
+            $stmt = $this->connection->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $nongdo = [];
+            while ($row = $result->fetch_assoc()) {
+                $nongdo[] = [
+                    'id' => $row['ma_nong_do'],
+                    'name' => $row['nong_do']
+                ];
+            }
+            $product['nong_do'] = $nongdo;
+            $stmt->close();
+    
+
+            $sql = "SELECT n.not_huong, nn.loai ,n.ma_not_huong
+                    FROM nothuong n 
+                    JOIN nothuong_nuochoa nn ON n.ma_not_huong = nn.ma_not_huong 
+                    WHERE nn.ma_nuoc_hoa = ?";
+            $stmt = $this->connection->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $nothuong = [];
+            while ($row = $result->fetch_assoc()) {
+                $nothuong[] = [
+                    'id' => $row['ma_not_huong'],
+                    'loai' => $row['loai'],
+                    'name' => $row['not_huong']
+                ];
+            }
+            $stmt->close();
+            $product['nothuong'] = $nothuong;
+        }
+
+        return $product;
+    }
+
+    public function getProductByIdDT($id  ,$ma_dung_tich) {
         $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, n.gioi_tinh, n.mo_ta, t.ten_thuong_hieu , dn.gia_ban
                 FROM nuochoa n 
                 LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 

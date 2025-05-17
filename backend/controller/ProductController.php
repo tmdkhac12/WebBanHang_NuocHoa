@@ -10,6 +10,10 @@ class ProductController {
     public function createProduct($name, $price, $description, $brand, $gender, $nongdo, $image,$dungtich, $notes = []){
         return $this->productModel->createProduct($name, $price, $description, $brand, $gender, $nongdo, $image,$dungtich, $notes = []);
     }
+    public function getProductByIdDT($id  ,$ma_dung_tich) {
+        return $this->productModel->getProductByIdDT($id , $ma_dung_tich);
+    }
+
     public function getAllProducts($limit = null, $offset = null) {
         return $this->productModel->getAllProducts($limit, $offset);
     }
@@ -31,8 +35,8 @@ class ProductController {
     public function getProductsInList($nuochoas) {
         return $this->productModel->getProductsInList($nuochoas);
     }
-    public function getProductById($id , $ma_dung_tich) {
-        return $this->productModel->getProductById($id , $ma_dung_tich);
+    public function getProductById($id ) {
+        return $this->productModel->getProductById($id );
     }
     public function deleteProduct($id) {
         return $this->productModel->deleteProduct($id);

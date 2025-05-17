@@ -241,7 +241,7 @@ $totalPages = ceil($totalProducts / $limit);
         function loadProductData(productId, isUpdate , ma_dung_tich) {
             
             $.ajax({
-                url: `../../backend/api/ProductAPI.php?action=getProductByID&id=${productId}&ma_dung_tich=${ma_dung_tich}`,
+                url: `../../backend/api/ProductAPI.php?action=getProductByIdDT&id=${productId}&ma_dung_tich=${ma_dung_tich}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function(product) {
