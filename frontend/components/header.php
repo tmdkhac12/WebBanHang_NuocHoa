@@ -8,10 +8,8 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav gap-3">
                 <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Giới thiệu</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Thương hiệu</a></li>
+                <li class="nav-item"><a class="nav-link" href="gioiThieu.php">Giới thiệu</a></li>
                 <li class="nav-item"><a class="nav-link" href="sanpham.php">Sản phẩm</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
             </ul>
         </div>
         <div class="d-flex gap-3">
