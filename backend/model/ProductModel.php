@@ -322,21 +322,46 @@ class ProductModel {
         }
 
         $stmt->close();
-        $sql = "UPDATE dungtich_nuochoa 
-                SET gia_ban = ? , ma_dung_tich= ?
-                WHERE ma_nuoc_hoa = ? ";
-        $stmt = $this->connection->prepare($sql);
-        if (!$stmt) {
-            error_log("Error preparing update statement: " . $this->connection->error);
+        $checkSql = "SELECT COUNT(*) FROM dungtich_nuochoa WHERE ma_nuoc_hoa = ? AND ma_dung_tich = ?";
+        $checkStmt = $this->connection->prepare($checkSql);
+        if (!$checkStmt) {
+            error_log("Error preparing check statement: " . $this->connection->error);
             return false;
         }
-        $stmt->bind_param("dii", $price, $dungtich,$productId);
-        $success = $stmt->execute();
+        $checkStmt->bind_param("ii", $productId, $dungtich);
+        $checkStmt->execute();
+        $checkStmt->bind_result($count);
+        $checkStmt->fetch();
+        $checkStmt->close();
+
+        if ($count > 0) {
+            $updateSql = "UPDATE dungtich_nuochoa 
+                        SET gia_ban = ?
+                        WHERE ma_nuoc_hoa = ? AND ma_dung_tich = ?";
+            $updateStmt = $this->connection->prepare($updateSql);
+            if (!$updateStmt) {
+                error_log("Error preparing update statement: " . $this->connection->error);
+                return false;
+            }
+            $updateStmt->bind_param("dii", $price, $productId, $dungtich);
+            $success = $updateStmt->execute();
+            $updateStmt->close();
+        } else {
+            $insertSql = "INSERT INTO dungtich_nuochoa (ma_nuoc_hoa, ma_dung_tich, gia_ban) VALUES (?, ?, ?)";
+            $insertStmt = $this->connection->prepare($insertSql);
+            if (!$insertStmt) {
+                error_log("Error preparing insert statement: " . $this->connection->error);
+                return false;
+            }
+            $insertStmt->bind_param("iid", $productId, $dungtich, $price);
+            $success = $insertStmt->execute();
+            $insertStmt->close();
+        }
+
         if (!$success) {
-            error_log("Error executing update statement: " . $stmt->error);
+            error_log("Error inserting/updating dungtich_nuochoa: " . $this->connection->error);
             return false;
         }
-        $stmt->close();
         
         $sql = "Update nongdo_nuochoa 
                 SET ma_nong_do = ?
