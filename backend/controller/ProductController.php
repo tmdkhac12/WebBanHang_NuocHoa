@@ -13,7 +13,9 @@ class ProductController {
     public function getAllProducts($limit = null, $offset = null) {
         return $this->productModel->getAllProducts($limit, $offset);
     }
-
+    public function getAllProductByDungTich ($limit = null, $offset = null){
+        return $this->productModel->getAllProductsByDungTich($limit , $offset);
+    }
     public function getTotalProducts() {
         return $this->productModel->getTotalProducts();
     }
@@ -29,8 +31,8 @@ class ProductController {
     public function getProductsInList($nuochoas) {
         return $this->productModel->getProductsInList($nuochoas);
     }
-    public function getProductById($id) {
-        return $this->productModel->getProductById($id);
+    public function getProductById($id , $ma_dung_tich) {
+        return $this->productModel->getProductById($id , $ma_dung_tich);
     }
     public function deleteProduct($id) {
         return $this->productModel->deleteProduct($id);

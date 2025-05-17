@@ -67,7 +67,7 @@ $totalPages = ceil($totalProducts / $limit);
                                         <th>Tên sản phẩm</th>
                                         <th>Giá bán</th>
                                         <th>Tên thương hiệu</th>
-                                        <th>Hành động</th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -85,8 +85,18 @@ $totalPages = ceil($totalProducts / $limit);
                                                 </td>
                                                 <td><?php echo $product['ten_thuong_hieu']; ?></td>
                                                 <td>
-                                                    <a class="btn btn-success btn-sm btn-view" data-id="<?= $product['ma_nuoc_hoa'] ?>">View</a>
-                                                    <a class="btn btn-warning btn-sm btn-update" data-id="<?= $product['ma_nuoc_hoa'] ?>">Update</a>
+                                                    <a 
+                                                        class="btn btn-success btn-sm btn-view" 
+                                                        data-id="<?= $product['ma_nuoc_hoa'] ?>" 
+                                                        data-dungtich="<?= $product['ma_nuoc_hoa'] ?>">
+                                                    View
+                                                    </a>
+                                                    <a 
+                                                        class="btn btn-success btn-sm btn-view" 
+                                                        data-id="<?= $product['ma_nuoc_hoa'] ?>" 
+                                                        data-dungtich="<?= $product['ma_dung_tich'] ?>">
+                                                    Update
+                                                    </a>
                                                     <a class="btn btn-danger btn-sm btn-delete" data-id="<?= $product['ma_nuoc_hoa'] ?>">Delete</a>
                                                 </td>
                                             </tr>
@@ -228,10 +238,10 @@ $totalPages = ceil($totalProducts / $limit);
 
     $(document).ready(function() {
         
-        function loadProductData(productId, isUpdate) {
+        function loadProductData(productId, isUpdate , ma_dung_tich) {
             
             $.ajax({
-                url: '../../backend/api/ProductAPI.php?action=getProductByID&id=' + productId,
+                url: `../../backend/api/ProductAPI.php?action=getProductByID&id=${productId}&ma_dung_tich=${ma_dung_tich}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function(product) {
@@ -244,7 +254,7 @@ $totalPages = ceil($totalProducts / $limit);
                     $('.js-example-basic-multiple').select2();
                     populateBrands(product.ten_thuong_hieu);
                     populateNongDo(nongDoId);
-                    populateDungTich(product.dung_tich[0].ma_dung_tich);
+                    populateDungTich(ma_dung_tich);
                     $('#name').val(product.ten_nuoc_hoa);
 
                     $('#price').val(product.gia_ban);
@@ -312,13 +322,18 @@ $totalPages = ceil($totalProducts / $limit);
         $(document).on('click', '.btn-view', function(e) {
             e.preventDefault();
             var productId = $(this).data('id');
-            loadProductData(productId, false); // false: chỉ xem
+            var productDungtich = $(this).data('dungtich')
+            console.log(productDungtich);
+            console.log(productId);
+            loadProductData(productId, false , productDungtich); // false: chỉ xem
         });
 
         $(document).on('click', '.btn-update', function(e) {
             e.preventDefault();
+            var productDungtich = $(this).data('dungtich')
             var productId = $(this).data('id');
-            loadProductData(productId, true); // true: cập nhật
+            
+            loadProductData(productId, true , productDungtich); // true: cập nhật
         });
 
         $(document).on('click', '.btn-delete', function(e) {
@@ -633,7 +648,7 @@ $totalPages = ceil($totalProducts / $limit);
     function renderProductTable(products) {
         let html = '';
         if (products.length === 0) {
-            html = '<tr><td colspan="5">Không có sản phẩm nào.</td></tr>';
+            html = '<tr><td colspan="6">Không có sản phẩm nào.</td></tr>';
         } else {
             products.forEach(product => {
                 html += `<tr>
@@ -641,10 +656,23 @@ $totalPages = ceil($totalProducts / $limit);
                     <td>${product.ten_nuoc_hoa}</td>
                     <td>${numberFormat(product.gia_ban)}</td>
                     <td>${product.ten_thuong_hieu || ''}</td>
+                    <td>${product.dung_tich || ''}</td>
+
                     <td>
-                        <a class="btn btn-success btn-sm btn-view" data-id="${product.ma_nuoc_hoa}">View</a>
-                        <a class="btn btn-warning btn-sm btn-update" data-id="${product.ma_nuoc_hoa}">Update</a>
-                        <a class="btn btn-danger btn-sm btn-delete" data-id="${product.ma_nuoc_hoa}">Delete</a>
+                        <a class="btn btn-success btn-sm btn-view" 
+                        data-id="${product.ma_nuoc_hoa}" 
+                        data-dungtich="${product.ma_dung_tich}">
+                        View
+                        </a>
+                        <a class="btn btn-warning btn-sm btn-update" 
+                        data-id="${product.ma_nuoc_hoa}" 
+                        data-dungtich="${product.ma_dung_tich}">
+                        Update
+                        </a>
+                        <a class="btn btn-danger btn-sm btn-delete" 
+                        data-id="${product.ma_nuoc_hoa}">
+                        Delete
+                        </a>
                     </td>
                 </tr>`;
             });

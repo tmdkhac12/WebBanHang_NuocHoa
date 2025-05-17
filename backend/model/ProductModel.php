@@ -16,7 +16,7 @@ class ProductModel {
     }
 
     public function getAllProducts($limit, $offset) {
-        $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, dn.gia_ban, t.ten_thuong_hieu 
+        $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, dn.gia_ban, t.ten_thuong_hieu , dn.ma_dung_tich 
         FROM nuochoa n 
         LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
         LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa AND dn.ma_dung_tich = 6
@@ -34,7 +34,7 @@ class ProductModel {
         $stmt->close();
         return $products;
     }
-
+    
     public function getTotalProducts() {
         $sql = "SELECT COUNT(*) as total 
                 FROM nuochoa n 
@@ -46,6 +46,34 @@ class ProductModel {
         $total = $result->fetch_assoc()['total'];
         $stmt->close();
         return $total;
+    }
+    public function getAllProductsByDungTich($limit, $offset) {
+        $sql = "SELECT 
+                    n.ma_nuoc_hoa, 
+                    n.hinh_anh, 
+                    n.ten_nuoc_hoa, 
+                    dn.ma_dung_tich, 
+                    dn.gia_ban, 
+                    t.ten_thuong_hieu 
+                FROM nuochoa n
+                INNER JOIN nongdo_nuochoa nd ON n.ma_nuoc_hoa = nd.ma_nuoc_hoa
+                LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
+                INNER JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa
+                WHERE n.tinh_trang = 1
+                LIMIT ? OFFSET ?";
+
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bind_param("ii", $limit, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $products = [];
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $row;
+        }
+
+        $stmt->close();
+        return $products;
     }
 
     private function buildFilterConditions($gender, $minPrice, $maxPrice, $productNameSearch) {
@@ -129,15 +157,15 @@ class ProductModel {
         return ['products' => $products, 'total' => $total];
     }
 
-    public function getProductById($id) {
+    public function getProductById($id  ,$ma_dung_tich) {
         $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, n.gioi_tinh, n.mo_ta, t.ten_thuong_hieu , dn.gia_ban
                 FROM nuochoa n 
                 LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
                 LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa
 
-                WHERE n.ma_nuoc_hoa = ? and n.tinh_trang = 1";
+                WHERE n.ma_nuoc_hoa = ? and n.tinh_trang = 1 and dn.ma_dung_tich=?";
         $stmt = $this->connection->prepare($sql);
-        $stmt->bind_param("i", $id);
+        $stmt->bind_param("ii", $id,$ma_dung_tich);
         $stmt->execute();
         $product = $stmt->get_result()->fetch_assoc();
         $stmt->close();
@@ -146,9 +174,9 @@ class ProductModel {
             $sql = "SELECT *
                     FROM dungtich d 
                     JOIN dungtich_nuochoa dn ON d.ma_dung_tich = dn.ma_dung_tich 
-                    WHERE dn.ma_nuoc_hoa = ?";
+                    WHERE dn.ma_nuoc_hoa = ? ";
             $stmt = $this->connection->prepare($sql);
-            $stmt->bind_param("i", $id);
+            $stmt->bind_param("i", $id );
             $stmt->execute();
             $result = $stmt->get_result();
             $dungtich = [];
@@ -499,7 +527,7 @@ class ProductModel {
     public function searchProducts($keyword, $limit, $offset) {
         $connection = getConnection();
         $keyword = "%$keyword%";
-        $sql = "SELECT DISTINCT p.*, th.ten_thuong_hieu , dtnh.gia_ban
+        $sql = "SELECT DISTINCT p.*, th.ten_thuong_hieu , dtnh.gia_ban , dtnh.ma_dung_tich
                 FROM nuochoa p
                 LEFT JOIN thuonghieu th ON p.ma_thuong_hieu = th.ma_thuong_hieu
                 INNER JOIN dungtich_nuochoa dtnh ON p.ma_nuoc_hoa = dtnh.ma_nuoc_hoa

@@ -57,7 +57,8 @@ try {
         case 'getProductByID':
             if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                 $productId = (int)$_GET['id'];
-                $product = $productController->getProductByID($productId);
+                $ma_dung_tich = (int)$_GET['ma_dung_tich'];
+                $product = $productController->getProductByID($productId,$ma_dung_tich);
                 if ($product) {
                     echo json_encode($product);
                 } else {
@@ -285,6 +286,8 @@ try {
             ]);
             exit();
         }
+        case 'getAllProductByDungTich':
+
         default:
             http_response_code(400);
             echo json_encode(['error' => 'Hành động không hợp lệ']);
