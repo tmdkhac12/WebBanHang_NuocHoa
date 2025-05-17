@@ -22,8 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let abortController = null;
 
     const formatPrice = (price) => {
-        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
-    };
+    if (price === null || price === undefined) {
+        return "Giá chưa cập nhật";  // or any placeholder text you prefer
+    }
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
+};
 
     const renderProducts = (products, total) => {
         console.log("renderProducts called with products:", products, "total:", total);
@@ -141,6 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         console.log("Sending request with data:", requestBody);
+        console.log("Final requestBody before stringify:", requestBody);
+    console.log("Final JSON:", JSON.stringify(requestBody));
         fetch('/backend/api/ProductAPI.php?action=filterProducts', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
