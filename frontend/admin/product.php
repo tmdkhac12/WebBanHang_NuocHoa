@@ -475,16 +475,17 @@ $totalPages = ceil($totalProducts / $limit);
             $('#huongdau, #huonggiua, #huongcuoi').select2();
 
 
-            
-            $('#huongdau').val(null).trigger('change');
-            $('#huonggiua').val(null).trigger('change');
-            $('#huongcuoi').val(null).trigger('change');
+           
 
           
             populateBrands();
             populateNongDo();
             populateNotHuongOptions();
             populateDungTich();
+             
+            $('#huongdau').val(null).trigger('change');
+            $('#huonggiua').val(null).trigger('change');
+            $('#huongcuoi').val(null).trigger('change');
 
              $('#avatar').closest('.form-outline').toggle(true);
 

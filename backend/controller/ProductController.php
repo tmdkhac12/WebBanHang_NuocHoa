@@ -8,7 +8,7 @@ class ProductController {
         $this->productModel = new ProductModel();
     }
     public function createProduct($name, $price, $description, $brand, $gender, $nongdo, $image,$dungtich, $notes = []){
-        return $this->productModel->createProduct($name, $price, $description, $brand, $gender, $nongdo, $image,$dungtich, $notes = []);
+        return $this->productModel->createProduct($name, $price, $description, $brand, $gender, $nongdo, $image,$dungtich, $notes );
     }
     public function getProductByIdDT($id  ,$ma_dung_tich) {
         return $this->productModel->getProductByIdDT($id , $ma_dung_tich);
