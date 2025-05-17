@@ -119,7 +119,11 @@ class ProductModel {
        $sql = "SELECT n.ma_nuoc_hoa, n.hinh_anh, n.ten_nuoc_hoa, dn.gia_ban, t.ten_thuong_hieu 
         FROM nuochoa n 
         LEFT JOIN thuonghieu t ON n.ma_thuong_hieu = t.ma_thuong_hieu 
-        LEFT JOIN dungtich_nuochoa dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa
+        LEFT JOIN (
+            SELECT ma_nuoc_hoa, MIN(gia_ban) as gia_ban
+            FROM dungtich_nuochoa
+            GROUP BY ma_nuoc_hoa
+        ) dn ON n.ma_nuoc_hoa = dn.ma_nuoc_hoa
         WHERE n.tinh_trang = 1" . $conditions['sql'];
         $sql .= " ORDER BY dn.gia_ban ASC LIMIT ? OFFSET ?";
         $conditions['types'] .= "ii";
