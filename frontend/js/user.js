@@ -65,7 +65,7 @@ function addUpdateAccountEventHandler() {
       // console.log(hoten, email, currentPassword, newPassword, confirmPassword)
 
       // 3. Fetch API
-      fetch("/backend/api/UserAPI.php?action=updateUser", {
+      fetch("/backend/api/UserAPI.php?action=updateUserFromClient", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

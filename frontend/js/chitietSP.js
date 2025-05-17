@@ -96,13 +96,15 @@ function addProductToLocalStorage(productInfo) {
 function buyNow() {
     const size = [5, 10, 15, 20, 30, 50, 75, 90, 100, 125, 150, 200];
 
+    const urlParams = new URLSearchParams(window.location.search);
 
+    const product_id = parseInt(urlParams.get('id')); 
     const price = document.querySelector(".product-price").innerHTML || "";
     const s_selectedSize = document.querySelector(".size-btn.active").getAttribute("data-size") + "ml";
     const quantity = parseInt(document.querySelector("input").value) || "1";
 
     const cartItems = {
-            product_id: parseInt(window.location.href.slice(-1)),
+            product_id: product_id,
             image: document.querySelector("#product-image")?.src || "",
             name: document.querySelector("h1.product-title")?.textContent + " - " + s_selectedSize || "",
             price, 

@@ -96,7 +96,7 @@ function addRegisterEventHandler() {
       }
 
       // Get user input
-      let hoten = null;
+      let name = null;
       let email = null;
       let username = document
         .querySelector("#register-form #username")
@@ -126,7 +126,7 @@ function addRegisterEventHandler() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          hoten: hoten,
+          name: name,
           email: email,
           username: username,
           password: password,
