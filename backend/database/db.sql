@@ -274,8 +274,8 @@ DROP TABLE IF EXISTS `nothuong_nuochoa`;
 CREATE TABLE `nothuong_nuochoa` (
   `ma_not_huong` int NOT NULL,
   `ma_nuoc_hoa` int NOT NULL,
-  `loai` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  PRIMARY KEY (`ma_not_huong`,`ma_nuoc_hoa`),
+  `loai` varchar(50) COLLATE utf8mb4_general_ci not null,
+  PRIMARY KEY (`ma_not_huong`,`ma_nuoc_hoa` , `loai`),
   KEY `ma_nuoc_hoa` (`ma_nuoc_hoa`),
   CONSTRAINT `nothuong_nuochoa_ibfk_1` FOREIGN KEY (`ma_not_huong`) REFERENCES `nothuong` (`ma_not_huong`) ON DELETE CASCADE,
   CONSTRAINT `nothuong_nuochoa_ibfk_2` FOREIGN KEY (`ma_nuoc_hoa`) REFERENCES `nuochoa` (`ma_nuoc_hoa`) ON DELETE CASCADE
@@ -348,12 +348,13 @@ INSERT INTO `thuonghieu` VALUES (1,'Chanel'),(2,'Dior'),(3,'Gucci'),(4,'Versace'
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */; 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2025-05-17  6:12:43

@@ -506,7 +506,11 @@ class ProductModel {
                 $loai = $note['loai'] ?? null;
 
                 if ($ma_not_huong && $loai) {
-                    $insertStmt->bind_param("iis", $productId, $ma_not_huong, $loai);
+                    
+                    $mh = $ma_not_huong;
+                    $l = $loai;
+
+                    $insertStmt->bind_param("iis", $productId, $mh, $l);
                     $insertStmt->execute();
                 }
             }
