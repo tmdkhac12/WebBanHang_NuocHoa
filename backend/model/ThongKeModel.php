@@ -4,6 +4,9 @@ require_once __DIR__ . "/../config/connection.php";
 class ThongKeModel {
     public function getProductStats($from, $to) {
         $conn = getConnection();
+
+        $to = date('Y-m-d', strtotime($to . ' +1 day'));
+
         $sql = "SELECT 
                     nh.ten_nuoc_hoa, 
                     dt.dung_tich,
@@ -15,19 +18,23 @@ class ThongKeModel {
                 INNER JOIN dungtich_nuochoa dt_nh ON ct.ma_nuoc_hoa = dt_nh.ma_nuoc_hoa AND ct.ma_dung_tich = dt_nh.ma_dung_tich
                 INNER JOIN dungtich dt ON dt_nh.ma_dung_tich = dt.ma_dung_tich
                 WHERE hd.trang_thai_don_hang = 'Đã giao'
-                AND hd.thoi_gian BETWEEN ? AND ?
+                AND hd.thoi_gian >= ? AND hd.thoi_gian < ?
                 GROUP BY nh.ten_nuoc_hoa, dt.dung_tich
                 ORDER BY so_luong_ban DESC";
+
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ss", $from, $to);
         $stmt->execute();
         $result = $stmt->get_result();
+        
         $data = [];
         while ($row = $result->fetch_assoc()) $data[] = $row;
+
         $stmt->close();
         $conn->close();
         return $data;
     }
+
 
     public function getTopCustomers($from = '', $to = '') {
         $conn = getConnection();
@@ -35,7 +42,7 @@ class ThongKeModel {
         $sql = "SELECT kh.ma_khach_hang, kh.ten_khach_hang, kh.email, SUM(hd.tong_tien) AS tong_doanh_thu
                 FROM hoadon hd
                 JOIN khachhang kh ON hd.ma_khach_hang = kh.ma_khach_hang
-                WHERE hd.trang_thai_don_hang != 'Đã hủy'";;
+                WHERE hd.trang_thai_don_hang = 'Đã giao'";;
 
         $params = [];
         $types = "";
@@ -77,10 +84,10 @@ class ThongKeModel {
 
         $totalOrders = $conn->query("SELECT COUNT(*) as total FROM hoadon WHERE trang_thai_don_hang != 'Đã hủy'")->fetch_assoc()['total'];
 
-        $totalRevenue = $conn->query("SELECT IFNULL(SUM(tong_tien),0) as total FROM hoadon WHERE trang_thai_don_hang != 'Đã hủy'")->fetch_assoc()['total'];
+        $totalRevenue = $conn->query("SELECT IFNULL(SUM(tong_tien),0) as total FROM hoadon WHERE trang_thai_don_hang = 'Đã giao'")->fetch_assoc()['total'];
         $ordersToday = $conn->query("SELECT COUNT(*) as total FROM hoadon WHERE DATE(thoi_gian) = CURDATE() AND trang_thai_don_hang != 'Đã hủy'")->fetch_assoc()['total'];
 
-        $customers = $conn->query("SELECT COUNT(DISTINCT ma_khach_hang) as total FROM hoadon WHERE trang_thai_don_hang != 'Đã hủy'")->fetch_assoc()['total'];
+        $customers = $conn->query("SELECT COUNT(DISTINCT ma_khach_hang) as total FROM hoadon WHERE trang_thai_don_hang = 'Đã giao'")->fetch_assoc()['total'];
 
         $conn->close();
 
