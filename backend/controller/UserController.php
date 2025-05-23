@@ -101,7 +101,7 @@ class UserController
             if ($isSuccess) {
                 return 1;
             }
-            return -1; // Update user info failed, db error 
+            return -3; // Update user info failed (data not change) 
         } else {
             if (!$this->userModel->isCurrentPasswordMatched($username, $currentPassword)) {
                 return -2; // Current password not correct 

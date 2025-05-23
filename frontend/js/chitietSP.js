@@ -44,7 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const id = parseInt(window.location.href.slice(-1));
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = parseInt(urlParams.get('id'));
         const selectedSize = parseInt(document.querySelector(".size-btn.active").dataset.size);
 
         const productInfo = {

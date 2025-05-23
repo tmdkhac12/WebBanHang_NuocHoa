@@ -201,7 +201,7 @@ switch ($action) {
             }
             break;
         }
-        case 'updateUserFromClient': {
+    case 'updateUserFromClient': {
             // Get Fetch data
             $data = json_decode(file_get_contents("php://input"), true);
             $hoten = $data["hoten"];
@@ -218,7 +218,7 @@ switch ($action) {
                     // If success then recreate session
                     $_SESSION["email"] = $email;
                     $_SESSION["ten_khach_hang"] = $hoten;
-                    
+
                     echo json_encode(["success" => true, "message" => "Cập nhật thông tin thành công!"]);
                     break;
                 case -1:
@@ -227,8 +227,10 @@ switch ($action) {
                 case -2:
                     echo json_encode(["success" => false, "message" => "Mật khẩu hiện tại không chính xác!"]);
                     break;
+                case -3:
+                    echo json_encode(["success" => false, "message" => "Vui lòng nhập đủ thông tin nếu muốn thay đổi"]);
+                    break;
                 default:
-                    # code...
                     break;
             }
             break;
