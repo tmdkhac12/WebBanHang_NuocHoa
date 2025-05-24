@@ -13,7 +13,6 @@
             </ul>
         </div>
         <div class="d-flex gap-3">
-            <a href="#" class="text-dark"><i class="fas fa-search"></i></a>
             <a href="<?php
                 if (isset($_SESSION["username"])) {
                     echo "user.php";

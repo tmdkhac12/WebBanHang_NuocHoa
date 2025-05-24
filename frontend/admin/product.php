@@ -164,7 +164,7 @@ $totalPages = ceil($totalProducts / $limit);
 
                         <div data-mdb-input-init class="form-outline mb-4">
                             <label class="form-label" for="email1">Giá bán</label>
-                            <input type="text" id="price" class="form-control" />
+                            <input type="text" id="price" class="form-control" maxlength="11" />
                         </div>
 
 
@@ -611,6 +611,16 @@ $totalPages = ceil($totalProducts / $limit);
     });
 }
 
+    function limitGia(input) {
+        // Loại bỏ ký tự không phải số
+        let raw = input.value.replace(/\D/g, '');
+
+        // Giới hạn tối đa 13 chữ số (1.000.000.000.000 ~ 1 nghìn tỷ)
+        if (raw.length > 13) raw = raw.substring(0, 13);
+
+        // Định dạng lại (có dấu chấm)
+        input.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
 
     //tim kiem phan trang
     function loadProducts(keyword = '', page = 1) {
@@ -717,6 +727,9 @@ $totalPages = ceil($totalProducts / $limit);
         loadProducts('', 1);
     });
     $('.dataTables_info').remove();
+
+
+    
 </script>
 
 </html>
